@@ -40,9 +40,9 @@
 class Tx_Freemind2_Utility_PageTree {
 
 		// EXTERNAL, static:
-	var $expandFirst = 0; // If set, the first element in the tree is always expanded.
-	var $thisScript = ''; // Holds the current script to reload to.
-	var $title = 'no title'; // Used if the tree is made of records (not folders for ex.)
+	public $expandFirst = 0; // If set, the first element in the tree is always expanded.
+	public $thisScript = ''; // Holds the current script to reload to.
+	public $title = 'no title'; // Used if the tree is made of records (not folders for ex.)
 
 	/**
 	 * Needs to be initialized with $GLOBALS['BE_USER']
@@ -50,14 +50,14 @@ class Tx_Freemind2_Utility_PageTree {
 	 *
 	 * @var t3lib_beUserAuth
 	 */
-	var $BE_USER = '';
+	public $BE_USER = '';
 
 	/**
 	 * Needs to be initialized with e.g. $GLOBALS['WEBMOUNTS']
 	 * Default setting in init() is 0 => 0
 	 * The keys are mount-ids (can be anything basically) and the values are the ID of the root element (COULD be zero or anything else. For pages that would be the uid of the page, zero for the pagetree root.)
 	 */
-	var $MOUNTS = '';
+	public $MOUNTS = '';
 
 
 	/**
@@ -65,33 +65,33 @@ class Tx_Freemind2_Utility_PageTree {
 	 * Leave blank if data comes from an array.
 	 * should always be the pages table
 	 */
-	var $table = 'pages';
+	public $table = 'pages';
 
 	/**
 	 * Defines the field of $table which is the parent id field (like pid for table pages).
 	 */
-	var $parentField = 'pid';
+	public $parentField = 'pid';
 
 	/**
 	 * WHERE clause used for selecting records for the tree. Is set by function init.
 	 * Only makes sense when $this->table is set.
 	 * @see init()
 	 */
-	var $clause = '';
+	public $clause = '';
 
 	/**
 	 * Field for ORDER BY. Is set by function init.
 	 * Only makes sense when $this->table is set.
 	 * @see init()
 	 */
-	var $orderByFields = '';
+	public $orderByFields = 'pid,sorting';
 
 	/**
 	 * Default set of fields selected from the tree table.
 	 * Make SURE that these fields names listed herein are actually possible to select from $this->table (if that variable is set to a TCA table name)
 	 * @see addField()
 	 */
-	var $fieldArray = array('uid', 'title','deleted','hidden','doktype' /* and many more columns ... */ );
+	public $fieldArray = array('uid', 'title','deleted','hidden','doktype','shortcut_mode','crdate','tstamp');
 
 	/**
 	 * List of other fields which are ALLOWED to set (here, based on the "pages" table!)
@@ -104,23 +104,21 @@ class Tx_Freemind2_Utility_PageTree {
 	 * Sets the associative array key which identifies a new sublevel if arrays are used for trees.
 	 * This value has formerly been "subLevel" and "--sublevel--"
 	 */
-	var $subLevelID = '_SUB_LEVEL';
+	public $subLevelID = '_SUB_LEVEL';
 
 
 		// *********
 		// Internal
 		// *********
 		// For record trees:
-	var $ids = array(); // one-dim array of the uid's selected.
-	var $ids_hierarchy = array(); // The hierarchy of element uids
-	var $orig_ids_hierarchy = array(); // The hierarchy of versioned element uids
-	var $buffer_idH = array(); // Temporary, internal array
+	public $ids = array(); // one-dim array of the uid's selected.
+	public $ids_hierarchy = array(); // The hierarchy of element uids
+	public $orig_ids_hierarchy = array(); // The hierarchy of versioned element uids
+	public $buffer_idH = array(); // Temporary, internal array
 
 
-		// For both types
-	var $tree = array(); // Tree is accumulated in this variable
-	var $stored = array(); // Holds (session stored) information about which items in the tree are unfolded and which are not.
-	var $recs = array(); // Accumulates the displayed records.
+	public $tree = array(); // Tree is accumulated in this variable
+	public $recs = array(); // Accumulates the displayed records.
 
 
 	/**
@@ -131,7 +129,7 @@ class Tx_Freemind2_Utility_PageTree {
 	 * @param	string		record ORDER BY field
 	 * @return	void
 	 */
-	function init($clause = '', $orderByFields = '') {
+	public function init($clause = '', $orderByFields = '') {
 		$this->BE_USER = $GLOBALS['BE_USER']; // Setting BE_USER by default
 
 		if ($clause) {
@@ -159,7 +157,7 @@ class Tx_Freemind2_Utility_PageTree {
 	 * @param	boolean		If set, the fieldname will be set no matter what. Otherwise the field name must either be found as key in $TCA[$table]['columns'] or in the list ->defaultList
 	 * @return	void
 	 */
-	function addField($field, $noCheck = 0) {
+	public function addField($field, $noCheck = 0) {
 		global $TCA;
 		if ($noCheck || is_array($TCA[$this->table]['columns'][$field]) || t3lib_div::inList($this->defaultList, $field)) {
 			$this->fieldArray[] = $field;
@@ -172,7 +170,7 @@ class Tx_Freemind2_Utility_PageTree {
 	 *
 	 * @return	void
 	 */
-	function reset() {
+	public function reset() {
 		$this->tree = array();
 		$this->recs = array();
 		$this->ids = array();
@@ -202,7 +200,7 @@ class Tx_Freemind2_Utility_PageTree {
 	 * @param	string		? (internal)
 	 * @return	integer		The count of items on the level
 	 */
-	function getTree($uid, $depth = 999, $depthData = '', $blankLineCode = '') {
+	public function getTree($uid, $depth = 999, $depthData = '', $blankLineCode = '') {
 
 			// Buffer for id hierarchy is reset:
 		$this->buffer_idH = array();
@@ -287,7 +285,7 @@ class Tx_Freemind2_Utility_PageTree {
 	 * @return	integer
 	 * @access private
 	 */
-	function getCount($uid) {
+	private function getCount($uid) {
 
 		return $GLOBALS['TYPO3_DB']->exec_SELECTcountRows(
 			'uid',
@@ -306,7 +304,7 @@ class Tx_Freemind2_Utility_PageTree {
 	 * @param	integer		uid, <= 0 (normally, this does not matter)
 	 * @return	array		Array with title/uid keys with values of $this->title/0 (zero)
 	 */
-	function getRootRecord($uid) {
+	private function getRootRecord($uid) {
 		return array('title' => $this->title, 'uid' => 0);
 	}
 
@@ -319,7 +317,7 @@ class Tx_Freemind2_Utility_PageTree {
 	 * @param	integer		UID to look up
 	 * @return	array		The record
 	 */
-	function getRecord($uid) {
+	private function getRecord($uid) {
 		return t3lib_BEfunc::getRecordWSOL($this->table, $uid);
 	}
 
@@ -331,7 +329,7 @@ class Tx_Freemind2_Utility_PageTree {
 	 * @return	mixed		data handle (Tables: An sql-resource, arrays: A parentId integer. -1 is returned if there were NO subLevel.)
 	 * @access private
 	 */
-	function getDataInit($parentId) {
+	private function getDataInit($parentId) {
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 				implode(',', $this->fieldArray),
 				$this->table,
@@ -353,7 +351,7 @@ class Tx_Freemind2_Utility_PageTree {
 	 * @access private
 	 * @see getDataInit()
 	 */
-	function getDataCount(&$res) {
+	private function getDataCount(&$res) {
 		$c = $GLOBALS['TYPO3_DB']->sql_num_rows($res);
 		return $c;
 	}
@@ -366,7 +364,7 @@ class Tx_Freemind2_Utility_PageTree {
 	 * @access private
 	 * @see getDataInit()
 	 */
-	function getDataNext(&$res) {
+	private function getDataNext(&$res) {
 		while ($row = @$GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 			t3lib_BEfunc::workspaceOL($this->table, $row, $this->BE_USER->workspace, TRUE);
 			if (is_array($row)) {
@@ -383,7 +381,7 @@ class Tx_Freemind2_Utility_PageTree {
 	 * @return	void
 	 * @access private
 	 */
-	function getDataFree(&$res) {
+	private function getDataFree(&$res) {
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);
 	}
 

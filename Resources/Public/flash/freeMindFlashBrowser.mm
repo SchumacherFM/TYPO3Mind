@@ -1,11 +1,11 @@
-<map version="0.8">
+<map version="0.9.0">
 <!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->
-<node BACKGROUND_COLOR="#ccccff" COLOR="#cc0066" CREATED="1116895787449" ID="Freemind_Link_1757763095" MODIFIED="1133829961500" TEXT=" FreeMind&#xa; FlashBrowser">
+<node BACKGROUND_COLOR="#ccccff" COLOR="#cc0066" CREATED="1116895787449" ID="Freemind_Link_1757763095" MODIFIED="1321302397493" TEXT=" FreeMind&#xa; FlashBrowser">
 <richcontent TYPE="NOTE"><html><head/><body><p align="left">Flash implementation of&#13; &#13;&#13;&#13;
 a browser of FreeMind mindmaps</p></body></html></richcontent>
 <edge STYLE="bezier" WIDTH="8"/>
 <font BOLD="true" NAME="SansSerif" SIZE="12"/>
-<node COLOR="#006600" CREATED="1120438784977" FOLDED="true" HGAP="57" ID="_" MODIFIED="1174530309319" POSITION="right" TEXT="suport" VSHIFT="-2">
+<node COLOR="#006600" CREATED="1120438784977" HGAP="57" ID="_" MODIFIED="1321302404487" POSITION="right" TEXT="suport" VSHIFT="-2">
 <edge COLOR="#00cc66" STYLE="bezier" WIDTH="2"/>
 <cloud COLOR="#fbee98"/>
 <font BOLD="true" NAME="SansSerif" SIZE="12"/>
@@ -95,10 +95,9 @@ a browser of FreeMind mindmaps</p></body></html></richcontent>
     
   </head>
   <body>
-    <img src="bola.jpg" />
+    <img src="bola.jpg"/>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <edge COLOR="#00cc66" STYLE="bezier" WIDTH="2"/>
 <font BOLD="true" NAME="SansSerif" SIZE="12"/>
 </node>
@@ -113,10 +112,9 @@ a browser of FreeMind mindmaps</p></body></html></richcontent>
     
   </head>
   <body>
-    <img src="estrella.png" />
+    <img src="estrella.png"/>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 </node>
 </node>
 <node COLOR="#006600" CREATED="1132970928136" ID="Freemind_Link_876325418" MODIFIED="1137712994477" STYLE="fork" TEXT="gif">
@@ -128,10 +126,9 @@ a browser of FreeMind mindmaps</p></body></html></richcontent>
     
   </head>
   <body>
-    <img src="bola4.gif" />
+    <img src="bola4.gif"/>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <edge COLOR="#00cc66" WIDTH="2"/>
 <font BOLD="true" NAME="SansSerif" SIZE="12"/>
 </node>
@@ -165,11 +162,15 @@ a browser of FreeMind mindmaps</p></body></html></richcontent>
 </node>
 <node BACKGROUND_COLOR="#d9f26b" CREATED="1120438957676" ID="Freemind_Link_904931287" MODIFIED="1133829942406" POSITION="left" STYLE="bubble" TEXT="configuration&#xa; HTML">
 <edge COLOR="#9999ff" STYLE="sharp_bezier" WIDTH="8"/>
-<node BACKGROUND_COLOR="#ccccff" CREATED="1120439553572" ID="Freemind_Link_956009379" MODIFIED="1120757253715" STYLE="bubble" TEXT="atributes">
+<node BACKGROUND_COLOR="#ccccff" CREATED="1120439553572" ID="Freemind_Link_956009379" MODIFIED="1321302680345" STYLE="bubble" TEXT="atributes">
 <node BACKGROUND_COLOR="#ccccff" CREATED="1120439671903" ID="Freemind_Link_1627742472" MODIFIED="1120757283658" STYLE="bubble" TEXT="initLoadFile">
 <richcontent TYPE="NOTE"><html><head/><body><p align="left">Initial mindmap to load&#13;&#13;&#13;&#13;&#13;
 default="index.mm"</p></body></html></richcontent>
 <edge COLOR="#9999ff" WIDTH="2"/>
+<node CREATED="1321302425893" ID="ID_876103430" MODIFIED="1321302717517" TEXT="RumpfDieBirne">
+<icon BUILTIN="stop"/>
+<attribute NAME="date" VALUE="10/01/2006"/>
+</node>
 </node>
 <node BACKGROUND_COLOR="#ccccff" CREATED="1120439625306" ID="Freemind_Link_459354659" MODIFIED="1120757286452" STYLE="bubble" TEXT="openUrl">
 <richcontent TYPE="NOTE"><html><head/><body><p align="left">Where to open a link&#13;&#13;&#13;&#13;&#13;
@@ -215,7 +216,7 @@ default=600</p></body></html></richcontent>
 <node BACKGROUND_COLOR="#ccccff" CREATED="1137712485555" ID="Freemind_Link_1281638518" MODIFIED="1174527876771" STYLE="bubble" TEXT="justMap">
 <richcontent TYPE="NOTE"><html>
   <head>
-    <title>>    </title>
+    <title>&gt;    </title>
     
   </head>
   <body>
@@ -223,14 +224,13 @@ default=600</p></body></html></richcontent>
       true o false
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <edge COLOR="#9999ff" WIDTH="2"/>
 </node>
 <node BACKGROUND_COLOR="#ccccff" CREATED="1137712485555" ID="Freemind_Link_1730370515" MODIFIED="1174527466051" STYLE="bubble" TEXT="defaultToolTipWordWrap">
 <richcontent TYPE="NOTE"><html>
   <head>
-    <title>>    </title>
+    <title>&gt;    </title>
     
   </head>
   <body>
@@ -238,8 +238,7 @@ default=600</p></body></html></richcontent>
       Number that acts as an automatic wordwrap limit
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <edge COLOR="#9999ff" WIDTH="2"/>
 </node>
 <node BACKGROUND_COLOR="#ccccff" CREATED="1137712485555" ID="Freemind_Link_1953067860" MODIFIED="1176039826719" STYLE="bubble" TEXT="offsetX">
@@ -249,41 +248,38 @@ default=600</p></body></html></richcontent>
   </head>
   <body>
     <p align="left">
-      for the initial centering of the map.Admits also the values &quot;left&quot; and &quot;right&quot;
+      for the initial centering of the map.Admits also the values "left" and "right"
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <edge COLOR="#9999ff" WIDTH="2"/>
 </node>
 <node BACKGROUND_COLOR="#ccccff" CREATED="1137712485555" ID="Freemind_Link_582701624" MODIFIED="1176039554247" STYLE="bubble" TEXT="offsetY">
 <richcontent TYPE="NOTE"><html>
   <head>
-    <title>>    </title>
+    <title>&gt;    </title>
     
   </head>
   <body>
     <p>
-      for the initial centering of the map. Admits also the values &quot;top&quot; and &quot;bottom&quot;
+      for the initial centering of the map. Admits also the values "top" and "bottom"
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <edge COLOR="#9999ff" WIDTH="2"/>
 </node>
 <node BACKGROUND_COLOR="#ccccff" CREATED="1137712485555" ID="Freemind_Link_390963532" MODIFIED="1176039898432" STYLE="bubble" TEXT="buttonsPos">
 <richcontent TYPE="NOTE"><html>
   <head>
-    <title>>    </title>
+    <title>&gt;    </title>
     
   </head>
   <body>
     <p align="left">
-      values &quot;top&quot; (default) and &quot;bottom&quot;
+      values "top" (default) and "bottom"
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <edge COLOR="#9999ff" WIDTH="2"/>
 </node>
 <node BACKGROUND_COLOR="#ccccff" CREATED="1176044286873" ID="Freemind_Link_1470437317" MODIFIED="1176044426153" STYLE="bubble" TEXT="max_alpha_buttons">
@@ -296,8 +292,7 @@ default=600</p></body></html></richcontent>
       max value of alpha for the dynamic view of buttons (0-100)
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <edge COLOR="#9999ff" WIDTH="2"/>
 </node>
 <node BACKGROUND_COLOR="#ccccff" CREATED="1176044289957" ID="Freemind_Link_690872243" MODIFIED="1176044419613" STYLE="bubble" TEXT="min_alpha_buttons">
@@ -310,8 +305,7 @@ default=600</p></body></html></richcontent>
       min value of alpha for the dynamic view of buttons (0-100)
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <edge COLOR="#9999ff" WIDTH="2"/>
 </node>
 <node BACKGROUND_COLOR="#ccccff" CREATED="1176039567536" ID="Freemind_Link_409377548" MODIFIED="1176039664526" STYLE="bubble" TEXT="scaleTooltips">
@@ -321,11 +315,10 @@ default=600</p></body></html></richcontent>
   </head>
   <body>
     <p>
-      optionally can be used to restrict the scale of the tooltips ( by default it does scale) &quot;true&quot; or &quot;false&quot;
+      optionally can be used to restrict the scale of the tooltips ( by default it does scale) "true" or "false"
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <edge COLOR="#9999ff" WIDTH="2"/>
 </node>
 <node BACKGROUND_COLOR="#ccccff" CREATED="1176043762018" ID="Freemind_Link_861631583" MODIFIED="1176043911733" STYLE="bubble" TEXT="toolTipsBgColor">
@@ -335,11 +328,10 @@ default=600</p></body></html></richcontent>
   </head>
   <body>
     <p>
-      tooltip bgcolor ej: &quot;0xaaeeaa&quot;
+      tooltip bgcolor ej: "0xaaeeaa"
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <edge COLOR="#9999ff" WIDTH="2"/>
 </node>
 <node BACKGROUND_COLOR="#ccccff" CREATED="1176043762019" ID="Freemind_Link_861631584" MODIFIED="1176043911733" STYLE="bubble" TEXT="baseImagePath">
@@ -352,8 +344,7 @@ default=600</p></body></html></richcontent>
       for some web sites like wikis, add a prefix to the image direction ej(/images/): /images/image1.gif
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <edge COLOR="#9999ff" WIDTH="2"/>
 </node>
 <node BACKGROUND_COLOR="#ccccff" CREATED="1176043762022" ID="Freemind_Link_861631585" MODIFIED="1176043911733" STYLE="bubble" TEXT="CSSFile">
@@ -366,8 +357,7 @@ default=600</p></body></html></richcontent>
       for some web sites like wikis, full dir or the css ej: /css/special.css
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <edge COLOR="#9999ff" WIDTH="2"/>
 </node>
 </node>

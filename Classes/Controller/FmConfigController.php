@@ -127,13 +127,18 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 		}
 
 		$expObj = t3lib_div::makeInstance('Tx_Freemind2_Export_mmExport',$this->pageUid);
-		$expObj->getContent();
-		
+		$xml = $expObj->getContent();
 
- echo '<pre>'; 
- var_dump($expObj);
- exit;
+		file_put_contents('/home/www/schumacherfm/typo3temp/test.mm',$xml);
 		
+		// xml header ...
+
+echo '<pre>'; 
+// echo( htmlspecialchars($xml) );
+echo 'wrote file to typo3temp';
+echo '</pre>';
+
+		exit;
 		
 	
 	}
