@@ -1,0 +1,11 @@
+# Module configuration
+module.tx_freemind2 {
+	persistence {
+		storagePid = {$module.tx_freemind2.persistence.storagePid}
+	}
+	view {
+		templateRootPath = {$module.tx_freemind2.view.templateRootPath}
+		partialRootPath = {$module.tx_freemind2.view.partialRootPath}
+		layoutRootPath = {$module.tx_freemind2.view.layoutRootPath}
+	}
+}

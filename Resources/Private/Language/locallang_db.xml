@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>database</type>
+		<description>Language labels for database tables/fields belonging to extension 'freemind2'</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="mlang_tabs_tab">FreeMind2</label>
+			<label index="tx_freemind2_domain_model_fmconfig">Fm Config</label>
+			<label index="tx_freemind2_domain_model_fmconfig.name">Name</label>
+			<label index="tx_freemind2_domain_model_fmconfig.default_value">Default Value</label>
+		</languageKey>
+	</data>
+</T3locallang>

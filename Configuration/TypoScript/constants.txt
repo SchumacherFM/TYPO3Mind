@@ -1,0 +1,14 @@
+module.tx_freemind2 {
+	view {
+		# cat=module.tx_freemind2/file; type=string; label=Path to template root (BE)
+		templateRootPath = EXT:freemind2/Resources/Private/Backend/Templates/
+		# cat=module.tx_freemind2/file; type=string; label=Path to template partials (BE)
+		partialRootPath = EXT:freemind2/Resources/Private/Backend/Partials/
+		# cat=module.tx_freemind2/file; type=string; label=Path to template layouts (BE)
+		layoutRootPath = EXT:freemind2/Resources/Private/Backend/Layouts/
+	}
+	persistence {
+		# cat=module.tx_freemind2//a; type=int+; label=Default storage PID
+		storagePid = 
+	}
+}

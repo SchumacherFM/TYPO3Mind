@@ -1,0 +1,427 @@
+<?php
+/***************************************************************
+ *  Copyright notice
+ *
+ *  (c) 1999-2011 Kasper Skårhøj (kasperYYYY@typo3.com)
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *  A copy is found in the textfile GPL.txt and important notices to the license
+ *  from the author is found in LICENSE.txt distributed with these scripts.
+ *
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
+/**
+ * Contains base class for creating a browsable array/page/folder tree in HTML
+ *
+ * $Id$
+ * Revised for TYPO3 3.6 November/2003 by Kasper Skårhøj
+ *
+ * @author	Kasper Skårhøj <kasperYYYY@typo3.com>
+ * @coauthor	René Fritz <r.fritz@colorcube.de>
+ * @author	Cyrill Schumacher <cyrill@schumacher.fm>
+ *
+ * based on t3lib_treeView but modified for the FreeMind ext
+ */
+
+class Tx_Freemind2_Utility_PageTree {
+
+		// EXTERNAL, static:
+	var $expandFirst = 0; // If set, the first element in the tree is always expanded.
+	var $thisScript = ''; // Holds the current script to reload to.
+	var $title = 'no title'; // Used if the tree is made of records (not folders for ex.)
+
+	/**
+	 * Needs to be initialized with $GLOBALS['BE_USER']
+	 * Done by default in init()
+	 *
+	 * @var t3lib_beUserAuth
+	 */
+	var $BE_USER = '';
+
+	/**
+	 * Needs to be initialized with e.g. $GLOBALS['WEBMOUNTS']
+	 * Default setting in init() is 0 => 0
+	 * The keys are mount-ids (can be anything basically) and the values are the ID of the root element (COULD be zero or anything else. For pages that would be the uid of the page, zero for the pagetree root.)
+	 */
+	var $MOUNTS = '';
+
+
+	/**
+	 * Database table to get the tree data from.
+	 * Leave blank if data comes from an array.
+	 * should always be the pages table
+	 */
+	var $table = 'pages';
+
+	/**
+	 * Defines the field of $table which is the parent id field (like pid for table pages).
+	 */
+	var $parentField = 'pid';
+
+	/**
+	 * WHERE clause used for selecting records for the tree. Is set by function init.
+	 * Only makes sense when $this->table is set.
+	 * @see init()
+	 */
+	var $clause = '';
+
+	/**
+	 * Field for ORDER BY. Is set by function init.
+	 * Only makes sense when $this->table is set.
+	 * @see init()
+	 */
+	var $orderByFields = '';
+
+	/**
+	 * Default set of fields selected from the tree table.
+	 * Make SURE that these fields names listed herein are actually possible to select from $this->table (if that variable is set to a TCA table name)
+	 * @see addField()
+	 */
+	var $fieldArray = array('uid', 'title','deleted','hidden','doktype' /* and many more columns ... */ );
+
+	/**
+	 * List of other fields which are ALLOWED to set (here, based on the "pages" table!)
+	 * @see addField()
+	 */
+	var $defaultList = 'uid,pid,tstamp,sorting,deleted,perms_userid,perms_groupid,perms_user,perms_group,perms_everybody,crdate,cruser_id';
+
+
+	/**
+	 * Sets the associative array key which identifies a new sublevel if arrays are used for trees.
+	 * This value has formerly been "subLevel" and "--sublevel--"
+	 */
+	var $subLevelID = '_SUB_LEVEL';
+
+
+		// *********
+		// Internal
+		// *********
+		// For record trees:
+	var $ids = array(); // one-dim array of the uid's selected.
+	var $ids_hierarchy = array(); // The hierarchy of element uids
+	var $orig_ids_hierarchy = array(); // The hierarchy of versioned element uids
+	var $buffer_idH = array(); // Temporary, internal array
+
+
+		// For both types
+	var $tree = array(); // Tree is accumulated in this variable
+	var $stored = array(); // Holds (session stored) information about which items in the tree are unfolded and which are not.
+	var $recs = array(); // Accumulates the displayed records.
+
+
+	/**
+	 * Initialize the tree class. Needs to be overwritten
+	 * Will set ->fieldsArray, and ->clause
+	 *
+	 * @param	string		record WHERE clause
+	 * @param	string		record ORDER BY field
+	 * @return	void
+	 */
+	function init($clause = '', $orderByFields = '') {
+		$this->BE_USER = $GLOBALS['BE_USER']; // Setting BE_USER by default
+
+		if ($clause) {
+			$this->clause = $clause;
+		} // Setting clause
+		if ($orderByFields) {
+			$this->orderByFields = $orderByFields;
+		}
+
+		if (!is_array($this->MOUNTS)) {
+			$this->MOUNTS = array(0 => 0); // dummy
+		}
+
+		if ($this->table) {
+			t3lib_div::loadTCA($this->table);
+		}
+
+	}
+
+
+	/**
+	 * Adds a fieldname to the internal array ->fieldArray
+	 *
+	 * @param	string		Field name to
+	 * @param	boolean		If set, the fieldname will be set no matter what. Otherwise the field name must either be found as key in $TCA[$table]['columns'] or in the list ->defaultList
+	 * @return	void
+	 */
+	function addField($field, $noCheck = 0) {
+		global $TCA;
+		if ($noCheck || is_array($TCA[$this->table]['columns'][$field]) || t3lib_div::inList($this->defaultList, $field)) {
+			$this->fieldArray[] = $field;
+		}
+	}
+
+
+	/**
+	 * Resets the tree, recs, ids, ids_hierarchy and orig_ids_hierarchy internal variables. Use it if you need it.
+	 *
+	 * @return	void
+	 */
+	function reset() {
+		$this->tree = array();
+		$this->recs = array();
+		$this->ids = array();
+		$this->ids_hierarchy = array();
+		$this->orig_ids_hierarchy = array();
+	}
+
+
+	/*******************************************
+	 *
+	 * tree handling
+	 *
+	 *******************************************/
+
+	/********************************
+	 *
+	 * tree data buidling
+	 *
+	 ********************************/
+
+	/**
+	 * Fetches the data for the tree
+	 *
+	 * @param	integer		item id for which to select subitems (parent id)
+	 * @param	integer		Max depth (recursivity limit)
+	 * @param	string		HTML-code prefix for recursive calls.
+	 * @param	string		? (internal)
+	 * @return	integer		The count of items on the level
+	 */
+	function getTree($uid, $depth = 999, $depthData = '', $blankLineCode = '') {
+
+			// Buffer for id hierarchy is reset:
+		$this->buffer_idH = array();
+
+			// Init vars
+		$depth = intval($depth);
+		$a = 0;
+
+		$res = $this->getDataInit($uid);
+		$c = $this->getDataCount($res);
+		$crazyRecursionLimiter = 999;
+
+		$idH = array();
+
+			// Traverse the records:
+		while ($crazyRecursionLimiter > 0 && $row = $this->getDataNext($res)) {
+			$a++;
+			$crazyRecursionLimiter--;
+
+			$newID = $row['uid'];
+
+			if ($newID == 0) {
+				throw new RuntimeException('Endless recursion detected: TYPO3 has detected an error in the database. Please fix it manually (e.g. using phpMyAdmin) and change the UID of ' . $this->table . ':0 to a new value.<br /><br />See <a href="http://bugs.typo3.org/view.php?id=3495" target="_blank">bugs.typo3.org/view.php?id=3495</a> to get more information about a possible cause.');
+			}
+
+			$this->tree[] = array(); // Reserve space.
+			end($this->tree);
+			$treeKey = key($this->tree); // Get the key for this space
+			$LN = ($a == $c) ? 'blank' : 'line';
+
+				// If records should be accumulated, do so
+			// todo get all columns and store here so that we don't need a 2nd DB query
+			$this->recs[$row['uid']] = $row;
+
+				// Accumulate the id of the element in the internal arrays
+			$this->ids[] = $idH[$row['uid']]['uid'] = $row['uid'];
+			$this->ids_hierarchy[$depth][] = $row['uid'];
+			$this->orig_ids_hierarchy[$depth][] = $row['_ORIG_uid'] ? $row['_ORIG_uid'] : $row['uid'];
+
+				// Make a recursive call to the next level
+			if ($depth > 1 && !$row['php_tree_stop']) {
+				$nextCount = $this->getTree(
+					$newID,
+					$depth - 1,
+					'',
+					$blankLineCode . ',' . $LN
+				);
+				if (count($this->buffer_idH)) {
+					$idH[$row['uid']]['subrow'] = $this->buffer_idH;
+				}
+				$exp = 1; // Set "did expand" flag
+			} else {
+				$nextCount = $this->getCount($newID);
+				$exp = 0; // Clear "did expand" flag
+			}
+
+				// Finally, add the row/HTML content to the ->tree array in the reserved key.
+			$this->tree[$treeKey] = array(
+				'row' => $row,
+				'invertedDepth' => $depth,
+				'blankLineCode' => $blankLineCode,
+			);
+		}
+
+		$this->getDataFree($res);
+		$this->buffer_idH = $idH;
+		return $c;
+	}
+
+
+	/********************************
+	 *
+	 * Data handling
+	 * Works with records and arrays
+	 *
+	 ********************************/
+
+	/**
+	 * Returns the number of records having the parent id, $uid
+	 *
+	 * @param	integer		id to count subitems for
+	 * @return	integer
+	 * @access private
+	 */
+	function getCount($uid) {
+
+		return $GLOBALS['TYPO3_DB']->exec_SELECTcountRows(
+			'uid',
+			$this->table,
+			$this->parentField . '=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($uid, $this->table) .
+			t3lib_BEfunc::deleteClause($this->table) .
+			t3lib_BEfunc::versioningPlaceholderClause($this->table) .
+			$this->clause // whereClauseMightContainGroupOrderBy
+		);
+	}
+
+
+	/**
+	 * Returns root record for uid (<=0)
+	 *
+	 * @param	integer		uid, <= 0 (normally, this does not matter)
+	 * @return	array		Array with title/uid keys with values of $this->title/0 (zero)
+	 */
+	function getRootRecord($uid) {
+		return array('title' => $this->title, 'uid' => 0);
+	}
+
+
+	/**
+	 * Returns the record for a uid.
+	 * For tables: Looks up the record in the database.
+	 * For arrays: Returns the fake record for uid id.
+	 *
+	 * @param	integer		UID to look up
+	 * @return	array		The record
+	 */
+	function getRecord($uid) {
+		return t3lib_BEfunc::getRecordWSOL($this->table, $uid);
+	}
+
+	/**
+	 * Getting the tree data: Selecting/Initializing data pointer to items for a certain parent id.
+	 * For tables: This will make a database query to select all children to "parent"
+	 *
+	 * @param	integer		parent item id
+	 * @return	mixed		data handle (Tables: An sql-resource, arrays: A parentId integer. -1 is returned if there were NO subLevel.)
+	 * @access private
+	 */
+	function getDataInit($parentId) {
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+				implode(',', $this->fieldArray),
+				$this->table,
+				$this->parentField . '=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($parentId, $this->table) .
+				t3lib_BEfunc::deleteClause($this->table) .
+				t3lib_BEfunc::versioningPlaceholderClause($this->table) .
+				$this->clause, // whereClauseMightContainGroupOrderBy
+				'',
+				$this->orderByFields
+			);
+			return $res;
+	}
+
+	/**
+	 * Getting the tree data: Counting elements in resource
+	 *
+	 * @param	mixed		data handle
+	 * @return	integer		number of items
+	 * @access private
+	 * @see getDataInit()
+	 */
+	function getDataCount(&$res) {
+		$c = $GLOBALS['TYPO3_DB']->sql_num_rows($res);
+		return $c;
+	}
+
+	/**
+	 * Getting the tree data: next entry
+	 *
+	 * @param	mixed		data handle
+	 * @return	array		item data array OR FALSE if end of elements.
+	 * @access private
+	 * @see getDataInit()
+	 */
+	function getDataNext(&$res) {
+		while ($row = @$GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+			t3lib_BEfunc::workspaceOL($this->table, $row, $this->BE_USER->workspace, TRUE);
+			if (is_array($row)) {
+				break;
+			}
+		}
+		return $row;
+	}
+
+	/**
+	 * Getting the tree data: frees data handle
+	 *
+	 * @param	mixed		data handle
+	 * @return	void
+	 * @access private
+	 */
+	function getDataFree(&$res) {
+		$GLOBALS['TYPO3_DB']->sql_free_result($res);
+	}
+
+
+	/*
+		array(
+			[id1] => array(
+				'title'=>'title...',
+				'id' => 'id1',
+				'icon' => 'icon ref, relative to typo3/ folder...'
+			),
+			[id2] => array(
+				'title'=>'title...',
+				'id' => 'id2',
+				'icon' => 'icon ref, relative to typo3/ folder...'
+			),
+			[id3] => array(
+				'title'=>'title...',
+				'id' => 'id3',
+				'icon' => 'icon ref, relative to typo3/ folder...'
+				$this->subLevelID => array(
+					[id3_asdf#1] => array(
+						'title'=>'title...',
+						'id' => 'asdf#1',
+						'icon' => 'icon ref, relative to typo3/ folder...'
+					),
+					[5] => array(
+						'title'=>'title...',
+						'id' => 'id...',
+						'icon' => 'icon ref, relative to typo3/ folder...'
+					),
+					[6] => array(
+						'title'=>'title...',
+						'id' => 'id...',
+						'icon' => 'icon ref, relative to typo3/ folder...'
+					),
+				)
+			),
+		)
+*/
+}
