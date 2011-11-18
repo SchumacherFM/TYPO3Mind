@@ -73,6 +73,13 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 	protected $apikey;
 
 	/**
+	 * helpers object
+	 *
+	 * @var Tx_Freemind2_Utility_Helpers
+	 */
+	protected $helpers;
+
+	/**
 	 * initializeAction
 	 *
 	 * @return void
@@ -80,7 +87,7 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 	public function initializeAction() {
 		$this->pageUid = (int)t3lib_div::_GET('id');
 		$this->apikey = md5(t3lib_div::_GET('apikey'));
-		
+		$this->helpers = new Tx_Freemind2_Utility_Helpers;
         $this->extConfSettings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['freemind2']);
 
 		// todo: better error handling
@@ -91,16 +98,28 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 	}
 
 	/**
+	 * shows the flash browser and load the current tree
+	 *
+	 * @return void
+	 */
+	public function browserAction() {
+	
+	}
+	
+	/**
 	 * action editPages
 	 *
 	 * @return void
 	 */
 	public function editPagesAction() {
+		
+	 
 
-		$icons = $this->fmConfigRepository->getIcons( $this->settings['icons'] );
-	
-		$this->view->assign('icons', $icons);
-		$this->view->assign('fmConfigs', $fmConfigs);
+		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'title' ) );
+		$this->view->assign('icons', $this->fmConfigRepository->getIcons( $this->settings ) );
+		$this->view->assign('userIcons', $this->fmConfigRepository->getUserIcons( $this->settings ) );
+		$this->view->assign('edgeStyles', $this->helpers->trimExplodeVK(',', $this->settings['edgeStyles'] ) );
+		$this->view->assign('edgeWidths', $this->helpers->trimExplodeVK(',', $this->settings['edgeWidths'] ) );
 		
 	}
 
@@ -146,6 +165,5 @@ echo '</pre>';
 		
 	
 	}
-
-
+ 
 }

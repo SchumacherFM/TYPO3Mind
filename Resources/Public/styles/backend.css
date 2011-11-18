@@ -1,0 +1,30 @@
+.clear { clear:both; }
+ul li {
+	margin:1em;
+}
+
+ul.fixedLine li {
+	margin:0.7em;
+	float:left;
+	width:200px;
+	white-space:no-wrap;
+}
+
+ul.fixedLine input[type=text] {
+	width:100px;
+}
+
+img.nodeIcon {
+	width:16px; height:16px; margin-right:5px;
+}
+
+.padLeft {
+	float:left;
+	padding-left:1em;
+}
+ 
+div.colorarea {
+	padding:0 2em;
+	margin:0;
+	float:right;
+}
