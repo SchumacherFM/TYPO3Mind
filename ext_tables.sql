@@ -6,8 +6,23 @@ CREATE TABLE tx_freemind2_domain_model_fmconfig (
 	pid int(11) DEFAULT '0' NOT NULL,
 
 
-	name varchar(255) DEFAULT '' NOT NULL,
-	default_value varchar(255) DEFAULT '' NOT NULL,
+	page_uid int(11) DEFAULT '0' NOT NULL,
+	font_face varchar(255) DEFAULT '' NOT NULL,
+	font_color varchar(255) DEFAULT '' NOT NULL,
+	font_size int(11) DEFAULT '0' NOT NULL,
+	font_bold tinyint(1) unsigned DEFAULT '0' NOT NULL,
+	font_italic tinyint(1) unsigned DEFAULT '0' NOT NULL,
+	cloud_is tinyint(1) unsigned DEFAULT '0' NOT NULL,
+	cloud_color varchar(255) DEFAULT '' NOT NULL,
+	node_color varchar(255) DEFAULT '' NOT NULL,
+	node_folded tinyint(1) unsigned DEFAULT '0' NOT NULL,
+	node_position int(11) DEFAULT '0' NOT NULL,
+	node_style int(11) DEFAULT '0' NOT NULL,
+	node_icon text NOT NULL,
+	node_user_icon text NOT NULL,
+	edge_color varchar(255) DEFAULT '' NOT NULL,
+	edge_style int(11) DEFAULT '0' NOT NULL,
+	edge_width int(11) DEFAULT '0' NOT NULL,
 
 	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
 	crdate int(11) unsigned DEFAULT '0' NOT NULL,
@@ -34,20 +49,7 @@ CREATE TABLE tx_freemind2_domain_model_fmconfig (
 
 	PRIMARY KEY (uid),
 	KEY parent (pid),
+	UNIQUE  (  `page_uid` )
 	KEY t3ver_oid (t3ver_oid,t3ver_wsid),
 	KEY language (l10n_parent,sys_language_uid)
-);
-
-#
-# Alter Table structure for table 'tt_content'
-#	storage for a json string
-CREATE TABLE tt_content (
-	tx_freemind2_data text
-);
-
-#
-# Table structure for table 'pages'
-#	storage for a json string
-CREATE TABLE pages (
-	tx_freemind2_data text
 );

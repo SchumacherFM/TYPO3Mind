@@ -1,5 +1,4 @@
 <?php
-
 /***************************************************************
  *  Copyright notice
  *
@@ -26,7 +25,7 @@
 
 
 /**
- * 
+ *
  *
  * @package freemind2
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -103,26 +102,37 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 	 * @return void
 	 */
 	public function browserAction() {
-	
+
 	}
-	
+
 	/**
 	 * action editPages
 	 *
 	 * @return void
 	 */
 	public function editPagesAction() {
-		
-	 
 
+	
+		$this->view->assign('config', $this->fmConfigRepository->findOneBypageUid( $this->pageUid ) );
 		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'title' ) );
 		$this->view->assign('icons', $this->fmConfigRepository->getIcons( $this->settings ) );
 		$this->view->assign('userIcons', $this->fmConfigRepository->getUserIcons( $this->settings ) );
 		$this->view->assign('edgeStyles', $this->helpers->trimExplodeVK(',', $this->settings['edgeStyles'] ) );
 		$this->view->assign('edgeWidths', $this->helpers->trimExplodeVK(',', $this->settings['edgeWidths'] ) );
-		
+
 	}
 
+	/**
+	 * action editPagesSave
+	 *
+	 * @return void
+	 */
+	public function editPagesSaveAction() {
+		echo '<pre>';
+		var_dump($_POST);
+		echo '</pre>';
+	}
+	
 	/**
 	 * action export
 	 *
@@ -153,17 +163,17 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 		$xml = $expObj->getContent();
 
 		file_put_contents('/home/www/schumacherfm/typo3temp/test.mm',$xml);
-		
+
 		// xml header ...
 
-echo '<pre>'; 
+echo '<pre>';
 // echo( htmlspecialchars($xml) );
 echo 'wrote file to typo3temp';
 echo '</pre>';
 
 		exit;
-		
-	
+
+
 	}
- 
+
 }

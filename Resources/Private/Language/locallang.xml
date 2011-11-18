@@ -2,13 +2,28 @@
 <T3locallang>
 	<meta type="array">
 		<type>module</type>
-		<description>Language labels for the FreeMind2 extension in the FRONTEND</description>
+		<description>Language labels for the freemind2 extension in the FRONTEND</description>
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
-			<label index="tx_freemind2_domain_model_fmconfig">Basic default config.</label>
-			<label index="tx_freemind2_domain_model_fmconfig.name">name</label>
-			<label index="tx_freemind2_domain_model_fmconfig.default_value">defaultValue</label>
+			<label index="tx_freemind2_domain_model_fmconfig">Config for each page</label>
+			<label index="tx_freemind2_domain_model_fmconfig.page_uid">Page ID</label>
+			<label index="tx_freemind2_domain_model_fmconfig.font_face">Font Face</label>
+			<label index="tx_freemind2_domain_model_fmconfig.font_color">Font Color</label>
+			<label index="tx_freemind2_domain_model_fmconfig.font_size">Font Size</label>
+			<label index="tx_freemind2_domain_model_fmconfig.font_bold">is Bold?</label>
+			<label index="tx_freemind2_domain_model_fmconfig.font_italic">is Italic?</label>
+			<label index="tx_freemind2_domain_model_fmconfig.cloud_is">Display as cloud?</label>
+			<label index="tx_freemind2_domain_model_fmconfig.cloud_color">Cloud Color</label>
+			<label index="tx_freemind2_domain_model_fmconfig.node_color">Node color</label>
+			<label index="tx_freemind2_domain_model_fmconfig.node_folded">Is the node folded?</label>
+			<label index="tx_freemind2_domain_model_fmconfig.node_position">Node position, left or right?</label>
+			<label index="tx_freemind2_domain_model_fmconfig.node_style">Node style</label>
+			<label index="tx_freemind2_domain_model_fmconfig.node_icon">Node icon (build in into FreeMind)</label>
+			<label index="tx_freemind2_domain_model_fmconfig.node_user_icon">User node icon</label>
+			<label index="tx_freemind2_domain_model_fmconfig.edge_color">Edge color</label>
+			<label index="tx_freemind2_domain_model_fmconfig.edge_style">Edge style</label>
+			<label index="tx_freemind2_domain_model_fmconfig.edge_width">Edge width</label>
 		</languageKey>
 	</data>
 </T3locallang>

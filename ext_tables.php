@@ -14,7 +14,7 @@ if(TYPO3_MODE === 'BE') {
 		'fm2be',		// Submodule key
 		'',				// Position
 		array(
-			'FmConfig' => 'export, exportEID, editPages, editTTContent',
+			'FmConfig' => 'export, exportEID, editPages, editPagesSave',
 		),
 		array(
 			'access' => 'user,group',
@@ -49,7 +49,7 @@ t3lib_extMgm::allowTableOnStandardPages('tx_freemind2_domain_model_fmconfig');
 $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 	'ctrl' => array(
 		'title'	=> 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig',
-		'label' => 'name',
+		'label' => 'page_uid',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',

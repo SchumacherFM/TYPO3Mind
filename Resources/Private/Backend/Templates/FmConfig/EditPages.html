@@ -1,13 +1,13 @@
 <f:layout name="Default" />
 <f:section name="content">
 <h1>FreeMind2 page properties for &quot;{page.title}&quot;</h1>
-<f:form action="EditPagesSave">
+<f:form action="editPagesSave" controller="FmConfig">
 <ul>
 	<li>
 		<h2>Saving options</h2> 
 		<ul class="fixedLine">
 			<li> 
-			<button id="ajaxSave" type="button">Save Settings</button> </li>
+			<button id="ajaxSave" type="submit">Save Settings {config.pageUid}</button> </li>
 
 			<li> <label for="recursiv">Copy settings below recursively?</label>
 			<f:form.checkbox id="recursiv" name="recursiv" value="1"/> </li>
@@ -70,7 +70,7 @@
 		<ul class="fixedLine">
 			<f:for each="{userIcons}" as="icon" key="name">
 				<li>
-					<f:form.checkbox id="cui{name}" name="nodeicon[]" value="{name}"/>
+					<f:form.checkbox id="cui{name}" name="nodeUsericon[]" value="{name}"/>
 					<label for="cui{name}"><f:image class="nodeIcon" src="{icon}" alt="{name}" />{name}</label>
 				</li>
 				

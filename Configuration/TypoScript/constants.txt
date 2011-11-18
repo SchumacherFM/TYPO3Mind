@@ -9,6 +9,7 @@ module.tx_freemind2 {
 	}
 	persistence {
 		# cat=module.tx_freemind2//a; type=int+; label=Default storage PID
-		storagePid = 
+		# change this to your SysFolder ID!
+		storagePid = 178
 	}
 }
