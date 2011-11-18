@@ -106,14 +106,14 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	/**
 	 * Node position, left or right? aendern auf varchar
 	 *
-	 * @var integer
+	 * @var string
 	 */
 	protected $nodePosition;
 
 	/**
 	 * Node style
 	 *
-	 * @var integer
+	 * @var string
 	 */
 	protected $nodeStyle;
 
@@ -141,14 +141,14 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	/**
 	 * Edge style
 	 *
-	 * @var integer
+	 * @var string
 	 */
 	protected $edgeStyle;
 
 	/**
 	 * Edge width
 	 *
-	 * @var integer
+	 * @var string
 	 */
 	protected $edgeWidth;
 
@@ -243,7 +243,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	 * @return boolean $fontBold
 	 */
 	public function getFontBold() {
-		return $this->fontBold;
+		return (boolean)$this->fontBold;
 	}
 
 	/**
@@ -253,7 +253,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	 * @return void
 	 */
 	public function setFontBold($fontBold) {
-		$this->fontBold = $fontBold;
+		$this->fontBold = (boolean)$fontBold;
 	}
 
 	/**
@@ -271,7 +271,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	 * @return boolean $fontItalic
 	 */
 	public function getFontItalic() {
-		return $this->fontItalic;
+		return (boolean)$this->fontItalic;
 	}
 
 	/**
@@ -281,7 +281,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	 * @return void
 	 */
 	public function setFontItalic($fontItalic) {
-		$this->fontItalic = $fontItalic;
+		$this->fontItalic = (boolean)$fontItalic;
 	}
 
 	/**
@@ -299,7 +299,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	 * @return boolean $cloudIs
 	 */
 	public function getCloudIs() {
-		return $this->cloudIs;
+		return (boolean)$this->cloudIs;
 	}
 
 	/**
@@ -309,7 +309,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	 * @return void
 	 */
 	public function setCloudIs($cloudIs) {
-		$this->cloudIs = $cloudIs;
+		$this->cloudIs = (boolean)$cloudIs;
 	}
 
 	/**
@@ -365,7 +365,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	 * @return boolean $nodeFolded
 	 */
 	public function getNodeFolded() {
-		return $this->nodeFolded;
+		return (boolean)$this->nodeFolded;
 	}
 
 	/**
@@ -375,7 +375,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	 * @return void
 	 */
 	public function setNodeFolded($nodeFolded) {
-		$this->nodeFolded = $nodeFolded;
+		$this->nodeFolded = (boolean)$nodeFolded;
 	}
 
 	/**
@@ -390,7 +390,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	/**
 	 * Returns the nodePosition
 	 *
-	 * @return integer $nodePosition
+	 * @return string $nodePosition
 	 */
 	public function getNodePosition() {
 		return $this->nodePosition;
@@ -399,7 +399,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	/**
 	 * Sets the nodePosition
 	 *
-	 * @param integer $nodePosition
+	 * @param string $nodePosition
 	 * @return void
 	 */
 	public function setNodePosition($nodePosition) {
@@ -409,7 +409,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	/**
 	 * Returns the nodeStyle
 	 *
-	 * @return integer $nodeStyle
+	 * @return string $nodeStyle
 	 */
 	public function getNodeStyle() {
 		return $this->nodeStyle;
@@ -418,7 +418,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	/**
 	 * Sets the nodeStyle
 	 *
-	 * @param integer $nodeStyle
+	 * @param string $nodeStyle
 	 * @return void
 	 */
 	public function setNodeStyle($nodeStyle) {
@@ -485,7 +485,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	/**
 	 * Returns the edgeStyle
 	 *
-	 * @return integer $edgeStyle
+	 * @return string $edgeStyle
 	 */
 	public function getEdgeStyle() {
 		return $this->edgeStyle;
@@ -494,7 +494,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	/**
 	 * Sets the edgeStyle
 	 *
-	 * @param integer $edgeStyle
+	 * @param string $edgeStyle
 	 * @return void
 	 */
 	public function setEdgeStyle($edgeStyle) {
@@ -504,7 +504,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	/**
 	 * Returns the edgeWidth
 	 *
-	 * @return integer $edgeWidth
+	 * @return string $edgeWidth
 	 */
 	public function getEdgeWidth() {
 		return $this->edgeWidth;
@@ -513,7 +513,7 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	/**
 	 * Sets the edgeWidth
 	 *
-	 * @param integer $edgeWidth
+	 * @param string $edgeWidth
 	 * @return void
 	 */
 	public function setEdgeWidth($edgeWidth) {

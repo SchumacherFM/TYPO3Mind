@@ -1,7 +1,7 @@
 <f:layout name="Default" />
 <f:section name="content">
 <h1>FreeMind2 page properties for &quot;{page.title}&quot;</h1>
-<f:form action="editPagesSave" controller="FmConfig">
+<f:form action="editPagesSave" controller="FmConfig" name="FmConfig" object="{FmConfig}">
 <ul>
 	<li>
 		<h2>Saving options</h2> 
@@ -10,13 +10,13 @@
 			<button id="ajaxSave" type="submit">Save Settings {config.pageUid}</button> </li>
 
 			<li> <label for="recursiv">Copy settings below recursively?</label>
-			<f:form.checkbox id="recursiv" name="recursiv" value="1"/> </li>
+			<f:form.checkbox id="recursiv" name="options[recursiv]" value="1"/> </li>
 
 			<li> <label for="remove">Remove all settings?</label>
-			<f:form.checkbox id="remove" name="remove" value="1"/> </li>
+			<f:form.checkbox id="remove" name="options[remove]" value="1"/> </li>
 
 			<li> <label for="copy">Copy all settings to Page UID:</label>
-			<f:form.textfield id="copy" name="copy2uid" maxlength="5" value=""/>  </li>
+			<f:form.textfield id="copy" name="options[copy2uid]" maxlength="5" value=""/>  </li>
 		</ul><div class="clear"/>
 	</li>
 
@@ -24,14 +24,14 @@
 		<h2>Font</h2>
 		<ul class="fixedLine">
 			<li> <label id="nodeFont" for="fontf">Name (SansSerif, Arial ...)</label>
-				<f:form.textfield id="fontf" name="font[face]" value=""/> </li>
+				<f:form.textfield id="fontf" property="fontFace" value=""/> </li>
 			<li> <label for="fonts">Size (12, 14, 16, 18 ...)</label>
-			<f:form.select id="fonts" name="font[size]" options="{10:10,12:12,14:14,16:16,18:18}" value="12"/> </li>
+			<f:form.select id="fonts" property="fontSize" options="{10:10,12:12,14:14,16:16,18:18}"/> </li>
 			</li>
 			<li> <label for="fontc">Color</label>
-			<div id="fontcArea" class="colorarea"/><f:form.textfield id="fontc" name="font[color]" maxlength="6" value=""/></div></li>
-			<li><f:form.checkbox id="fontb" name="font[bold]" value="1"/> <label style="font-weight:bold;" for="fontb">is bold?</label></li>
-			<li><f:form.checkbox id="fonti" name="font[italic]" value="1"/> <label style="font-style:italic;" for="fonti">is italic?</label></li>
+			<div id="fontcArea" class="colorarea"/><f:form.textfield id="fontc" property="fontColor"/></div></li>
+			<li><f:form.checkbox id="fontb" property="fontBold" value="1"/> <label style="font-weight:bold;" for="fontb">is bold?</label></li>
+			<li><f:form.checkbox id="fonti" property="fontItalic" value="1"/> <label style="font-style:italic;" for="fonti">is italic?</label></li>
 		</ul><div class="clear"/>
 	</li>
 	<li>
@@ -49,6 +49,8 @@
 			<li> <label for="nodec">Color</label>
 			<div id="nodecArea" class="colorarea"/><f:form.textfield id="nodec" name="node[color]" maxlength="6" value=""/></div></li>
 			<li> <label for="nodep">Position</label>
+			<f:form.select id="nodep" name="node[position]" options="{0:'Default',r:'Right',l:'Left'}" value="l"/> </li>
+			<li> <label for="nodep">Style</label>
 			<f:form.select id="nodep" name="node[position]" options="{0:'Default',r:'Right',l:'Left'}" value="l"/> </li>
 		</ul><div class="clear"/>
 	</li>

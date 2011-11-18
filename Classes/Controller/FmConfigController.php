@@ -108,12 +108,31 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 	/**
 	 * action editPages
 	 *
+	 * @param $FmConfig
+	 * @dontvalidate $FmConfig
 	 * @return void
 	 */
-	public function editPagesAction() {
+	public function editPagesAction(Tx_Freemind2_Domain_Model_FmConfig $FmConfig = NULL) {
 
+		if ($FmConfig == NULL) {
+
+			$FmConfig = $this->fmConfigRepository->findOneBypageUid( $this->pageUid );
+
+			if( $FmConfig == NULL ){
+				$FmConfig = t3lib_div::makeInstance('Tx_Freemind2_Domain_Model_FmConfig');
+				$FmConfig->setpageUid( $this->pageUid );
+			}
+		}
 	
-		$this->view->assign('config', $this->fmConfigRepository->findOneBypageUid( $this->pageUid ) );
+/*
+echo '<pre>';
+var_dump($FmConfig);
+die( '</pre>'); 
+			
+*/	
+		
+	
+		$this->view->assign('FmConfig', $FmConfig );
 		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'title' ) );
 		$this->view->assign('icons', $this->fmConfigRepository->getIcons( $this->settings ) );
 		$this->view->assign('userIcons', $this->fmConfigRepository->getUserIcons( $this->settings ) );
@@ -125,14 +144,16 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 	/**
 	 * action editPagesSave
 	 *
+	 * @param $FmConfig
+	 * @param array $options
 	 * @return void
 	 */
-	public function editPagesSaveAction() {
+	public function editPagesSaveAction(Tx_Freemind2_Domain_Model_FmConfig $FmConfig, $options ) {
 		echo '<pre>';
-		var_dump($_POST);
+		var_dump($FmConfig);
 		echo '</pre>';
 	}
-	
+
 	/**
 	 * action export
 	 *
