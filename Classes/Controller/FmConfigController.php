@@ -97,7 +97,11 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 	 */
 	public function editPagesAction() {
 
+		$icons = $this->fmConfigRepository->getIcons( $this->settings['icons'] );
 	
+		$this->view->assign('icons', $icons);
+		$this->view->assign('fmConfigs', $fmConfigs);
+		
 	}
 
 	/**

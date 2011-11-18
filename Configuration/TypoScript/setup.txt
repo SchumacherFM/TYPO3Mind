@@ -8,4 +8,12 @@ module.tx_freemind2 {
 		partialRootPath = {$module.tx_freemind2.view.partialRootPath}
 		layoutRootPath = {$module.tx_freemind2.view.layoutRootPath}
 	}
+	
+	settings {
+	
+		icons.path = EXT:freemind2/Resources/Public/freemind_icons/
+	
+		# this values comes out of the freemind.properties file, unpack the lib/freemind.jar file in our FreeMind installation
+		icons.list=idea; help; yes; messagebox_warning; stop-sign; closed; info; button_ok; button_cancel; full-1; full-2; full-3; full-4; full-5; full-6; full-7; full-8; full-9; full-0; stop; prepare; go; back; forward; up; down; attach; ksmiletris; smiley-neutral; smiley-oh; smiley-angry; smily_bad; clanbomber; desktop_new; gohome; folder; korn; Mail; kmail; list; edit; kaddressbook; knotify; password; pencil; wizard; xmag; bell; bookmark; penguin; licq; freemind_butterfly; broken-line; calendar; clock; hourglass; launch; flag-black; flag-blue; flag-green; flag-orange; flag-pink; flag; flag-yellow; family; female1; female2; male1; male2; fema; group
+	}
 }

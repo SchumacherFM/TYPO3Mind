@@ -34,4 +34,19 @@
  */
 class Tx_Freemind2_Domain_Repository_FmConfigRepository extends Tx_Extbase_Persistence_Repository {
 
+	/**
+	 *	@param array $settingsIcons see setup.txt
+	 */
+	public function getIcons($settingsIcons){
+
+		$path = preg_replace('~^ext:~i','typo3conf/ext/',$settingsIcons['path']);
+	
+		$icons = t3lib_div::trimExplode(';',$settingsIcons['list'],1);
+		
+		echo '<pre>';
+		var_dump($icons);
+		die( '</pre>');
+	
+	}
+
 }
