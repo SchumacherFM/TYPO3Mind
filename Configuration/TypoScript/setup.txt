@@ -11,9 +11,14 @@ module.tx_freemind2 {
 	
 	settings {
 	
-		icons.path = EXT:freemind2/Resources/Public/freemind_icons/
-	
 		# this values comes out of the freemind.properties file, unpack the lib/freemind.jar file in our FreeMind installation
-		icons.list=idea; help; yes; messagebox_warning; stop-sign; closed; info; button_ok; button_cancel; full-1; full-2; full-3; full-4; full-5; full-6; full-7; full-8; full-9; full-0; stop; prepare; go; back; forward; up; down; attach; ksmiletris; smiley-neutral; smiley-oh; smiley-angry; smily_bad; clanbomber; desktop_new; gohome; folder; korn; Mail; kmail; list; edit; kaddressbook; knotify; password; pencil; wizard; xmag; bell; bookmark; penguin; licq; freemind_butterfly; broken-line; calendar; clock; hourglass; launch; flag-black; flag-blue; flag-green; flag-orange; flag-pink; flag; flag-yellow; family; female1; female2; male1; male2; fema; group
+		# official buildin icons change only the filename if you know what to do
+		# path below Resources/Public/ Supports only png files
+		iconsPath = freemind_icons/
+
+		userIconsPath = fileadmin/nuvola/16x16/filesystems/
+		
+		edgeStyles = bezier,linear,sharp_bezier,sharp_linear
+		edgeWidths = parent,thin,1,2,4,8
 	}
 }

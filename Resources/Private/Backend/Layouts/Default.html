@@ -1,4 +1,7 @@
-<f:be.container>
+<f:be.container addCssFile="{f:uri.resource(path:'styles/backend.css')}" addJsFile="{f:uri.resource(path:'scripts/jquery.min.js')}">
+<script type="text/javascript">jQuery.noConflict(); </script>
+<link rel="stylesheet" media="screen" type="text/css" href="{f:uri.resource(path:'colorpicker/css/colorpicker.css')}" />
+
 	<div class="typo3-fullDoc">
 		<div id="typo3-docheader">
 			<div id="typo3-docheader-row1">
@@ -26,9 +29,13 @@
 		</div>
 		<div id="typo3-docbody">
 			<div id="typo3-inner-docbody">
-				<f:flashMessages renderMode="div" />
-				<f:render section="content" />
+				
+					<f:flashMessages renderMode="div" />
+					<f:render section="content" />
+				 
 			</div>
 		</div>
 	</div>
+<script type="text/javascript" src="{f:uri.resource(path:'colorpicker/js/colorpicker.js')}"></script>
+<script type="text/javascript" src="{f:uri.resource(path:'scripts/main.js')}"></script>
 </f:be.container>

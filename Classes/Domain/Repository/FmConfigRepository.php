@@ -1,5 +1,4 @@
 <?php
-
 /***************************************************************
  *  Copyright notice
  *
@@ -26,7 +25,7 @@
 
 
 /**
- *
+ *	http://typo3.org/fileadmin/typo3api-4.0.0/d9/de0/classt3lib__BEfunc.html
  *
  * @package freemind2
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -35,17 +34,50 @@
 class Tx_Freemind2_Domain_Repository_FmConfigRepository extends Tx_Extbase_Persistence_Repository {
 
 	/**
-	 *	@param array $settingsIcons see setup.txt
+	 * Gets the icons as an array
+	 * @param array $settingsIcons see setup.txt
+	 * @return array
 	 */
 	public function getIcons($settingsIcons){
 
-		$path = preg_replace('~^ext:~i','typo3conf/ext/',$settingsIcons['path']);
-	
-		$icons = t3lib_div::trimExplode(';',$settingsIcons['list'],1);
+		$path = t3lib_extMgm::extPath('freemind2').'Resources/Public/'.$settingsIcons['iconsPath']; 
+
+		$icons = scanDir($path,0);
 		
-		echo '<pre>';
-		var_dump($icons);
-		die( '</pre>');
+		$icons2 = array();
+		foreach($icons as $k=>$v){
+			if( preg_match('~(.+)\.(png)$~i',$v,$filename) ){
+				$icons2[ $filename[1] ] = $settingsIcons['iconsPath'].$v;
+			}
+		}
+		return $icons2;
+	
+	}
+
+	/**
+	 * Gets the icons as an array from the user defined folder
+	 * @param array $settingsIcons see setup.txt
+	 * @return array
+	 */
+	public function getUserIcons($settingsIcons){
+
+		$path = t3lib_div::getIndpEnv('TYPO3_DOCUMENT_ROOT').'/'.$settingsIcons['userIconsPath']; 
+
+		$icons = scanDir($path,0);
+		
+		$icons2 = array();
+		foreach($icons as $k=>$v){
+			if( preg_match('~(.+)\.(png|jpg|gif)$~i',$v,$filename) ){
+				$icons2[ $filename[1] ] = $settingsIcons['userIconsPath'].$v;
+			}
+		}
+/*	echo '<pre>'; 
+	var_dump($path); 
+	var_dump($icons2); 
+	exit; 
+*/
+		
+		return $icons2;
 	
 	}
 

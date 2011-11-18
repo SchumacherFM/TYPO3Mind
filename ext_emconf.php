@@ -14,7 +14,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'title' => 'FreeMind2',
 	'description' => 'Exports your whole TYPO3 site or a branch as a .mm file for the favorite mind mapping tool FreeMind (http://freemind.sourceforge.net).
 Adds items to the pagetree clickmenu to start the export of a branch. Or use the eID Param to use the link (with an API Key) directly in FreeMind.
-Needs TYPO3 4.5 or later.',
+Needs TYPO3 4.5 or later, SimpleXML, PHP5',
 	'category' => 'be',
 	'author' => 'Cyrill Schumacher',
 	'author_email' => 'Cyrill@Schumacher.fm',
