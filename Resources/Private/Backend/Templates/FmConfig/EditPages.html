@@ -29,7 +29,7 @@
 			<f:form.select id="fonts" property="fontSize" options="{10:10,12:12,14:14,16:16,18:18}"/> </li>
 			</li>
 			<li> <label for="fontc">Color</label>
-			<div id="fontcArea" class="colorarea"/><f:form.textfield id="fontc" property="fontColor"/></div></li>
+			<div id="fontcArea" class="colorarea"/><f:form.textfield id="fontc" property="fontColor" maxlength="6"/></div></li>
 			<li><f:form.checkbox id="fontb" property="fontBold" value="1"/> <label style="font-weight:bold;" for="fontb">is bold?</label></li>
 			<li><f:form.checkbox id="fonti" property="fontItalic" value="1"/> <label style="font-style:italic;" for="fonti">is italic?</label></li>
 		</ul><div class="clear"/>
@@ -37,21 +37,21 @@
 	<li>
 		<h2>Cloud</h2> 
 		<ul class="fixedLine">
-			<li><f:form.checkbox id="cloudi" name="cloud[is]" value="1"/> <label for="cloudi">is Cloud?</label></li>
+			<li><f:form.checkbox id="cloudi" property="cloudIs" value="1"/> <label for="cloudi">is Cloud?</label></li>
 			<li> <label for="cloudc">Color</label>
-			<div id="cloudcArea" class="colorarea"/><f:form.textfield id="cloudc" name="cloud[color]" maxlength="6" value=""/> </div></li>
+			<div id="cloudcArea" class="colorarea"/><f:form.textfield id="cloudc" property="cloudColor" maxlength="6"/> </div></li>
 		</ul><div class="clear"/>
 	</li>
 	<li>
 		<h2>Node</h2>
 		<ul class="fixedLine">
-			<li><f:form.checkbox id="nodef" name="node[folded]" value="1"/> <label for="nodef">is Folded?</label></li>
+			<li><f:form.checkbox id="nodef" property="nodeFolded" value="1"/> <label for="nodef">is Folded?</label></li>
 			<li> <label for="nodec">Color</label>
-			<div id="nodecArea" class="colorarea"/><f:form.textfield id="nodec" name="node[color]" maxlength="6" value=""/></div></li>
+			<div id="nodecArea" class="colorarea"/><f:form.textfield id="nodec" property="nodeColor" maxlength="6"/></div></li>
 			<li> <label for="nodep">Position</label>
-			<f:form.select id="nodep" name="node[position]" options="{0:'Default',r:'Right',l:'Left'}" value="l"/> </li>
+			<f:form.select id="nodep" property="nodePosition" options="{nodePositions}" /> TODO: only important for first level</li>
 			<li> <label for="nodep">Style</label>
-			<f:form.select id="nodep" name="node[position]" options="{0:'Default',r:'Right',l:'Left'}" value="l"/> </li>
+			<f:form.select id="nodep" property="nodeStyle" options="{nodeStyles}"/> </li>
 		</ul><div class="clear"/>
 	</li>
 	

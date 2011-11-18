@@ -18,7 +18,10 @@ module.tx_freemind2 {
 
 		userIconsPath = fileadmin/nuvola/16x16/filesystems/
 		
+		# first option is always default
 		edgeStyles = bezier,linear,sharp_bezier,sharp_linear
 		edgeWidths = parent,thin,1,2,4,8
+		nodePositions = right,left
+		nodeStyles = bubble,fork
 	}
 }

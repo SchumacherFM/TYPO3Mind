@@ -18,8 +18,7 @@
 			<label index="tx_freemind2_domain_model_fmconfig.node_color">Node Color</label>
 			<label index="tx_freemind2_domain_model_fmconfig.node_folded">Node Folded</label>
 			<label index="tx_freemind2_domain_model_fmconfig.node_position">Node Position</label>
-			<label index="tx_freemind2_domain_model_fmconfig.node_position.left">Left</label>
-			<label index="tx_freemind2_domain_model_fmconfig.node_position.right">Right</label>
+			<label index="tx_freemind2_domain_model_fmconfig.selectError">Do not edit here! Use edit menu</label>
 			
 			
 			<label index="tx_freemind2_domain_model_fmconfig.node_style">Node Style</label>

@@ -188,8 +188,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'config' => array(
 				'type' => 'select',
 				'items' => array(
-				  Array('LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_position.right', 'right'),
-				  Array('LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_position.left', 'left'),
+				  Array('LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.selectError', ''),
 				),
 				'size' => 1,
 				'maxitems' => 1,
@@ -202,7 +201,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'config' => array(
 				'type' => 'select',
 				'items' => array(
-					array('-- Label --', 0),
+				  Array('LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.selectError', ''),
 				),
 				'size' => 1,
 				'maxitems' => 1,
@@ -244,7 +243,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'config' => array(
 				'type' => 'select',
 				'items' => array(
-					array('-- Label --', 0),
+				  Array('LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.selectError', ''),
 				),
 				'size' => 1,
 				'maxitems' => 1,
@@ -257,7 +256,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'config' => array(
 				'type' => 'select',
 				'items' => array(
-					array('-- Label --', 0),
+				  Array('LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.selectError', ''),
 				),
 				'size' => 1,
 				'maxitems' => 1,

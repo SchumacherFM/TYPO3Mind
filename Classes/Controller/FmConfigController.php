@@ -136,6 +136,8 @@ die( '</pre>');
 		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'title' ) );
 		$this->view->assign('icons', $this->fmConfigRepository->getIcons( $this->settings ) );
 		$this->view->assign('userIcons', $this->fmConfigRepository->getUserIcons( $this->settings ) );
+		$this->view->assign('nodePositions', $this->helpers->trimExplodeVK(',', $this->settings['nodePositions'] ) );
+		$this->view->assign('nodeStyles', $this->helpers->trimExplodeVK(',', $this->settings['nodeStyles'] ) );
 		$this->view->assign('edgeStyles', $this->helpers->trimExplodeVK(',', $this->settings['edgeStyles'] ) );
 		$this->view->assign('edgeWidths', $this->helpers->trimExplodeVK(',', $this->settings['edgeWidths'] ) );
 
