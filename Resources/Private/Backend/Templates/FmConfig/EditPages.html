@@ -1,22 +1,24 @@
 <f:layout name="Default" />
 <f:section name="content">
 <h1>FreeMind2 page properties for &quot;{page.title}&quot;</h1>
-<f:form action="editPagesSave" controller="FmConfig" name="FmConfig" object="{FmConfig}">
+<f:form action="editPagesSave" controller="FmConfig" name="FmConfig" id="FmConfig" object="{FmConfig}">
+<f:form.hidden name="options[pageUid]" value="{page.uid}"/>			
 <ul>
 	<li>
 		<h2>Saving options</h2> 
 		<ul class="fixedLine">
-			<li> 
-			<button id="ajaxSave" type="submit">Save Settings {config.pageUid}</button> </li>
-
+			<li>
+				<f:form.hidden id="ajaxSaveHidden" name="options[action]" value=""/>			
+				<button class="ajaxSave" type="submit" value="0" title="Save"><img src="sysext/t3skin/icons/gfx/savedok.gif"/></button>
+				<button class="ajaxSave" type="submit" value="1" title="Delete"><img src="sysext/t3skin/icons/gfx/deletedok.gif"/></button> 
+			</li>
+ 
 			<li> <label for="recursiv">Copy settings below recursively?</label>
 			<f:form.checkbox id="recursiv" name="options[recursiv]" value="1"/> </li>
 
-			<li> <label for="remove">Remove all settings?</label>
-			<f:form.checkbox id="remove" name="options[remove]" value="1"/> </li>
-
 			<li> <label for="copy">Copy all settings to Page UID:</label>
 			<f:form.textfield id="copy" name="options[copy2uid]" maxlength="5" value=""/>  </li>
+
 		</ul><div class="clear"/>
 	</li>
 

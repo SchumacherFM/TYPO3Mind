@@ -9,7 +9,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, page_uid, font_face, font_color, font_size, font_bold, font_italic, cloud_is, cloud_color, node_color, node_folded, node_position, node_style, node_icon, node_user_icon, edge_color, edge_style, edge_width',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, page_uid, font_face, font_color, font_size, font_bold, font_italic, cloud_is, cloud_color, node_color, node_folded, node_position, node_style, node_icon, node_user_icon, edge_color, edge_style, edge_width,--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,starttime, endtime'),
+		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, page_uid, --div--;LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tabs.font, font_face, font_color, font_size, font_bold, font_italic, --div--;LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tabs.cloud, cloud_is, cloud_color, --div--;LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tabs.node,node_color, node_folded, node_position, node_style, node_icon, --div--;LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tabs.nodeui, node_user_icon, --div--;LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tabs.edge,edge_color, edge_style, edge_width,--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,starttime, endtime'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -127,9 +127,14 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'exclude' => 0,
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.font_size',
 			'config' => array(
-				'type' => 'input',
-				'size' => 4,
-				'eval' => 'int'
+				'type' => 'select',
+				'items' => array(
+				  array(10,10),
+				  array(12,12),
+				),
+				'size' => 1,
+				'maxitems' => 1,
+				'eval' => ''
 			),
 		),
 		'font_bold' => array(
@@ -212,10 +217,19 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'exclude' => 0,
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_icon',
 			'config' => array(
-				'type' => 'text',
-				'cols' => 40,
-				'rows' => 15,
-				'eval' => 'trim'
+				'type' => 'select',
+				'items' => array(
+//				  Array('attach', 'attach','EXT:freemind2/Resources/Public/freemind_icons/attach.png'),
+//				  Array('bell', 'bell','EXT:freemind2/Resources/Public/freemind_icons/bell.png'),
+				),
+		
+				'fileFolder' => 'EXT:freemind2/Resources/Public/freemind_icons/',
+				'fileFolder_extList' => 'png',
+				'fileFolder_recursions' => 0,
+				'selicon_cols' => 8,
+				'size' => 1,
+				'minitems' => 0,
+				'maxitems' => 1,				
 			),
 		),
 		'node_user_icon' => array(

@@ -22,4 +22,8 @@ jQuery(document).ready(function($){
 		$('#nodeFont').css('font-family', $(this).val() );
 	});
 
+	$('button.ajaxSave').click(function(e){
+		$('input#ajaxSaveHidden').val( $(this).val() );
+	});
+	
 });

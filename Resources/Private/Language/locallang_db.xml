@@ -6,17 +6,25 @@
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
+		
+			<label index="tabs.font">Font</label>
+			<label index="tabs.cloud">Cloud</label>
+			<label index="tabs.node">Node</label>
+			<label index="tabs.nodeui">Node User Icons</label>
+			<label index="tabs.edge">Edge</label>
+		
+		
 			<label index="tx_freemind2_domain_model_fmconfig">Fm Config</label>
 			<label index="tx_freemind2_domain_model_fmconfig.page_uid">Page Uid</label>
 			<label index="tx_freemind2_domain_model_fmconfig.font_face">Font Face</label>
 			<label index="tx_freemind2_domain_model_fmconfig.font_color">Font Color</label>
 			<label index="tx_freemind2_domain_model_fmconfig.font_size">Font Size</label>
-			<label index="tx_freemind2_domain_model_fmconfig.font_bold">Font Bold</label>
-			<label index="tx_freemind2_domain_model_fmconfig.font_italic">Font Italic</label>
-			<label index="tx_freemind2_domain_model_fmconfig.cloud_is">Cloud Is</label>
+			<label index="tx_freemind2_domain_model_fmconfig.font_bold">Font is bold?</label>
+			<label index="tx_freemind2_domain_model_fmconfig.font_italic">Font is italic?</label>
+			<label index="tx_freemind2_domain_model_fmconfig.cloud_is">Is a Cloud?</label>
 			<label index="tx_freemind2_domain_model_fmconfig.cloud_color">Cloud Color</label>
 			<label index="tx_freemind2_domain_model_fmconfig.node_color">Node Color</label>
-			<label index="tx_freemind2_domain_model_fmconfig.node_folded">Node Folded</label>
+			<label index="tx_freemind2_domain_model_fmconfig.node_folded">Node is folded?</label>
 			<label index="tx_freemind2_domain_model_fmconfig.node_position">Node Position</label>
 			<label index="tx_freemind2_domain_model_fmconfig.selectError">Do not edit here! Use edit menu</label>
 			

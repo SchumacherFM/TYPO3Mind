@@ -20,6 +20,7 @@ module.tx_freemind2 {
 		
 		# first option is always default
 		edgeStyles = bezier,linear,sharp_bezier,sharp_linear
+		fontSize = 10,12,14,16,18
 		edgeWidths = parent,thin,1,2,4,8
 		nodePositions = right,left
 		nodeStyles = bubble,fork

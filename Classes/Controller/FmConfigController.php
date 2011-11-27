@@ -121,19 +121,20 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 			if( $FmConfig == NULL ){
 				$FmConfig = t3lib_div::makeInstance('Tx_Freemind2_Domain_Model_FmConfig');
 				$FmConfig->setpageUid( $this->pageUid );
+				$this->fmConfigRepository->add($FmConfig);
 			}
 		}
-	
+
 /*
 echo '<pre>';
 var_dump($FmConfig);
-die( '</pre>'); 
-			
-*/	
-		
-	
+die( '</pre>');
+
+*/
+
+
 		$this->view->assign('FmConfig', $FmConfig );
-		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'title' ) );
+		$this->view->assign('page', t3lib_BEfunc::getRecord('uid,pages', $this->pageUid, 'title' ) );
 		$this->view->assign('icons', $this->fmConfigRepository->getIcons( $this->settings ) );
 		$this->view->assign('userIcons', $this->fmConfigRepository->getUserIcons( $this->settings ) );
 		$this->view->assign('nodePositions', $this->helpers->trimExplodeVK(',', $this->settings['nodePositions'] ) );
@@ -151,9 +152,29 @@ die( '</pre>');
 	 * @return void
 	 */
 	public function editPagesSaveAction(Tx_Freemind2_Domain_Model_FmConfig $FmConfig, $options ) {
+
+		foreach($options as $k=>$v){
+			$options[$k] = (int)$v;
+		}
+
+		$this->pageUid = isset($options['pageUid']) ? $options['pageUid'] : 0;
+
 		echo '<pre>';
+		var_dump($options);
+		echo '<hr/>';
 		var_dump($FmConfig);
 		echo '</pre>';
+
+
+		if( $this->pageUid == 0 ){
+			$this->redirect('editPages');
+		}
+
+		$this->fmConfigRepository->update($FmConfig);
+
+		$this->view->assign('options', $options );
+		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'title' ) );
+
 	}
 
 	/**

@@ -1,0 +1,20 @@
+<f:layout name="Default" />
+<f:section name="content">
+
+	<h1>FreeMind2 page properties for &quot;{page.title}&quot; successfully
+		<f:if condition="{options.recursiv}==1">
+			recursivly
+		</f:if>
+	
+		<f:if condition="{options.action}==0">
+		<f:then>
+			saved
+		</f:then>
+		<f:else>
+			deleted
+		</f:else>
+		</f:if>
+
+	</h1>
+
+</f:section>
