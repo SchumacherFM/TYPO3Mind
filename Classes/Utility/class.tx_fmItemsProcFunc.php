@@ -25,7 +25,7 @@
 
 
 
-class Tx_Freemind2_Utility_Helpers {
+class tx_fmItemsProcFunc {
 
 
 	/**
@@ -53,5 +53,50 @@ class Tx_Freemind2_Utility_Helpers {
 	
 		return $this->arrayKeysEqualValues ( t3lib_div::trimExplode($d, $s ,1 ) );
 	}
+	
+	/**
+	 * trimExplode VK = value also in keys
+	 *
+	 * @param	array	$params
+	 * @param	array	$pObj
+	 * @return	array
+	 */
+	public function getFromTS(&$params, &$pObj) {
+		// global $TCA, $LANG;
+		// http://typo3.toaster-schwerin.de/typo3_dev/2011_11/msg00089.html
 
+		$typoscriptInclude = '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:freemind2/Configuration/TypoScript/setup.txt">';
+
+		$TSparserObject = t3lib_div::makeInstance('t3lib_tsparser');
+		$configTS = $TSparserObject->checkIncludeLines($typoscriptInclude);
+		$TSparserObject->parse($configTS, $matchObj);
+  
+		$tsKey = $params['config']['itemsProcFunc_config']['tsKey'];
+  		$tsValue = $TSparserObject->setup['module.']['tx_freemind2.']['settings.'] [$tsKey];
+  
+    
+		$params['items'] = array();
+		if( $tsKey == 'userIconsPath' && is_dir(PATH_site.$tsValue) ){
+			$pics = scandir(PATH_site.$tsValue);
+			foreach($pics as $k=>$v){
+				if( preg_match('~\.(png|jpg|gif|jpeg|webp)$~i',$v) ){
+					$params['items'][] = array($v,$v,'../'.$tsValue.$v);
+				
+				}
+			}
+		}else{
+		
+			$tsValarray = $this->trimExplodeVK(',',$tsValue);
+			foreach($tsValarray as $k=>$v){
+				$params['items'][] = array($v,$v);
+			}
+		/*	
+	echo '<pre>';
+  var_dump($tsValarray);
+  exit;	*/
+		}
+		
+		
+
+	}
 }

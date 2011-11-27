@@ -42,6 +42,7 @@ if(TYPO3_MODE === 'BE') {
 
 t3lib_extMgm::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'FreeMind2');
 
+include_once(t3lib_extMgm::extPath($_EXTKEY).'Classes/Utility/class.tx_fmItemsProcFunc.php');
 
 
 t3lib_extMgm::addLLrefForTCAdescr('tx_freemind2_domain_model_fmconfig', 'EXT:freemind2/Resources/Private/Language/locallang_csh_tx_freemind2_domain_model_fmconfig.xml');

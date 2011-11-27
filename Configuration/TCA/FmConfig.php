@@ -128,13 +128,14 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.font_size',
 			'config' => array(
 				'type' => 'select',
-				'items' => array(
-				  array(10,10),
-				  array(12,12),
+				'items' => array(),
+				'itemsProcFunc'=>'tx_fmItemsProcFunc->getFromTS',
+				'itemsProcFunc_config' => array(
+					'tsKey' => 'fontSize',
 				),
-				'size' => 1,
+				'minitems' => 0,
 				'maxitems' => 1,
-				'eval' => ''
+				'renderMode'=>'checkbox',
 			),
 		),
 		'font_bold' => array(
@@ -218,28 +219,28 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_icon',
 			'config' => array(
 				'type' => 'select',
-				'items' => array(
-//				  Array('attach', 'attach','EXT:freemind2/Resources/Public/freemind_icons/attach.png'),
-//				  Array('bell', 'bell','EXT:freemind2/Resources/Public/freemind_icons/bell.png'),
-				),
-		
+				'items' => array(),
 				'fileFolder' => 'EXT:freemind2/Resources/Public/freemind_icons/',
 				'fileFolder_extList' => 'png',
 				'fileFolder_recursions' => 0,
-				'selicon_cols' => 8,
-				'size' => 1,
 				'minitems' => 0,
-				'maxitems' => 1,				
+				'maxitems' => 5,
+				'renderMode'=>'checkbox',
 			),
 		),
 		'node_user_icon' => array(
 			'exclude' => 0,
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_user_icon',
 			'config' => array(
-				'type' => 'text',
-				'cols' => 40,
-				'rows' => 15,
-				'eval' => 'trim'
+				'type' => 'select',
+				'items' => array(),
+				'itemsProcFunc'=>'tx_fmItemsProcFunc->getFromTS',
+				'itemsProcFunc_config' => array(
+					'tsKey' => 'userIconsPath',
+				),
+				'minitems' => 0,
+				'maxitems' => 5,
+				'renderMode'=>'checkbox',
 			),
 		),
 		'edge_color' => array(
