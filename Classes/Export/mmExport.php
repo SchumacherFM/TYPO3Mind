@@ -47,6 +47,12 @@ class Tx_Freemind2_Export_mmExport implements Tx_Freemind2_Export_mmExportInterf
 	 */
 	public $mmVersion = '0.9.0';
 
+	/**
+	 * fmConfigRepository
+	 *
+	 * @var Tx_Freemind2_Domain_Repository_FmConfigRepository
+	 */
+	protected $fmConfigRepository;
 
 	/**
 	 * initializeAction
@@ -56,9 +62,9 @@ class Tx_Freemind2_Export_mmExport implements Tx_Freemind2_Export_mmExportInterf
 	 */
 	public function __construct($pageUid) {
 		$this->pageUid = $pageUid;
-
+		$this->fmConfigRepository = t3lib_div::makeInstance('Tx_Freemind2_Domain_Repository_FmConfigRepository');
 	}
-
+	
 	/**
 	 * main method to get the content
 	 *
@@ -67,7 +73,7 @@ class Tx_Freemind2_Export_mmExport implements Tx_Freemind2_Export_mmExportInterf
 	public function getContent() {
 
 
-		tslib_eidtools::initTCA();
+//		tslib_eidtools::initTCA();
 
 //		t3lib_div::loadTCA('pages');
 		// General Includes
@@ -79,7 +85,14 @@ class Tx_Freemind2_Export_mmExport implements Tx_Freemind2_Export_mmExportInterf
 		$tree = t3lib_div::makeInstance('Tx_Freemind2_Utility_PageTree');
 		$tree->init('');
 
-		$treeStartingRecord = t3lib_BEfunc::getRecord('pages', $treeStartingPoint, implode(',',$tree->fieldArray) );
+		if( $treeStartingPoint > 0 ){
+			$treeStartingRecord = t3lib_BEfunc::getRecord('pages', $treeStartingPoint, implode(',',$tree->fieldArray) );
+		}else{
+			$treeStartingRecord = array(
+				'uid'=> 0,
+				'title'=> $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'],
+			);
+		}
 
 		// Create the tree from starting point:
 		$tree->getTree($treeStartingPoint, 999, '');
@@ -88,19 +101,23 @@ class Tx_Freemind2_Export_mmExport implements Tx_Freemind2_Export_mmExportInterf
 		$mmXML = new SimpleXMLElement('<map></map>');
 		$mmXML->addAttribute('version',$this->mmVersion);
 
-		$firstChild = $this->addNode($mmXML, $this->getAttrFromPage($treeStartingRecord)  );
+		$FmConfig = $this->fmConfigRepository->findOneByPageUid( $treeStartingRecord['uid'] );
+
+		$firstChild = $this->addNode($mmXML, $this->getAttrFromPage($treeStartingRecord,$FmConfig)  );
 
 		foreach($tree->buffer_idH as $uid=>$childUids){
 				
-			$childs = $this->addNode($firstChild, $this->getAttrFromPage( $tree->recs[$uid] ) );
+			$FmConfig = $this->fmConfigRepository->findOneByPageUid($uid);
+				
+			$childs = $this->addNode($firstChild, $this->getAttrFromPage( $tree->recs[$uid] , $FmConfig ) );
 		}
-	/*
+	
 echo '<pre>';  
-// echo htmlspecialchars(var_export($mmXML->asXML(),1));
-// echo '<hr>'; var_dump($tree->buffer_idH); 
+ var_dump($treeStartingRecord);
+ echo '<hr>'; var_dump($tree->buffer_idH); 
 echo '<hr>'; var_dump($tree->recs); 
-echo '</pre><hr>';
-*/
+echo '</pre><hr>'; exit;
+
 	
 		return $mmXML->asXML();
 	} /* end fnc getContent */
@@ -137,28 +154,28 @@ how to insert new lines
 	 * Creates the attributes from a page record
 	 *
 	 * @param	array $pageRecord
+	 * @param	Tx_Freemind2_Domain_Model_FmConfig $FmConfig
 	 * @param	array $additionalAttributes  key is the name and value the value
 	 * @return	SimpleXMLElement
 	 */
-	private function getAttrFromPage(&$pageRecord,$additionalAttributes = array() ) {
+	private function getAttrFromPage(&$pageRecord,$FmConfig,$additionalAttributes = array() ) {
 
 		/* now we have here to the the special options from the column tx_freemind2_data from table pages */
 
 		$attr = array(
-			/* optional, time is not a real timestamp
-			'CREATED'=>'1124560950701',
-			'MODIFIED'=>'1225908650678',
-			*/
-			'COLOR'=>'#407000',
 			'FOLDED'=>'false',
 			'ID'=>'page_'.$pageRecord['uid'],
 			'POSITION'=>'right',
 			'TEXT'=>$pageRecord['title'],
 		);
+		
+		if( !empty( $FmConfig->getNodeColor() ) ){
+			$attr['COLOR'] = $FmConfig->getNodeColor();
+		}
 
 		// mvc webrequest -> base uri to build in!
-		if( in_array($pageRecord['doktype'], array(1,4) ) ){
-			$attr['LINK'] = 'http://'.$_SERVER['HTTP_HOST'].'/index.php?id='.$uid;
+		if( in_array($pageRecord['doktype'], array(1,4) ) && $pageRecord['uid'] > 0 ){
+			$attr['LINK'] = 'http://'.$_SERVER['HTTP_HOST'].'/index.php?id='.$pageRecord['uid'];
 		}
 		
 		return array_merge($attr,$additionalAttributes);

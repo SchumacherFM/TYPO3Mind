@@ -88,10 +88,30 @@ class tx_fmItemsProcFunc {
 				}
 			}
 		}else{
+
 		
 			$tsValarray = $this->trimExplodeVK(',',$tsValue);
+
 			foreach($tsValarray as $k=>$v){
-				$params['items'][] = array($v,$v);
+				$vk = $v;
+				$vv = $v;
+				
+				if( strtolower($vk) == 'default' ){
+					switch($params['config']['eval']){
+						case 'int':
+							$vv = 0;
+						break;
+						case 'trim':
+						case 'trim,nospace':
+						case 'alpha':
+						case 'alphanum':
+						case 'alphanum_x':
+							$vv = ' ';
+						break;
+					}
+				}
+				
+				$params['items'][] = array($vk,$vv);
 			}
 		/*	
 	echo '<pre>';

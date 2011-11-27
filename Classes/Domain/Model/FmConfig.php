@@ -41,6 +41,13 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 	protected $pageUid;
 
 	/**
+	 * Recursive - If recursive is set then all sub pages will have this value
+	 *
+	 * @var boolean
+	 */
+	protected $recursive;
+
+	/**
 	 * Font Face
 	 *
 	 * @var string
@@ -180,6 +187,26 @@ class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_Abstrac
 		$this->pageUid = $pageUid;
 	}
 
+	/**
+	 * Returns the recursive
+	 *
+	 * @return boolean $recursive
+	 */
+	public function getrecursive() {
+		return (boolean)$this->recursive;
+	}
+
+	/**
+	 * Sets the recursive
+	 *
+	 * @param boolean $recursive
+	 * @return void
+	 */
+	public function setrecursive($recursive) {
+		$this->recursive = (boolean)$recursive;
+	}
+
+	
 	/**
 	 * Returns the fontFace
 	 *

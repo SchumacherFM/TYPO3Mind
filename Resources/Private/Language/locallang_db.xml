@@ -16,6 +16,7 @@
 		
 			<label index="tx_freemind2_domain_model_fmconfig">Fm Config</label>
 			<label index="tx_freemind2_domain_model_fmconfig.page_uid">Page Uid</label>
+			<label index="tx_freemind2_domain_model_fmconfig.recursive">Recursive? Extend to child pages?</label>
 			<label index="tx_freemind2_domain_model_fmconfig.font_face">Font Face</label>
 			<label index="tx_freemind2_domain_model_fmconfig.font_color">Font Color</label>
 			<label index="tx_freemind2_domain_model_fmconfig.font_size">Font Size</label>

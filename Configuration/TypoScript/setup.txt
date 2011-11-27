@@ -19,10 +19,15 @@ module.tx_freemind2 {
 		userIconsPath = fileadmin/nuvola/16x16/filesystems/
 		
 		# first option is always default
+		# use keyword default for no entry in the DB/XML
 		edgeStyles = bezier, linear, sharp_bezier, sharp_linear
-		fontSize = 10, 12, 14, 16, 18
-		edgeWidths = parent, thin , 1 , 2 ,  4 , 8
+		fontSize = default,10, 12, 14, 16, 18
+		
+		# any ttf font installed on the system
+		fontFace = default, SansSerif, Arial, Verdana, Tahoma, Times New Roman, Courier New
+		
+		edgeWidths = thin, parent, 1 , 2 ,  4 , 8
 		nodePositions = right,left
-		nodeStyles = bubble,fork
+		nodeStyles = default,bubble,fork
 	}
 }
