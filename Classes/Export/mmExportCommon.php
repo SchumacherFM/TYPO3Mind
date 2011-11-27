@@ -91,18 +91,16 @@ class Tx_Freemind2_Export_mmExportCommon {
 
 		$fileName = 'fm2_'.preg_replace('~[^a-z0-9]+~i','',$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']).'.mm';
 		// that's quite a hack!
-		file_put_contents(PATH_site.'typo3temp/'.$fileName, str_replace( array('|lt|','|gt|'), array('<','>'), $xml->asXML() ) );
+		file_put_contents(PATH_site.'typo3temp/'.$fileName, str_replace( 
+			array('|lt|','|gt|','@#'), 
+			array('<','>','&#'), 
+			$xml->asXML() ) );
 		return $fileName;
 	}
 
 
-	
-	
-	
-	
-	
-	
-	
+
+
 	/**
 	 * adds an builtin icon
 	 *
@@ -206,9 +204,9 @@ class Tx_Freemind2_Export_mmExportCommon {
 		if( !isset($attributes['ID']) ){
 			$attributes['ID'] = 'node_'.$this->getMicrotime();
 		}
-		if( !isset($attributes['FOLDED']) ){
+/*		if( !isset($attributes['FOLDED']) ){
 			$attributes['FOLDED'] = 'false';
-		}
+		} */
 	}
 
 	/**

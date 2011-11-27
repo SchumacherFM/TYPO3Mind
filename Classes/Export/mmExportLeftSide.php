@@ -79,7 +79,8 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 			'services' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_services'),
 			'templates' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_templates'),
 			'example' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_examples'),
-			'doc' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_documentation')
+			'doc' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_documentation'),
+			'' => 'none'
 		);
 		$this->types = array(
 			'S' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:type_system'),
@@ -116,14 +117,95 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 
 		$installedExt = $this->getInstalledExtensions();
 
-//		echo '<pre>'; var_dump( $categories ); exit;
+// echo '<pre>';   var_dump( $installedExt[0] ); exit;
 
 		foreach( $installedExt[1]['cat'] as $catName => $ext ){
 
 			$catNode = $this->addNode($ChildFirst_Extensions, array(
 				// 'FOLDED'=>'true',
-				'TEXT'=>$categories[$catName],
+				'TEXT'=>$this->categories[$catName],
 			) );
+			ksort($ext);
+			foreach($ext as $extKey => $niceName ){
+
+				switch($installedExt[0][$extKey]['type']){
+					case 'S':
+						$preURI = TYPO3_mainDir.'sysext/';
+						$addTERLink = 0;
+					break;
+					case 'G':
+						$preURI = TYPO3_mainDir.'ext/';
+						$addTERLink = 1;
+					break;
+					case 'L':
+						$preURI = 'typo3conf/ext/';
+						$addTERLink = 1;
+					break;
+				}	
+
+				// ext icon 
+				$extIcon = $preURI . $extKey . '/ext_icon.gif';
+
+				if( file_exists(PATH_site.$extIcon) ){
+					$img = '<img src="http://'.t3lib_div::getIndpEnv('HTTP_HOST').'/'.$extIcon.'"/>';
+					$nodeHTML = $img.'@#160;@#160;'.htmlspecialchars($niceName);
+					$extNode = $this->addRichContentNode($catNode, array(
+						'FOLDED'=>'true',
+					),$nodeHTML);
+				}else{
+					$extNode = $this->addNode($catNode, array(
+						'FOLDED'=>'true',
+						'TEXT'=>htmlspecialchars($niceName),
+					) );
+				}
+				
+				
+				// installed or not icon
+				$icon = $installedExt[0][$extKey]['installed'] ? 'button_ok' : 'button_cancel';
+				$this->addIcon($extNode,$icon);
+				
+				// node for system global or local ext
+				$this->addNode($extNode, array(
+					// 'FOLDED'=>'true',
+					'TEXT'=>$this->types[ $installedExt[0][$extKey]['type'] ],
+				) );
+
+				// link to TER
+//				
+				if( $addTERLink == 1 ){
+				
+					$this->addNode($extNode, array(
+						// 'FOLDED'=>'true',
+						'TEXT'=>$this->translate('tree.linkName2TER'),
+						'LINK'=>'http://typo3.org/extensions/repository/view/'.$extKey.'/current/',
+					) );
+				
+				}
+				
+				
+				// displaying the rest of the config
+				$emconf = $installedExt[0][$extKey]['EM_CONF'];
+				$constraints = $this->humanizeConstraints($emconf['constraints']);
+				$emconf['depends'] = $constraints['depends'];
+				$emconf['conflicts'] = $constraints['conflicts'];
+				$emconf['suggests'] = $constraints['suggests'];
+				unset($emconf['title']);
+				unset($emconf['constraints']);
+				unset($emconf['category']);
+				unset($emconf['_md5_values_when_last_written']);
+
+				// echo '<pre>';   var_dump( $emconf ); exit;
+	
+				foreach($emconf as $ek=>$ev){
+					if( !empty($ev) ){
+						$this->addNode($extNode, array(
+							// 'FOLDED'=>'true',
+							'TEXT'=>ucfirst($ek).': '.$ev,
+						) );
+					}
+				}
+	
+			}/*endforeach2*/
 
 		}/*endforeach*/
 
@@ -132,19 +214,6 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 		sort($extList);
 		foreach($extList as $k=>$extKey){
 
-			$isLoaded = t3lib_extMgm::isLoaded($extKey);
-
-			// include local ext_emconf
-			$extDetails = $this->setEmconf(PATH_typo3conf . 'ext/' . $extKey . '/ext_emconf.php', $extKey);
-			// if not then if could be a sysext
-			if (!$extDetails) {
-				$extDetails = $this->setEmconf(PATH_typo3 . 'sysext/' . $extKey . '/ext_emconf.php', $extKey);
-			}
-	//		echo '<pre>'; var_dump($extDetails); exit;
-
-
-			$icon = $isLoaded ? 'button_ok' : 'button_cancel';
-			$this->addIcon($extNode,$icon);
 
 			unset( $extDetails['title'] );
 			unset( $extDetails['constraints'] );
@@ -167,6 +236,14 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 		return $ChildFirst_Extensions;
 	}
 
+/* **************************************************************
+*  Copyright notice
+*
+*  (c) webservices.nl
+*  (c) 2006-2010 Karsten Dambekalns <karsten@typo3.org>
+*  All rights reserved
+*
+* **************************************************************/
 
 
 	/**
@@ -231,7 +308,72 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 	}
 
 
+	/**
+	 * Make constraints readable
+	 *
+	 * @param  array $constraints
+	 * @return array
+	 */
+	public function humanizeConstraints($constraints) {
+		$depends = $conflicts = $suggests = array();
+		$result = array(
+			'depends' => '',
+			'conflicts' => '',
+			'suggests' => ''
+		);
 
+		if (is_array($constraints) && count($constraints)) {
+			if (is_array($constraints['depends']) && count($constraints['depends'])) {
+				foreach ($constraints['depends'] as $key => $value) {
+					if ($value) {
+						$tmp = t3lib_div::trimExplode('-', $value, TRUE);
+						if (trim($tmp[1]) && trim($tmp[1]) !== '0.0.0') {
+							$value = $tmp[0] . ' - ' . $tmp[1];
+						} else {
+							$value = $tmp[0];
+						}
+					}
+					$depends[] = $key . ($value ? ' (' . $value . ')' : '');
+				}
+			}
+			if (is_array($constraints['conflicts']) && count($constraints['conflicts'])) {
+				foreach ($constraints['conflicts'] as $key => $value) {
+					if ($value) {
+						$tmp = t3lib_div::trimExplode('-', $value, TRUE);
+						if (trim($tmp[1]) && trim($tmp[1]) !== '0.0.0') {
+							$value = $tmp[0] . ' - ' . $tmp[1];
+						} else {
+							$value = $tmp[0];
+						}
+					}
+					$conflicts[] = $key . ($value ? ' (' . $value . ')' : '');
+				}
+			}
+			if (is_array($constraints['suggests']) && count($constraints['suggests'])) {
+				foreach ($constraints['suggests'] as $key => $value) {
+					if ($value) {
+						$tmp = t3lib_div::trimExplode('-', $value, TRUE);
+						if (trim($tmp[1]) && trim($tmp[1]) !== '0.0.0') {
+							$value = $tmp[0] . ' - ' . $tmp[1];
+						} else {
+							$value = $tmp[0];
+						}
+					}
+					$suggests[] = $key . ($value ? ' (' . $value . ')' : '');
+				}
+			}
+			if (count($depends)) {
+				$result['depends'] = htmlspecialchars(implode(', ', $depends));
+			}
+			if (count($conflicts)) {
+				$result['conflicts'] = htmlspecialchars(implode(', ', $conflicts));
+			}
+			if (count($suggests)) {
+				$result['suggests'] = htmlspecialchars(implode(', ', $suggests));
+			}
+		}
+		return $result;
+	}
 
 
 
