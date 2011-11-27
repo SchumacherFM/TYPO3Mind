@@ -213,19 +213,12 @@ die( '</pre>');
 	 */
 	public function exportAction() {
 
-		// echo '<pre>'; var_dump($this->pageUid); exit;
-		// todo better error handling
-		$expObj = t3lib_div::makeInstance('Tx_Freemind2_Export_mmExport',$this->pageUid);
-		$xml = $expObj->getContent();
+	
+		$expObj = t3lib_div::makeInstance('Tx_Freemind2_Export_mmExport');
+		$typo3tempFilename = $expObj->getContent();
 		
-		$currentPageRecord = t3lib_BEfunc::getRecord('pages', $this->pageUid, 'title' );
-		$currentPageRecord = isset($currentPageRecord) ? $currentPageRecord['title'] : $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
-				
-		$fileName = 'fm2_'.preg_replace('~[^a-z0-9]+~i','',$currentPageRecord).'.mm';
-		file_put_contents('/home/www/schumacherfm/typo3temp/'.$fileName,$xml);
-
-		$this->view->assign('downloadURL', '/typo3temp/'.$fileName);
-		$this->view->assign('filename', $fileName);
+		$this->view->assign('downloadURL', '/typo3temp/'.$typo3tempFilename);
+		$this->view->assign('filename', $typo3tempFilename);
 	}
 
 	/**

@@ -24,6 +24,10 @@
 			<label index="tx_freemind2_domain_model_fmconfig.edge_color">Edge color</label>
 			<label index="tx_freemind2_domain_model_fmconfig.edge_style">Edge style</label>
 			<label index="tx_freemind2_domain_model_fmconfig.edge_width">Edge width</label>
-		</languageKey>
+			
+			<label index="tree.extensions">Installed Extensions</label>
+			<label index="tree.version">Version</label>
+
+			</languageKey>
 	</data>
 </T3locallang>
