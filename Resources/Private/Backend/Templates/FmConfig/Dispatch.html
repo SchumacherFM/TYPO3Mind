@@ -1,0 +1,21 @@
+<f:layout name="Default" />
+<f:section name="content">
+<h1>FreeMind2: redirecting to page properties for &quot;{page.title}&quot;</h1>
+
+
+<script type="text/javascript">
+//	parent.frames['content'].location.href='{redirect}';
+/*	not working
+	console.log(parent.frames.length);
+	for(i=0;i<parent.frames.length;i++){
+		console.log(i, parent.frames[i].name );
+	}
+	
+	self.location.href='http://turmhof/typo3/{redirect}';
+*/
+// console.log(self.location.href); console.log('{redirect}');
+</script>
+
+<h2><a href="{redirect}">Please click here</a></h2>
+
+</f:section>

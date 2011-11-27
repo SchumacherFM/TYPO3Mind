@@ -14,7 +14,7 @@ if(TYPO3_MODE === 'BE') {
 		'fm2be',		// Submodule key
 		'',				// Position
 		array(
-			'FmConfig' => 'export, exportEID, editPages, editPagesSave',
+			'FmConfig' => 'export, exportEID, dispatch, editPages, editPagesSave',
 		),
 		array(
 			'access' => 'user,group',
@@ -34,8 +34,7 @@ if(TYPO3_MODE === 'BE') {
 				spriteIcon =
 				displayCondition =
 				callbackAction = openCustomUrlInContentFrame
-				customAttributes.contentUrl = mod.php?M=web_Freemind2Fm2be&tx_freemind2_web_freemind2fm2be%5Baction%5D=editPages&tx_freemind2_web_freemind2fm2be%5Bcontroller%5D=FmConfig&id=###ID###
-
+				customAttributes.contentUrl = mod.php?M=web_Freemind2Fm2be&tx_freemind2_web_freemind2fm2be%5Baction%5D=dispatch&tx_freemind2_web_freemind2fm2be%5Bcontroller%5D=FmConfig&id=###ID###
 			}
 		';
 } /*endif TYPO3_MODE === 'BE'*/

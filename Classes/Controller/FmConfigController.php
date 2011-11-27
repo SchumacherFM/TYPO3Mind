@@ -97,6 +97,34 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 	}
 
 	/**
+	 * Checks if an entry exists and redirects to the corresponding data row
+	 *
+	 * @return void
+	 */
+	public function dispatchAction() {
+		if( $this->pageUid == 0 ){
+			// todo better error messages .... 8-)
+			die('no page uid specified');
+		}
+	
+			$FmConfig = $this->fmConfigRepository->findOneBypageUid( $this->pageUid );
+
+			if( $FmConfig == NULL ){
+				$FmConfig = t3lib_div::makeInstance('Tx_Freemind2_Domain_Model_FmConfig');
+				$FmConfig->setpageUid( $this->pageUid );
+				$this->fmConfigRepository->add($FmConfig);
+				$persistenceManager = Tx_Extbase_Dispatcher::getPersistenceManager();
+				$persistenceManager->persistAll();
+				$FmConfig = $this->fmConfigRepository->findOneBypageUid( $this->pageUid );
+			}
+			
+			
+		$T3_THIS_LOCATION = urlencode('mod.php?M=web_list&id='.$this->pageUid);
+		$this->view->assign('redirect','alt_doc.php?returnUrl='.$T3_THIS_LOCATION.'&edit[tx_freemind2_domain_model_fmconfig]['.$FmConfig->getUid().']=edit');
+		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'uid,title' ) );
+	}
+	
+	/**
 	 * shows the flash browser and load the current tree
 	 *
 	 * @return void
@@ -105,6 +133,7 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 
 	}
 
+	
 	/**
 	 * action editPages
 	 *
@@ -134,7 +163,7 @@ die( '</pre>');
 
 
 		$this->view->assign('FmConfig', $FmConfig );
-		$this->view->assign('page', t3lib_BEfunc::getRecord('uid,pages', $this->pageUid, 'title' ) );
+		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'uid,title' ) );
 		$this->view->assign('icons', $this->fmConfigRepository->getIcons( $this->settings ) );
 		$this->view->assign('userIcons', $this->fmConfigRepository->getUserIcons( $this->settings ) );
 		$this->view->assign('nodePositions', $this->helpers->trimExplodeVK(',', $this->settings['nodePositions'] ) );

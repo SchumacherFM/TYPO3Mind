@@ -119,8 +119,21 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.font_color',
 			'config' => array(
 				'type' => 'input',
-				'size' => 30,
-				'eval' => 'trim'
+				'size' => '7',
+				'max' => '7',
+				'wizards' => Array(
+					'_PADDING' => 2,
+					'color' => Array(
+						'title' => 'Color:',
+						'type' => 'colorbox',
+						'dim' => '12x12',
+						'tableStyle' => 'border:solid 1px black;margin-left:20px;',
+						'script' => 'wizard_colorpicker.php',
+						'JSopenParams' => 'height=550,width=380,status=0,menubar=0,scrollbars=0',
+						'exampleImg' => 'gfx/wizard_colorpickerex.jpg',
+					),
+				),
+				'eval' => 'trim,nospace',
 			),
 		),
 		'font_size' => array(
@@ -135,7 +148,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 				),
 				'minitems' => 0,
 				'maxitems' => 1,
-				'renderMode'=>'checkbox',
+				'eval' => 'int',
 			),
 		),
 		'font_bold' => array(
@@ -143,7 +156,8 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.font_bold',
 			'config' => array(
 				'type' => 'check',
-				'default' => 0
+				'default' => 0,
+				'eval' => 'int',
 			),
 		),
 		'font_italic' => array(
@@ -151,7 +165,8 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.font_italic',
 			'config' => array(
 				'type' => 'check',
-				'default' => 0
+				'default' => 0,
+				'eval' => 'int',
 			),
 		),
 		'cloud_is' => array(
@@ -159,7 +174,8 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.cloud_is',
 			'config' => array(
 				'type' => 'check',
-				'default' => 0
+				'default' => 0,
+				'eval' => 'int',
 			),
 		),
 		'cloud_color' => array(
@@ -167,8 +183,21 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.cloud_color',
 			'config' => array(
 				'type' => 'input',
-				'size' => 30,
-				'eval' => 'trim'
+				'size' => '7',
+				'max' => '7',
+				'wizards' => Array(
+					'_PADDING' => 2,
+					'color' => Array(
+						'title' => 'Color:',
+						'type' => 'colorbox',
+						'dim' => '12x12',
+						'tableStyle' => 'border:solid 1px black;margin-left:20px;',
+						'script' => 'wizard_colorpicker.php',
+						'JSopenParams' => 'height=550,width=380,status=0,menubar=0,scrollbars=0',
+						'exampleImg' => 'gfx/wizard_colorpickerex.jpg',
+					),
+				),
+				'eval' => 'trim,nospace',
 			),
 		),
 		'node_color' => array(
@@ -176,8 +205,21 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_color',
 			'config' => array(
 				'type' => 'input',
-				'size' => 30,
-				'eval' => 'trim'
+				'size' => '7',
+				'max' => '7',
+				'wizards' => Array(
+					'_PADDING' => 2,
+					'color' => Array(
+						'title' => 'Color:',
+						'type' => 'colorbox',
+						'dim' => '12x12',
+						'tableStyle' => 'border:solid 1px black;margin-left:20px;',
+						'script' => 'wizard_colorpicker.php',
+						'JSopenParams' => 'height=550,width=380,status=0,menubar=0,scrollbars=0',
+						'exampleImg' => 'gfx/wizard_colorpickerex.jpg',
+					),
+				),
+				'eval' => 'trim,nospace',
 			),
 		),
 		'node_folded' => array(
@@ -185,7 +227,8 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_folded',
 			'config' => array(
 				'type' => 'check',
-				'default' => 0
+				'default' => 0,
+				'eval' => 'int',
 			),
 		),
 		'node_position' => array(
@@ -193,12 +236,14 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_position',
 			'config' => array(
 				'type' => 'select',
-				'items' => array(
-				  Array('LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.selectError', ''),
+				'items' => array(),
+				'itemsProcFunc'=>'tx_fmItemsProcFunc->getFromTS',
+				'itemsProcFunc_config' => array(
+					'tsKey' => 'nodePositions',
 				),
-				'size' => 1,
+				'minitems' => 0,
 				'maxitems' => 1,
-				'eval' => ''
+				'eval' => 'alpha',
 			),
 		),
 		'node_style' => array(
@@ -206,12 +251,14 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_style',
 			'config' => array(
 				'type' => 'select',
-				'items' => array(
-				  Array('LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.selectError', ''),
+				'items' => array(),
+				'itemsProcFunc'=>'tx_fmItemsProcFunc->getFromTS',
+				'itemsProcFunc_config' => array(
+					'tsKey' => 'nodeStyles',
 				),
-				'size' => 1,
+				'minitems' => 0,
 				'maxitems' => 1,
-				'eval' => ''
+				'eval' => 'alpha',
 			),
 		),
 		'node_icon' => array(
@@ -220,12 +267,15 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'config' => array(
 				'type' => 'select',
 				'items' => array(),
-				'fileFolder' => 'EXT:freemind2/Resources/Public/freemind_icons/',
-				'fileFolder_extList' => 'png',
-				'fileFolder_recursions' => 0,
+				'itemsProcFunc'=>'tx_fmItemsProcFunc->getFromTS',
+				'itemsProcFunc_config' => array(
+					'type' => 'folder',
+					'tsKey' => 'iconsPath',
+				),
 				'minitems' => 0,
-				'maxitems' => 5,
+				'maxitems' => 10,
 				'renderMode'=>'checkbox',
+
 			),
 		),
 		'node_user_icon' => array(
@@ -236,10 +286,11 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 				'items' => array(),
 				'itemsProcFunc'=>'tx_fmItemsProcFunc->getFromTS',
 				'itemsProcFunc_config' => array(
+					'type' => 'folder',
 					'tsKey' => 'userIconsPath',
 				),
 				'minitems' => 0,
-				'maxitems' => 5,
+				'maxitems' => 10,
 				'renderMode'=>'checkbox',
 			),
 		),
@@ -248,8 +299,21 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.edge_color',
 			'config' => array(
 				'type' => 'input',
-				'size' => 30,
-				'eval' => 'trim'
+				'size' => '7',
+				'max' => '7',
+				'wizards' => Array(
+					'_PADDING' => 2,
+					'color' => Array(
+						'title' => 'Color:',
+						'type' => 'colorbox',
+						'dim' => '12x12',
+						'tableStyle' => 'border:solid 1px black;margin-left:20px;',
+						'script' => 'wizard_colorpicker.php',
+						'JSopenParams' => 'height=550,width=380,status=0,menubar=0,scrollbars=0',
+						'exampleImg' => 'gfx/wizard_colorpickerex.jpg',
+					),
+				),
+				'eval' => 'trim,nospace',
 			),
 		),
 		'edge_style' => array(
@@ -257,12 +321,14 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.edge_style',
 			'config' => array(
 				'type' => 'select',
-				'items' => array(
-				  Array('LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.selectError', ''),
+				'items' => array(),
+				'itemsProcFunc'=>'tx_fmItemsProcFunc->getFromTS',
+				'itemsProcFunc_config' => array(
+					'tsKey' => 'edgeStyles',
 				),
-				'size' => 1,
+				'minitems' => 0,
 				'maxitems' => 1,
-				'eval' => ''
+				'eval' => 'alphanum_x',
 			),
 		),
 		'edge_width' => array(
@@ -270,12 +336,14 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.edge_width',
 			'config' => array(
 				'type' => 'select',
-				'items' => array(
-				  Array('LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.selectError', ''),
+				'items' => array(),
+				'itemsProcFunc'=>'tx_fmItemsProcFunc->getFromTS',
+				'itemsProcFunc_config' => array(
+					'tsKey' => 'edgeWidths',
 				),
-				'size' => 1,
+				'minitems' => 0,
 				'maxitems' => 1,
-				'eval' => ''
+				'eval' => 'alphanum',
 			),
 		),
 	),

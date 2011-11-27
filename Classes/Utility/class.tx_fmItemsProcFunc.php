@@ -76,7 +76,10 @@ class tx_fmItemsProcFunc {
   
     
 		$params['items'] = array();
-		if( $tsKey == 'userIconsPath' && is_dir(PATH_site.$tsValue) ){
+		if( isset($params['config']['itemsProcFunc_config']['type']) &&
+			$params['config']['itemsProcFunc_config']['type']=='folder' && 
+			is_dir(PATH_site.$tsValue) 
+		){
 			$pics = scandir(PATH_site.$tsValue);
 			foreach($pics as $k=>$v){
 				if( preg_match('~\.(png|jpg|gif|jpeg|webp)$~i',$v) ){

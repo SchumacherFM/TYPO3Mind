@@ -14,14 +14,14 @@ module.tx_freemind2 {
 		# this values comes out of the freemind.properties file, unpack the lib/freemind.jar file in our FreeMind installation
 		# official buildin icons change only the filename if you know what to do
 		# path below Resources/Public/ Supports only png files
-		iconsPath = freemind_icons/
+		iconsPath = typo3conf/ext/freemind2/Resources/Public/freemind_icons/
 
 		userIconsPath = fileadmin/nuvola/16x16/filesystems/
 		
 		# first option is always default
-		edgeStyles = bezier,linear,sharp_bezier,sharp_linear
-		fontSize = 10,12,14,16,18
-		edgeWidths = parent,thin,1,2,4,8
+		edgeStyles = bezier, linear, sharp_bezier, sharp_linear
+		fontSize = 10, 12, 14, 16, 18
+		edgeWidths = parent, thin , 1 , 2 ,  4 , 8
 		nodePositions = right,left
 		nodeStyles = bubble,fork
 	}
