@@ -34,7 +34,7 @@
  */
 class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportCommon {
 
- 
+
 	/**
 	 * @var SimpleXMLElement
 	 */
@@ -60,6 +60,11 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 	 */
 	protected $states;
 
+	/**
+	 * @var array
+	 */
+	protected $stateColors;
+
 
 	/**
 	 * initializeAction
@@ -67,7 +72,7 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 	 * @return void
 	 */
 	public function __construct() {
-	
+
 		$this->SYSLANG = t3lib_div::makeInstance('language');
 		$this->SYSLANG->init('default');	// initalize language-object with actual language
 		$this->categories = array(
@@ -94,11 +99,49 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 		 * Content must be redundant with the same internal variable as in class.tx_extrep.php!
 		 */
 		$this->states = tx_em_Tools::getStates();
+		$this->stateColors = tx_em_Tools::getStateColors();
 
 	}
 
 
+	/**
+	 * gets some database informations
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @return	SimpleXMLElement
+	 */
+	public function getDatabaseNode(SimpleXMLElement &$xmlNode) {
+		$MainNode = $this->addNode($xmlNode,array(
+			'POSITION'=>'left',
+			'TEXT'=>$this->translate('tree.database'),
+		));
 
+		$agt = $GLOBALS['TYPO3_DB']->admin_get_tables();
+
+	//	echo '<pre>';   var_dump( $agt ); exit;
+
+		foreach ($agt as $table => $tinfo){
+
+			$TableNode = $this->addNode($MainNode,array(
+				'FOLDED'=>'true',
+				'TEXT'=>$table,
+			));
+
+			$nodeHTML = array('<table>');
+			foreach($tinfo as $tk=>$tv){
+				if( !empty($tv) ){
+					$nodeHTML[] = '<tr><td>'.$tk.'</td><td>'.$tv.'</td></tr>';
+				}
+			}
+			$nodeHTML[] = '</table>';
+
+			$tinfoNode = $this->addRichContentNode($TableNode, array(),implode('',$nodeHTML) );
+
+		}/*endforeach*/
+
+
+		return $MainNode;
+	}
 
 	/**
 	 * gets the extension nodes
@@ -116,8 +159,6 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 
 
 		$installedExt = $this->getInstalledExtensions();
-
-// echo '<pre>';   var_dump( $installedExt[0] ); exit;
 
 		foreach( $installedExt[1]['cat'] as $catName => $ext ){
 
@@ -141,9 +182,9 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 						$preURI = 'typo3conf/ext/';
 						$addTERLink = 1;
 					break;
-				}	
+				}
 
-				// ext icon 
+				// ext icon
 				$extIcon = $preURI . $extKey . '/ext_icon.gif';
 
 				if( file_exists(PATH_site.$extIcon) ){
@@ -158,12 +199,12 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 						'TEXT'=>htmlspecialchars($niceName),
 					) );
 				}
-				
-				
+
+
 				// installed or not icon
 				$icon = $installedExt[0][$extKey]['installed'] ? 'button_ok' : 'button_cancel';
 				$this->addIcon($extNode,$icon);
-				
+
 				// node for system global or local ext
 				$this->addNode($extNode, array(
 					// 'FOLDED'=>'true',
@@ -171,18 +212,15 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 				) );
 
 				// link to TER
-//				
 				if( $addTERLink == 1 ){
-				
 					$this->addNode($extNode, array(
 						// 'FOLDED'=>'true',
 						'TEXT'=>$this->translate('tree.linkName2TER'),
 						'LINK'=>'http://typo3.org/extensions/repository/view/'.$extKey.'/current/',
 					) );
-				
 				}
-				
-				
+
+
 				// displaying the rest of the config
 				$emconf = $installedExt[0][$extKey]['EM_CONF'];
 				$constraints = $this->humanizeConstraints($emconf['constraints']);
@@ -194,44 +232,27 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 				unset($emconf['category']);
 				unset($emconf['_md5_values_when_last_written']);
 
-				// echo '<pre>';   var_dump( $emconf ); exit;
-	
+
 				foreach($emconf as $ek=>$ev){
 					if( !empty($ev) ){
-						$this->addNode($extNode, array(
-							// 'FOLDED'=>'true',
+
+						$attr = array(
 							'TEXT'=>ucfirst($ek).': '.$ev,
-						) );
+						);
+
+						if( $ek == 'state' ){
+							$attr['BACKGROUND_COLOR'] = $this->stateColors[ $ev ];
+							$attr['COLOR'] = '#ffffff';
+							$attr['TEXT']  = $this->states[$ev];
+						}
+
+						$this->addNode($extNode, $attr );
 					}
 				}
-	
+
 			}/*endforeach2*/
 
 		}/*endforeach*/
-
-		/*
-		$extList = t3lib_div::trimExplode(',',$GLOBALS['TYPO3_CONF_VARS']['EXT']['extList'],1);
-		sort($extList);
-		foreach($extList as $k=>$extKey){
-
-
-			unset( $extDetails['title'] );
-			unset( $extDetails['constraints'] );
-			unset( $extDetails['suggests'] );
-			unset( $extDetails['_md5_values_when_last_written'] );
-
-
-			foreach($extDetails as $edk=>$edv){
-				if( !empty($edv) ){
-					$this->addNode($extNode,array(
-						'TEXT'=>ucfirst($edk).': '.htmlentities($edv, ENT_QUOTES | ENT_IGNORE, "UTF-8"),
-
-					));
-				}
-			}
-
-
-		} *endforeach*/
 
 		return $ChildFirst_Extensions;
 	}

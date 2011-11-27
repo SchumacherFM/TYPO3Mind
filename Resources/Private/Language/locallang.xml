@@ -28,6 +28,7 @@
 			<label index="tree.extensions">Installed Extensions</label>
 			<label index="tree.version">Version</label>
 			<label index="tree.linkName2TER">T3 Ext. Repository</label>
+			<label index="tree.database">Database Info</label>
 
 
 			</languageKey>

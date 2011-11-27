@@ -72,11 +72,14 @@ class Tx_Freemind2_Export_mmExport extends Tx_Freemind2_Export_mmExportCommon im
 		$attributes = array(
 			'COLOR'=>'#993300',
 		);
-		$rootNode = $this->addRichContentNode($mmXML,$attributes,'<h2>'.$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'].'</h2>');
+		
+		$html = '<h2>'.$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'].'</h2><p>TYPO3: '.TYPO3_version.'</p>';
+		$rootNode = $this->addRichContentNode($mmXML,$attributes,$html);
 
 		
 		$mmExportLeftSide = t3lib_div::makeInstance('Tx_Freemind2_Export_mmExportLeftSide');
 		$mmExportLeftSide->getExtensionNode($rootNode);
+		$mmExportLeftSide->getDatabaseNode($rootNode);
 
 		
 /*

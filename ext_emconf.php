@@ -29,7 +29,7 @@ Needs TYPO3 4.5 or later, SimpleXML, PHP5',
 	'modify_tables' => '',
 	'clearCacheOnLoad' => 1,
 	'lockType' => '',
-	'version' => '0.0.3',
+	'version' => '0.0.4',
 	'constraints' => array(
 		'depends' => array(
 			'cms' => '',
