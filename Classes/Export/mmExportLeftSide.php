@@ -189,7 +189,7 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 	private function BeUsersHandleRow(SimpleXMLElement &$xmlNode,$row){
 
 		$aUserNode = $this->addNode($xmlNode,array(
-				// 'FOLDED'=>'false',
+				'FOLDED'=>'true',
 				'TEXT'=>$row['username']
 			));
 			if( $row['deleted'] == 1 ) {	$this->addIcon($aUserNode,'button_cancel'); }
