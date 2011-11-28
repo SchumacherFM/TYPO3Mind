@@ -104,6 +104,87 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 	}
 
 
+
+	/**
+	 * gets some T3 specific informations
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @return	SimpleXMLElement
+	 */
+	public function getTYPONode(SimpleXMLElement &$xmlNode) {
+		$MainNode = $this->addNode($xmlNode,array(
+			'POSITION'=>'left',
+			'FOLDED'=>'true',
+			'TEXT'=>$this->translate('tree.typo3'),
+		));
+
+		
+	
+		$nodeHTML = array();
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,log_data', 
+			'sys_log', 'error=0 AND type=255', '', 'tstamp DESC', 10 );
+		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
+			$nodeHTML[ $r['LoggedDate'] ] = implode(' / ',unserialize($r['log_data']));
+		}
+		$this->addRichContentNode($MainNode, array(), '<h3>Successfull Backend Logins</h3>'. $this->array2Html2ColTable($nodeHTML) );
+	
+	
+		$nodeHTML = array();
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,log_data', 
+			'sys_log', 'error=3', '', 'tstamp DESC', 10 );
+		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
+			$nodeHTML[ $r['LoggedDate'] ] = implode(' / ',unserialize($r['log_data']));
+		}
+		$this->addRichContentNode($MainNode, array(), '<h3>Failed Backend Logins</h3>'. $this->array2Html2ColTable($nodeHTML) );
+
+// echo '<pre>';   var_dump( $nodeHTML ); exit;
+		
+/*	
+//	private function getNonusedBackendLogins() {	alle BE user ausgeben ... als tree mit icons...
+	
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'username,lastlogin,admin', 'be_users', 'disable = 0 AND deleted = 0 AND lastlogin+7776000 < ' . time(), '', 'lastlogin DESC', '10' );
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
+		
+			$this->t3m['BE_USERS']['NONUSED_LOGINS'][$row['username']]['admin'] = $row['admin'];
+			$this->t3m['BE_USERS']['NONUSED_LOGINS'][$row['username']]['lastlogin'] = $row['lastlogin'];
+		}
+	*/
+		
+		// typo3 log
+		$DBresult = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,details', 
+			'sys_log', 'error=1', '', 'tstamp DESC', 10 /* TODO via TS ...*/ );
+		$nodeHTML = array();
+		while($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($DBresult) ){
+			$nodeHTML[ $r['LoggedDate'] ] = strip_tags(str_replace('|',' ',$r['details']));
+		}
+//		echo '<pre>';   var_dump( $nodeHTML ); exit;
+
+		$this->addRichContentNode($MainNode, array('TEXT'=>'Error Log'), '<h3>Error Log</h3>'. $this->array2Html2ColTable($nodeHTML), 
+			/*addEdge*/ array('COLOR'=>'#808080'),
+			/*addFont*/ array('SIZE'=>12)
+		);
+		
+		
+	}/*endmethod*/
+
+	/**
+	 * gets some server informations
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @return	SimpleXMLElement
+	 */
+	public function getServerNode(SimpleXMLElement &$xmlNode) {
+		$MainNode = $this->addNode($xmlNode,array(
+			'POSITION'=>'left',
+			'FOLDED'=>'true',
+			'TEXT'=>$this->translate('tree.server'),
+		));
+
+		$_SERVER['PHP_VERSION'] = phpversion();
+
+		$this->addRichContentNode($MainNode, array(),  $this->array2Html2ColTable($_SERVER) );
+
+	}
 	/**
 	 * gets some database informations
 	 *
@@ -116,8 +197,23 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 			'TEXT'=>$this->translate('tree.database'),
 		));
 
-		$agt = $GLOBALS['TYPO3_DB']->admin_get_tables();
+		// general mysql infos
+		$mysqlNode = $this->addNode($MainNode,array(
+			'FOLDED'=>'true',
+			'TEXT'=>$this->translate('tree.mysql'),
+		));
 
+		$nodeHTML = array();
+		$DBresult = $GLOBALS['TYPO3_DB']->sql_query('SHOW VARIABLES LIKE  \'version%\'');
+		while($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($DBresult) ){
+			$nodeHTML[$r['Variable_name']] = $r['Value'];
+		}
+
+		$this->addRichContentNode($mysqlNode, array(),$this->array2Html2ColTable($nodeHTML) );
+
+
+
+		$agt = $GLOBALS['TYPO3_DB']->admin_get_tables();
 
 		$groupedTables = array();
 		foreach ($agt as $table => $tinfo){
@@ -126,14 +222,14 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 		}
 		unset($agt);
 	//	echo '<pre>';   var_dump( $groupedTables ); exit;
-		
+
 		foreach ($groupedTables as $group => $tables){
 
 			$GroupTableNode = $this->addNode($MainNode,array(
 				'FOLDED'=>'true',
 				'TEXT'=>$this->translate('tree.database.'.$group),
 			));
-				
+
 			foreach ($tables as $tkey => $tinfo){
 
 				$nodeHTML = array('<table width="300" border="0" cellpadding="3" cellspacing="0">');
@@ -146,7 +242,7 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 
 				$tinfoNode = $this->addRichContentNode($GroupTableNode, array(),implode('',$nodeHTML) );
 			}
-			
+
 		}/*endforeach*/
 
 
@@ -173,7 +269,7 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 		foreach( $installedExt[1]['cat'] as $catName => $ext ){
 
 			$catNode = $this->addNode($ChildFirst_Extensions, array(
-				// 'FOLDED'=>'true',
+				'FOLDED'=>'true',
 				'TEXT'=>$this->categories[$catName],
 			) );
 			ksort($ext);

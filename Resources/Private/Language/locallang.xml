@@ -29,17 +29,21 @@
 			<label index="tree.version">Version</label>
 			<label index="tree.linkName2TER">T3 Ext. Repository</label>
 			<label index="tree.database">Database Info</label>
+			<label index="tree.mysql">MySQL Info</label>
 			<label index="tree.database.backend">Backend</label>
-			<label index="tree.database.backend">Backend</label>
-			<label index="tree.database.backend">Backend</label>
-			<label index="tree.database.backend">Backend</label>
-			<label index="tree.database.backend">Backend</label>
-			<label index="tree.database.backend">Backend</label>
-			<label index="tree.database.backend">Backend</label>
-			<label index="tree.database.backend">Backend</label>
-			<label index="tree.database.backend">Backend</label>
-			<label index="tree.database.backend">Backend</label>
+			<label index="tree.database.be">Backend BE</label>
+			<label index="tree.database.cache">Cache</label>
+			<label index="tree.database.cachingframework">Cache FW</label>
+			<label index="tree.database.fe">Frontend</label>
+			<label index="tree.database.pages">Pages</label>
+			<label index="tree.database.static">Static</label>
+			<label index="tree.database.sys">System</label>
+			<label index="tree.database.tt">Content</label>
+			<label index="tree.database.tx">Extensions</label>
 
+			<label index="tree.server">Server Env</label>
+
+			<label index="tree.typo3">TYPO3 Logs</label>
 			
 			</languageKey>
 	</data>

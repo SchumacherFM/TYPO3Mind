@@ -91,9 +91,9 @@ class Tx_Freemind2_Export_mmExportCommon {
 
 		$fileName = 'fm2_'.preg_replace('~[^a-z0-9]+~i','',$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']).'.mm';
 		// that's quite a hack!
-		file_put_contents(PATH_site.'typo3temp/'.$fileName, str_replace( 
-			array('|lt|','|gt|','@#'), 
-			array('<','>','&#'), 
+		file_put_contents(PATH_site.'typo3temp/'.$fileName, str_replace(
+			array('|lt|','|gt|','@#'),
+			array('<','>','&#'),
 			$xml->asXML() ) );
 		return $fileName;
 	}
@@ -112,6 +112,7 @@ class Tx_Freemind2_Export_mmExportCommon {
 		$icon = $xmlNode->addChild('icon','');
 		$icon->addAttribute('BUILTIN',$iconName);
 	}
+
 	/**
 	 * adds a node
 	 *
@@ -135,14 +136,60 @@ class Tx_Freemind2_Export_mmExportCommon {
 	}
 
 	/**
+	 * adds an edge
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	array $attributes
+	 * @return	nothing
+	 */
+	protected function addEdge(SimpleXMLElement $xmlNode,$attributes) {
+		$edge = $xmlNode->addChild('edge','');
+
+		if( !isset($attributes['STYLE']) ){
+			$attributes['STYLE'] = 'bezier';
+		}
+		if( !isset($attributes['WIDTH']) ){
+			$attributes['WIDTH'] = 'thin';
+		}
+
+		foreach($attributes as $k=>$v){
+			$edge->addAttribute($k,$v);
+		}
+	}
+	
+	/**
+	 * adds a font
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	array $attributes
+	 * @return	nothing
+	 */
+	protected function addFont(SimpleXMLElement $xmlNode,$attributes) {
+		$font = $xmlNode->addChild('font','');
+
+		if( !isset($attributes['NAME']) ){
+			$attributes['NAME'] = 'SansSerif';
+		}
+		if( !isset($attributes['SIZE']) ){
+			$attributes['SIZE'] = 12;
+		}
+
+		foreach($attributes as $k=>$v){
+			$font->addAttribute($k,$v);
+		}
+	}
+
+	/**
 	 * Creates a rich content node
 	 *
 	 * @param	SimpleXMLElement $xml
 	 * @param	array $attributes  key is the name and value the value
 	 * @param	string $htmlContent
+	 * @param	array $addEdgeAttr
+	 * @param	array $addFontAttr
 	 * @return	SimpleXMLElement
 	 */
-	protected function addRichContentNode(SimpleXMLElement $xml,$attributes,$htmlContent) {
+	protected function addRichContentNode(SimpleXMLElement $xml,$attributes,$htmlContent,$addEdgeAttr = array(),$addFontAttr = array() ) {
 
 		$htmlContent = str_replace( array('<','>'), array('|lt|','|gt|'), $htmlContent );
 
@@ -159,6 +206,13 @@ class Tx_Freemind2_Export_mmExportCommon {
 				$html->addChild('head','');
 		$body = $html->addChild('body',$htmlContent);
 
+		if( count($addEdgeAttr)>0 ){
+			$this->addEdge($node, $addEdgeAttr );
+		}
+		if( count($addFontAttr)>0 ){
+			$this->addFont($node, $addFontAttr );
+		}
+				
 		return $node;
 	}
 
@@ -228,6 +282,26 @@ class Tx_Freemind2_Export_mmExportCommon {
 	protected function getMicrotime(){
 		$m = explode(' ',microtime());
 		return $m[1] .''. ( (string)$m[0] );
+	}
+
+	/**
+	 * returns an array as an html table
+	 *
+	 * @return string
+	 */
+	protected function array2Html2ColTable($array,$width=300  ){
+		$nodeHTML = array('<table width="'.$width.'" border="0" cellpadding="3" cellspacing="0">');
+		$i=0;
+		foreach( $array as $k=>$v ){
+
+			$nodeHTML[] = '<tr style="background-color:'.(
+				$i % 2 == 0 ? '#ffffff' : '#ececec'
+			).';" valign="top"><td>'.$k.'</td><td>'.htmlspecialchars($v).'</td></tr>';
+			$i++;
+		}
+		$nodeHTML[] = '</table>';
+
+		return implode('',$nodeHTML);
 	}
 
 }
