@@ -189,7 +189,24 @@ class Tx_Freemind2_Export_mmExportCommon {
 	 * @param	array $addFontAttr
 	 * @return	SimpleXMLElement
 	 */
-	protected function addRichContentNode(SimpleXMLElement $xml,$attributes,$htmlContent,$addEdgeAttr = array(),$addFontAttr = array() ) {
+	protected function addRichContentNode(SimpleXMLElement $xml,$attributes,$htmlContent,$addEdgeAttr = array(),$addFontAttr = array()  ) {
+
+		return $this->addRichContentNote($xml,$attributes,$htmlContent,$addEdgeAttr,$addFontAttr, 'NODE' );
+
+	}
+	
+	/**
+	 * Creates a rich content note
+	 *
+	 * @param	SimpleXMLElement $xml
+	 * @param	array $attributes  key is the name and value the value
+	 * @param	string $htmlContent
+	 * @param	array $addEdgeAttr
+	 * @param	array $addFontAttr
+	 * @param	string $type defined how this rich content will look... like a node or a note!
+	 * @return	SimpleXMLElement
+	 */
+	protected function addRichContentNote(SimpleXMLElement $xml,$attributes,$htmlContent,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' ) {
 
 		$htmlContent = str_replace( array('<','>'), array('|lt|','|gt|'), $htmlContent );
 
@@ -201,7 +218,7 @@ class Tx_Freemind2_Export_mmExportCommon {
 		}
 
 		$rc = $node->addChild('richcontent','');
-		$rc->addAttribute('TYPE','NODE');
+		$rc->addAttribute('TYPE',$type);
 		$html = $rc->addChild('html','');
 				$html->addChild('head','');
 		$body = $html->addChild('body',$htmlContent);
@@ -258,9 +275,9 @@ class Tx_Freemind2_Export_mmExportCommon {
 		if( !isset($attributes['ID']) ){
 			$attributes['ID'] = 'node_'.$this->getMicrotime();
 		}
-/*		if( !isset($attributes['FOLDED']) ){
-			$attributes['FOLDED'] = 'false';
-		} */
+
+		$attributes['TEXT'] = str_replace('"','',$attributes['TEXT']);
+		 
 	}
 
 	/**
@@ -281,7 +298,7 @@ class Tx_Freemind2_Export_mmExportCommon {
 	 */
 	protected function getMicrotime(){
 		$m = explode(' ',microtime());
-		return $m[1] .''. ( (string)$m[0] );
+		return mt_rand() .'' . ( (string)$m[0] );
 	}
 
 	/**

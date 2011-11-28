@@ -118,7 +118,7 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 			'TEXT'=>$this->translate('tree.typo3'),
 		));
 
-		
+		// todo translations
 	
 		$nodeHTML = array();
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,log_data', 
@@ -126,7 +126,10 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$nodeHTML[ $r['LoggedDate'] ] = implode(' / ',unserialize($r['log_data']));
 		}
-		$this->addRichContentNode($MainNode, array(), '<h3>Successfull Backend Logins</h3>'. $this->array2Html2ColTable($nodeHTML) );
+		
+		// TODO this->translate()
+		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.typo3.SuccessfullBackendLogins') ),
+			'<h3>'.$this->translate('tree.typo3.SuccessfullBackendLogins').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 	
 	
 		$nodeHTML = array();
@@ -135,7 +138,8 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$nodeHTML[ $r['LoggedDate'] ] = implode(' / ',unserialize($r['log_data']));
 		}
-		$this->addRichContentNode($MainNode, array(), '<h3>Failed Backend Logins</h3>'. $this->array2Html2ColTable($nodeHTML) );
+		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.typo3.FailedBackendLogins'), 
+			'<h3>'.$this->translate('tree.typo3.FailedBackendLogins').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 
 // echo '<pre>';   var_dump( $nodeHTML ); exit;
 		
@@ -159,10 +163,8 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 		}
 //		echo '<pre>';   var_dump( $nodeHTML ); exit;
 
-		$this->addRichContentNode($MainNode, array('TEXT'=>'Error Log'), '<h3>Error Log</h3>'. $this->array2Html2ColTable($nodeHTML), 
-			/*addEdge*/ array('COLOR'=>'#808080'),
-			/*addFont*/ array('SIZE'=>12)
-		);
+		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.typo3.ErrorLog')),
+			'<h3>'.$this->translate('tree.typo3.ErrorLog').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 		
 		
 	}/*endmethod*/
