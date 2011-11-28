@@ -118,25 +118,35 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 
 		$agt = $GLOBALS['TYPO3_DB']->admin_get_tables();
 
-	//	echo '<pre>';   var_dump( $agt ); exit;
 
+		$groupedTables = array();
 		foreach ($agt as $table => $tinfo){
+			$te = explode('_',$table);
+			$groupedTables[ $te[0] ][$table] = $tinfo;
+		}
+		unset($agt);
+	//	echo '<pre>';   var_dump( $groupedTables ); exit;
+		
+		foreach ($groupedTables as $group => $tables){
 
-			$TableNode = $this->addNode($MainNode,array(
+			$GroupTableNode = $this->addNode($MainNode,array(
 				'FOLDED'=>'true',
-				'TEXT'=>$table,
+				'TEXT'=>$this->translate('tree.database.'.$group),
 			));
+				
+			foreach ($tables as $tkey => $tinfo){
 
-			$nodeHTML = array('<table>');
-			foreach($tinfo as $tk=>$tv){
-				if( !empty($tv) ){
-					$nodeHTML[] = '<tr><td>'.$tk.'</td><td>'.$tv.'</td></tr>';
-				}
+				$nodeHTML = array('<table width="300" border="0" cellpadding="3" cellspacing="0">');
+				$nodeHTML[] = '<tr><th colspan="2">'.$tkey.'</th></tr>';
+				$nodeHTML[] = '<tr><td>Rows</td><td style="text-align: right">'.$tinfo['Rows'].'</td></tr>';
+				$nodeHTML[] = '<tr><td>Data</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Data_length']/1024).'KiB</td></tr>';
+				$nodeHTML[] = '<tr><td>Index</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Index_length']/1024).'KiB</td></tr>';
+				if( $tinfo['Data_free']>0 ){ $nodeHTML[] = '<tr><td>Overhead</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Data_free']/1024).'KiB</td></tr>'; }
+				$nodeHTML[] = '</table>';
+
+				$tinfoNode = $this->addRichContentNode($GroupTableNode, array(),implode('',$nodeHTML) );
 			}
-			$nodeHTML[] = '</table>';
-
-			$tinfoNode = $this->addRichContentNode($TableNode, array(),implode('',$nodeHTML) );
-
+			
 		}/*endforeach*/
 
 

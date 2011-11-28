@@ -29,8 +29,18 @@
 			<label index="tree.version">Version</label>
 			<label index="tree.linkName2TER">T3 Ext. Repository</label>
 			<label index="tree.database">Database Info</label>
+			<label index="tree.database.backend">Backend</label>
+			<label index="tree.database.backend">Backend</label>
+			<label index="tree.database.backend">Backend</label>
+			<label index="tree.database.backend">Backend</label>
+			<label index="tree.database.backend">Backend</label>
+			<label index="tree.database.backend">Backend</label>
+			<label index="tree.database.backend">Backend</label>
+			<label index="tree.database.backend">Backend</label>
+			<label index="tree.database.backend">Backend</label>
+			<label index="tree.database.backend">Backend</label>
 
-
+			
 			</languageKey>
 	</data>
 </T3locallang>
