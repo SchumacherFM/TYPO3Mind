@@ -26,6 +26,7 @@
 			<label index="tx_freemind2_domain_model_fmconfig.edge_width">Edge width</label>
 			
 			<label index="tree.extensions">Installed Extensions</label>
+			<label index="tree.extensions.selectable">Selectable active FE plugins</label>
 			<label index="tree.version">Version</label>
 			<label index="tree.linkName2TER">T3 Ext. Repository</label>
 			<label index="tree.database">Database Info</label>
@@ -44,11 +45,15 @@
 
 			<label index="tree.server">Server Env</label>
 
-			<label index="tree.typo3">TYPO3 Logs</label>
+			<label index="tree.typo3">TYPO3 Logs+Info</label>
 			<label index="tree.typo3.SuccessfullBackendLogins">Successfull Backend Logins</label>
 			<label index="tree.typo3.FailedBackendLogins">Failed Backend Logins</label>
 			<label index="tree.typo3.ErrorLog">Error Log</label>
 			<label index="tree.typo3.SuccessfullBackendLogins">Successfull Backend Logins</label>
+			
+			<label index="tree.typo3.useradmin">Administrators</label>
+			<label index="tree.typo3.users">Backend Users</label>
+			
 			
 			</languageKey>
 	</data>

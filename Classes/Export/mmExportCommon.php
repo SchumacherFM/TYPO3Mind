@@ -180,6 +180,31 @@ class Tx_Freemind2_Export_mmExportCommon {
 	}
 
 	/**
+	 * adds a font
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	array $attributes
+	 * @param	string $imgRelPath relativ image path like ../typo3conf/ext/..../ext_icon.gif
+	 * @return	nothing
+	 */
+	protected function addImgNode(SimpleXMLElement $xmlNode,$attributes,$imgRelPath) {
+
+		$iconLocal = str_replace('../','',$imgRelPath);
+		
+		if( is_file(PATH_site.$iconLocal)  ){
+		
+			$nodeHTML = '<img src="http://'.t3lib_div::getIndpEnv('HTTP_HOST').'/'.$iconLocal.'"/>'.
+						'@#160;@#160;'.htmlspecialchars( $attributes['TEXT'] );
+			$childNode = $this->addRichContentNode($xmlNode, $attributes ,$nodeHTML);
+		
+		}else {
+			$childNode = $this->addNode($xmlNode,$attributes);
+		}
+		
+		return $childNode;
+	}
+	
+	/**
 	 * Creates a rich content node
 	 *
 	 * @param	SimpleXMLElement $xml
@@ -233,6 +258,7 @@ class Tx_Freemind2_Export_mmExportCommon {
 		return $node;
 	}
 
+		
 	/**
 	 * Creates the attributes from a page record
 	 *

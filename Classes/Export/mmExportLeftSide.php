@@ -118,8 +118,7 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 			'TEXT'=>$this->translate('tree.typo3'),
 		));
 
-		// todo translations
-	
+		
 		$nodeHTML = array();
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,log_data', 
 			'sys_log', 'error=0 AND type=255', '', 'tstamp DESC', 10 );
@@ -138,22 +137,10 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$nodeHTML[ $r['LoggedDate'] ] = implode(' / ',unserialize($r['log_data']));
 		}
-		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.typo3.FailedBackendLogins'), 
+		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.typo3.FailedBackendLogins')), 
 			'<h3>'.$this->translate('tree.typo3.FailedBackendLogins').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 
-// echo '<pre>';   var_dump( $nodeHTML ); exit;
-		
-/*	
-//	private function getNonusedBackendLogins() {	alle BE user ausgeben ... als tree mit icons...
-	
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'username,lastlogin,admin', 'be_users', 'disable = 0 AND deleted = 0 AND lastlogin+7776000 < ' . time(), '', 'lastlogin DESC', '10' );
-		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
-		
-			$this->t3m['BE_USERS']['NONUSED_LOGINS'][$row['username']]['admin'] = $row['admin'];
-			$this->t3m['BE_USERS']['NONUSED_LOGINS'][$row['username']]['lastlogin'] = $row['lastlogin'];
-		}
-	*/
-		
+
 		// typo3 log
 		$DBresult = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,details', 
 			'sys_log', 'error=1', '', 'tstamp DESC', 10 /* TODO via TS ...*/ );
@@ -165,10 +152,58 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 
 		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.typo3.ErrorLog')),
 			'<h3>'.$this->translate('tree.typo3.ErrorLog').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
+
+
+			
+		/*<show all admins>*/
+		$UserAdminNode = $this->addNode($MainNode,array(
+			'FOLDED'=>'false',
+			'TEXT'=>$this->translate('tree.typo3.useradmin'),
+		));
+		$this->addIcon($UserAdminNode,'penguin'); 
+	
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'username,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=1', '', 'username', '10' );
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
+			$this->BeUsersHandleRow($UserAdminNode,$row);
+		}
+		/*</show all admins>*/
 		
+		/*<show all non admins>*/
+		$UserUserNode = $this->addNode($MainNode,array(
+			'FOLDED'=>'false',
+			'TEXT'=>$this->translate('tree.typo3.users'),
+		));
+		$this->addIcon($UserUserNode,'male1'); 
+	
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'username,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=0', '', 'username', '10' );
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
+			$this->BeUsersHandleRow($UserUserNode,$row);
+		}
+		/*</show all non admins>*/
+
 		
 	}/*endmethod*/
 
+	
+	
+	private function BeUsersHandleRow(SimpleXMLElement &$xmlNode,$row){
+
+		$aUserNode = $this->addNode($xmlNode,array(
+				// 'FOLDED'=>'false',
+				'TEXT'=>$row['username']
+			));
+			if( $row['deleted'] == 1 ) {	$this->addIcon($aUserNode,'button_cancel'); }
+			elseif( $row['disable'] == 1 ) {	$this->addIcon($aUserNode,'encrypted'); }
+			if( ($row['lastlogin']+(3600*24*9)) < time() ) {	$this->addIcon($aUserNode,'hourglass'); }
+			
+			if( !empty($row['realname']) ){ $this->addNode($aUserNode,array('TEXT'=>$row['realname'])); }
+			if( !empty($row['email']) ){ $this->addNode($aUserNode,array('TEXT'=>$row['email']));	}
+			
+			$this->addNode($aUserNode,array('TEXT'=>'Idea Show SysLog last 10 enries...'));
+	
+	} /* endfnc */
+	
+	
 	/**
 	 * gets some server informations
 	 *
@@ -258,12 +293,40 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 	 * @return	SimpleXMLElement
 	 */
 	public function getExtensionNode(SimpleXMLElement &$xmlNode) {
-
-		$ChildFirst_Extensions = $this->addNode($xmlNode,array(
+		global $TCA;
+		
+/*		$ChildFirst_Extensions = $this->addNode($xmlNode,array(
 			'POSITION'=>'left',
 			'TEXT'=>$this->translate('tree.extensions'),
-		));
+		)); */
+		
+		$ChildFirst_Extensions = $this->addImgNode($xmlNode,array(
+			'POSITION'=>'left',
+			'TEXT'=>$this->translate('tree.extensions'),
+		), 'typo3/sysext/t3skin/icons/module_tools_em.png' );			
+		
 
+	//	echo '<pre>';   var_dump( $TCA["tt_content"]["columns"]['list_type']['config']['items'] ); exit;
+
+		$selectableExtensions = $this->addNode($ChildFirst_Extensions,array(
+			'TEXT'=>$this->translate('tree.extensions.selectable'),
+			'FOLDED'=>'true',
+		));
+		
+		foreach( $TCA["tt_content"]["columns"]['list_type']['config']['items'] as $ei=>$extA ){
+
+			
+			$extA[0] = $this->SYSLANG->sL($extA[0]);
+
+			if( !empty($extA[0]) ){
+			
+				$this->addImgNode($selectableExtensions,array(
+					'TEXT'=> '('.$extA[1].') '.$extA[0],
+				),$extA[2] );			
+			}
+			
+		
+		}/*endforeach*/
 
 
 		$installedExt = $this->getInstalledExtensions();
@@ -294,7 +357,13 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 
 				// ext icon
 				$extIcon = $preURI . $extKey . '/ext_icon.gif';
+				
+				$extNode = $this->addImgNode($catNode,array(
+					'FOLDED'=>'true',
+					'TEXT'=> $niceName,
+				), $extIcon );			
 
+				/*
 				if( file_exists(PATH_site.$extIcon) ){
 					$img = '<img src="http://'.t3lib_div::getIndpEnv('HTTP_HOST').'/'.$extIcon.'"/>';
 					$nodeHTML = $img.'@#160;@#160;'.htmlspecialchars($niceName);
@@ -306,7 +375,7 @@ class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportC
 						'FOLDED'=>'true',
 						'TEXT'=>htmlspecialchars($niceName),
 					) );
-				}
+				} */
 
 
 				// installed or not icon
