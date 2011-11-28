@@ -3,13 +3,13 @@ if (!defined ('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-$TCA['tx_freemind2_domain_model_fmconfig'] = array(
-	'ctrl' => $TCA['tx_freemind2_domain_model_fmconfig']['ctrl'],
+$TCA['tx_typo3mind_domain_model_t3mind'] = array(
+	'ctrl' => $TCA['tx_typo3mind_domain_model_t3mind']['ctrl'],
 	'interface' => array(
 		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, page_uid, recursive, font_face, font_color, font_size, font_bold, font_italic, cloud_is, cloud_color, node_color, node_folded, node_position, node_style, node_icon, node_user_icon, edge_color, edge_style, edge_width',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, recursive, page_uid, --div--;LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tabs.font, font_face, font_color, font_size, font_bold, font_italic, --div--;LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tabs.cloud, cloud_is, cloud_color, --div--;LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tabs.node,node_color, node_folded, node_position, node_style, node_icon, --div--;LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tabs.nodeui, node_user_icon, --div--;LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tabs.edge,edge_color, edge_style, edge_width,--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,starttime, endtime'),
+		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, recursive, page_uid, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.font, font_face, font_color, font_size, font_bold, font_italic, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.cloud, cloud_is, cloud_color, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.node,node_color, node_folded, node_position, node_style, node_icon, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.nodeui, node_user_icon, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.edge,edge_color, edge_style, edge_width,--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,starttime, endtime'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -37,8 +37,8 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 				'items' => array(
 					array('', 0),
 				),
-				'foreign_table' => 'tx_freemind2_domain_model_fmconfig',
-				'foreign_table_where' => 'AND tx_freemind2_domain_model_fmconfig.pid=###CURRENT_PID### AND tx_freemind2_domain_model_fmconfig.sys_language_uid IN (-1,0)',
+				'foreign_table' => 'tx_typo3mind_domain_model_t3mind',
+				'foreign_table_where' => 'AND tx_typo3mind_domain_model_t3mind.pid=###CURRENT_PID### AND tx_typo3mind_domain_model_t3mind.sys_language_uid IN (-1,0)',
 			),
 		),
 		'l10n_diffsource' => array(
@@ -95,7 +95,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'page_uid' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.page_uid',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.page_uid',
 			'config' => array(
 				'type' => 'group',
                 'internal_type' => 'db',
@@ -107,7 +107,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'recursive' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.recursive',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.recursive',
 			'config' => array(
 				'type' => 'check',
 				'default' => 0,
@@ -116,7 +116,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'font_face' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.font_face',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.font_face',
 			'config' => array(
 				'type' => 'select',
 				'items' => array(),
@@ -131,7 +131,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'font_color' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.font_color',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.font_color',
 			'config' => array(
 				'type' => 'input',
 				'size' => '7',
@@ -153,7 +153,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'font_size' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.font_size',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.font_size',
 			'config' => array(
 				'type' => 'select',
 				'items' => array(),
@@ -168,7 +168,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'font_bold' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.font_bold',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.font_bold',
 			'config' => array(
 				'type' => 'check',
 				'default' => 0,
@@ -177,7 +177,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'font_italic' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.font_italic',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.font_italic',
 			'config' => array(
 				'type' => 'check',
 				'default' => 0,
@@ -186,7 +186,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'cloud_is' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.cloud_is',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.cloud_is',
 			'config' => array(
 				'type' => 'check',
 				'default' => 0,
@@ -195,7 +195,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'cloud_color' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.cloud_color',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.cloud_color',
 			'config' => array(
 				'type' => 'input',
 				'size' => '7',
@@ -217,7 +217,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'node_color' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_color',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.node_color',
 			'config' => array(
 				'type' => 'input',
 				'size' => '7',
@@ -239,7 +239,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'node_folded' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_folded',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.node_folded',
 			'config' => array(
 				'type' => 'check',
 				'default' => 0,
@@ -248,7 +248,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'node_position' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_position',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.node_position',
 			'config' => array(
 				'type' => 'select',
 				'items' => array(),
@@ -263,7 +263,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'node_style' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_style',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.node_style',
 			'config' => array(
 				'type' => 'select',
 				'items' => array(),
@@ -278,7 +278,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'node_icon' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_icon',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.node_icon',
 			'config' => array(
 				'type' => 'select',
 				'items' => array(),
@@ -295,7 +295,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'node_user_icon' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.node_user_icon',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.node_user_icon',
 			'config' => array(
 				'type' => 'select',
 				'items' => array(),
@@ -311,7 +311,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'edge_color' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.edge_color',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.edge_color',
 			'config' => array(
 				'type' => 'input',
 				'size' => '7',
@@ -333,7 +333,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'edge_style' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.edge_style',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.edge_style',
 			'config' => array(
 				'type' => 'select',
 				'items' => array(),
@@ -348,7 +348,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 		),
 		'edge_width' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig.edge_width',
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.edge_width',
 			'config' => array(
 				'type' => 'select',
 				'items' => array(),

@@ -14,39 +14,39 @@ if(TYPO3_MODE === 'BE') {
 		'fm2be',		// Submodule key
 		'',				// Position
 		array(
-			'FmConfig' => 'export, exportEID, dispatch, editPages, editPagesSave',
+			'T3mind' => 'export, exportEID, dispatch, editPages, editPagesSave',
 		),
 		array(
 			'access' => 'user,group',
-			'icon'   => 'EXT:freemind2/ext_icon.gif',
-			'labels' => 'LLL:EXT:freemind2/Resources/Private/Language/locallang_fm2be.xml',
+			'icon'   => 'EXT:typo3mind/ext_icon.gif',
+			'labels' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_fm2be.xml',
 		)
 	);
 	
 	$GLOBALS['TYPO3_CONF_VARS']['BE']['defaultUserTSconfig'] .= "\n".'options.contextMenu.table.pages.items {
 			755 = ITEM
 			755 {
-				name = freemind2ClickMenu
-				label = LLL:EXT:freemind2/Resources/Private/Language/locallang_fm2be:contextMenu
+				name = typo3mindClickMenu
+				label = LLL:EXT:typo3mind/Resources/Private/Language/locallang_fm2be:contextMenu
 				icon = ' . t3lib_div::locationHeaderUrl(t3lib_extMgm::extRelPath($_EXTKEY) . 'ext_icon.gif') . '
 				spriteIcon =
 				displayCondition =
 				callbackAction = openCustomUrlInContentFrame
-				customAttributes.contentUrl = mod.php?M=web_Freemind2Fm2be&tx_freemind2_web_freemind2fm2be%5Baction%5D=dispatch&tx_freemind2_web_freemind2fm2be%5Bcontroller%5D=FmConfig&id=###ID###
+				customAttributes.contentUrl = mod.php?M=web_Typo3mindFm2be&tx_typo3mind_web_typo3mindfm2be%5Baction%5D=dispatch&tx_typo3mind_web_typo3mindfm2be%5Bcontroller%5D=T3mind&id=###ID###
 			}
 		';
 } /*endif TYPO3_MODE === 'BE'*/
 
-t3lib_extMgm::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'FreeMind2');
+t3lib_extMgm::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'TYPO3Mind');
 
 include_once(t3lib_extMgm::extPath($_EXTKEY).'Classes/Utility/class.tx_fmItemsProcFunc.php');
 
 
-t3lib_extMgm::addLLrefForTCAdescr('tx_freemind2_domain_model_fmconfig', 'EXT:freemind2/Resources/Private/Language/locallang_csh_tx_freemind2_domain_model_fmconfig.xml');
-t3lib_extMgm::allowTableOnStandardPages('tx_freemind2_domain_model_fmconfig');
-$TCA['tx_freemind2_domain_model_fmconfig'] = array(
+t3lib_extMgm::addLLrefForTCAdescr('tx_typo3mind_domain_model_t3mind', 'EXT:typo3mind/Resources/Private/Language/locallang_csh_tx_typo3mind_domain_model_t3mind.xml');
+t3lib_extMgm::allowTableOnStandardPages('tx_typo3mind_domain_model_t3mind');
+$TCA['tx_typo3mind_domain_model_t3mind'] = array(
 	'ctrl' => array(
-		'title'	=> 'LLL:EXT:freemind2/Resources/Private/Language/locallang_db.xml:tx_freemind2_domain_model_fmconfig',
+		'title'	=> 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind',
 		'label' => 'page_uid',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
@@ -64,7 +64,7 @@ $TCA['tx_freemind2_domain_model_fmconfig'] = array(
 			'starttime' => 'starttime',
 			'endtime' => 'endtime',
 		),
-		'dynamicConfigFile' => t3lib_extMgm::extPath($_EXTKEY) . 'Configuration/TCA/FmConfig.php',
-		'iconfile' => t3lib_extMgm::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_freemind2_domain_model_fmconfig.gif'
+		'dynamicConfigFile' => t3lib_extMgm::extPath($_EXTKEY) . 'Configuration/TCA/T3mind.php',
+		'iconfile' => t3lib_extMgm::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_typo3mind_domain_model_t3mind.gif'
 	),
 );

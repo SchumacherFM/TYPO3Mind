@@ -1,12 +1,12 @@
 # Module configuration
-module.tx_freemind2 {
+module.tx_typo3mind {
 	persistence {
-		storagePid = {$module.tx_freemind2.persistence.storagePid}
+		storagePid = {$module.tx_typo3mind.persistence.storagePid}
 	}
 	view {
-		templateRootPath = {$module.tx_freemind2.view.templateRootPath}
-		partialRootPath = {$module.tx_freemind2.view.partialRootPath}
-		layoutRootPath = {$module.tx_freemind2.view.layoutRootPath}
+		templateRootPath = {$module.tx_typo3mind.view.templateRootPath}
+		partialRootPath = {$module.tx_typo3mind.view.partialRootPath}
+		layoutRootPath = {$module.tx_typo3mind.view.layoutRootPath}
 	}
 	
 	settings {
@@ -14,7 +14,7 @@ module.tx_freemind2 {
 		# this values comes out of the freemind.properties file, unpack the lib/freemind.jar file in our FreeMind installation
 		# official buildin icons change only the filename if you know what to do
 		# path below Resources/Public/ Supports only png files
-		iconsPath = typo3conf/ext/freemind2/Resources/Public/freemind_icons/
+		iconsPath = typo3conf/ext/typo3mind/Resources/Public/freemind_icons/
 		
 		# set this to a convinient path
 		# todo find bug why in template in DB not values are taken ...

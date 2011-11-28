@@ -27,11 +27,11 @@
 /**
  *	http://typo3.org/fileadmin/typo3api-4.0.0/d9/de0/classt3lib__BEfunc.html
  *
- * @package freemind2
+ * @package typo3mind
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *
  */
-class Tx_Freemind2_Domain_Repository_FmConfigRepository extends Tx_Extbase_Persistence_Repository {
+class Tx_Typo3mind_Domain_Repository_T3mindRepository extends Tx_Extbase_Persistence_Repository {
 
 	/**
 	 * Gets the icons as an array
@@ -40,7 +40,7 @@ class Tx_Freemind2_Domain_Repository_FmConfigRepository extends Tx_Extbase_Persi
 	 */
 	public function getIcons($settingsIcons){
 
-		$path = t3lib_extMgm::extPath('freemind2').'Resources/Public/'.$settingsIcons['iconsPath']; 
+		$path = t3lib_extMgm::extPath('typo3mind').'Resources/Public/'.$settingsIcons['iconsPath']; 
 
 		$icons = scanDir($path,0);
 		

@@ -33,11 +33,11 @@
 /**
  *
  *
- * @package freemind2
+ * @package typo3mind
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *
  */
-class Tx_Freemind2_Export_mmExportCommon {
+class Tx_Typo3mind_Export_mmExportCommon {
 
 	/**
 	 * pageUid of the current page
@@ -53,11 +53,11 @@ class Tx_Freemind2_Export_mmExportCommon {
 	public $mmVersion = '0.9.0';
 
 	/**
-	 * fmConfigRepository
+	 * t3MindRepository
 	 *
-	 * @var Tx_Freemind2_Domain_Repository_FmConfigRepository
+	 * @var Tx_Typo3mind_Domain_Repository_T3mindRepository
 	 */
-	protected $fmConfigRepository;
+	protected $t3MindRepository;
 
 	/**
 	 * initializeAction
@@ -65,7 +65,7 @@ class Tx_Freemind2_Export_mmExportCommon {
 	 * @return void
 	 */
 	public function __construct() {
-	//	$this->fmConfigRepository = t3lib_div::makeInstance('Tx_Freemind2_Domain_Repository_FmConfigRepository');
+	//	$this->t3MindRepository = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Repository_T3mindRepository');
 	}
 
 	/**
@@ -263,13 +263,13 @@ class Tx_Freemind2_Export_mmExportCommon {
 	 * Creates the attributes from a page record
 	 *
 	 * @param	array $pageRecord
-	 * @param	Tx_Freemind2_Domain_Model_FmConfig $FmConfig
+	 * @param	Tx_Typo3mind_Domain_Model_T3mind $T3mind
 	 * @param	array $additionalAttributes  key is the name and value the value
 	 * @return	SimpleXMLElement
 	 */
-	protected function getAttrFromPage(&$pageRecord,$FmConfig = NULL,$additionalAttributes = array() ) {
+	protected function getAttrFromPage(&$pageRecord,$T3mind = NULL,$additionalAttributes = array() ) {
 
-		/* now we have here to the the special options from the column tx_freemind2_data from table pages */
+		/* now we have here to the the special options from the column tx_typo3mind_data from table pages */
 
 		$attr = array(
 			'FOLDED'=>'false',
@@ -278,8 +278,8 @@ class Tx_Freemind2_Export_mmExportCommon {
 			'TEXT'=>$pageRecord['title'],
 		);
 
-/*		if( !empty( $FmConfig->getNodeColor() ) ){
-			$attr['COLOR'] = $FmConfig->getNodeColor();
+/*		if( !empty( $T3mind->getNodeColor() ) ){
+			$attr['COLOR'] = $T3mind->getNodeColor();
 		} */
 
 		// mvc webrequest -> base uri to build in!
@@ -314,7 +314,7 @@ class Tx_Freemind2_Export_mmExportCommon {
 	 * @return string Translation output.
 	 */
 	protected function translate($key, $arguments = null) {
-		return Tx_Extbase_Utility_Localization::translate($key, 'Freemind2', $arguments);
+		return Tx_Extbase_Utility_Localization::translate($key, 'Typo3mind', $arguments);
 	}
 
 	/**

@@ -32,7 +32,7 @@
 * @author Cyrill Schumacher <cyrill@schumacher.fm>
 */
 		
-class Tx_Freemind2_Utility_eIDDispatcher {
+class Tx_Typo3mind_Utility_eIDDispatcher {
 	
 	
 	/**
@@ -134,13 +134,13 @@ class Tx_Freemind2_Utility_eIDDispatcher {
 		$this->arguments 		= $call['arguments'];	
 */
 		$apikey = t3lib_div::_GP('apikey');
-		$this->extensionName 	= 'freemind2';
+		$this->extensionName 	= 'typo3mind';
 		$this->pluginName 		= 'fm2be';
-		$this->controllerName 	= 'FmConfig';
+		$this->controllerName 	= 'T3mind';
 		$this->actionName 		= 'exportEID';
 		$this->arguments 		= array('apikey'=>$apikey);	
 	}
 }
 
-$dispatcher = t3lib_div::makeInstance('Tx_Freemind2_Utility_eIDDispatcher');
+$dispatcher = t3lib_div::makeInstance('Tx_Typo3mind_Utility_eIDDispatcher');
 $dispatcher->dispatch();

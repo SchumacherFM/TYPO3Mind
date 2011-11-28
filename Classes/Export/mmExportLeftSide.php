@@ -28,11 +28,11 @@
 /**
  *
  *
- * @package freemind2
+ * @package typo3mind
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *
  */
-class Tx_Freemind2_Export_mmExportLeftSide extends Tx_Freemind2_Export_mmExportCommon {
+class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportCommon {
 
 
 	/**

@@ -27,27 +27,27 @@
 /**
  *
  *
- * @package freemind2
+ * @package typo3mind
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *
  */
-class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controller_ActionController {
+class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller_ActionController {
 
 	/**
-	 * fmConfigRepository
+	 * t3MindRepository
 	 *
-	 * @var Tx_Freemind2_Domain_Repository_FmConfigRepository
+	 * @var Tx_Typo3mind_Domain_Repository_T3mindRepository
 	 */
-	protected $fmConfigRepository;
+	protected $t3MindRepository;
 
 	/**
-	 * injectFmConfigRepository
+	 * injectT3mindRepository
 	 *
-	 * @param Tx_Freemind2_Domain_Repository_FmConfigRepository $fmConfigRepository
+	 * @param Tx_Typo3mind_Domain_Repository_T3mindRepository $t3MindRepository
 	 * @return void
 	 */
-	public function injectFmConfigRepository(Tx_Freemind2_Domain_Repository_FmConfigRepository $fmConfigRepository) {
-		$this->fmConfigRepository = $fmConfigRepository;
+	public function injectT3mindRepository(Tx_Typo3mind_Domain_Repository_T3mindRepository $t3MindRepository) {
+		$this->t3MindRepository = $t3MindRepository;
 	}
 
 	/**
@@ -74,7 +74,7 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 	/**
 	 * helpers object
 	 *
-	 * @var Tx_Freemind2_Utility_Helpers
+	 * @var Tx_Typo3mind_Utility_Helpers
 	 */
 	protected $helpers;
 
@@ -86,8 +86,8 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 	public function initializeAction() {
 		$this->pageUid = (int)t3lib_div::_GET('id');
 		$this->apikey = md5(t3lib_div::_GET('apikey'));
-		$this->helpers = new Tx_Freemind2_Utility_Helpers;
-        $this->extConfSettings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['freemind2']);
+		$this->helpers = new Tx_Typo3mind_Utility_Helpers;
+        $this->extConfSettings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['typo3mind']);
 
 		// todo: better error handling
 		if( !isset($this->extConfSettings['apikey']) || trim($this->extConfSettings['apikey'])=='' ){
@@ -107,20 +107,20 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 			die('no page uid specified');
 		}
 	
-			$FmConfig = $this->fmConfigRepository->findOneBypageUid( $this->pageUid );
+			$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
 
-			if( $FmConfig == NULL ){
-				$FmConfig = t3lib_div::makeInstance('Tx_Freemind2_Domain_Model_FmConfig');
-				$FmConfig->setpageUid( $this->pageUid );
-				$this->fmConfigRepository->add($FmConfig);
+			if( $T3mind == NULL ){
+				$T3mind = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Model_T3mind');
+				$T3mind->setpageUid( $this->pageUid );
+				$this->t3MindRepository->add($T3mind);
 				$persistenceManager = Tx_Extbase_Dispatcher::getPersistenceManager();
 				$persistenceManager->persistAll();
-				$FmConfig = $this->fmConfigRepository->findOneBypageUid( $this->pageUid );
+				$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
 			}
 			
 			
 		$T3_THIS_LOCATION = urlencode('mod.php?M=web_list&id='.$this->pageUid);
-		$this->view->assign('redirect','alt_doc.php?returnUrl='.$T3_THIS_LOCATION.'&edit[tx_freemind2_domain_model_fmconfig]['.$FmConfig->getUid().']=edit');
+		$this->view->assign('redirect','alt_doc.php?returnUrl='.$T3_THIS_LOCATION.'&edit[tx_typo3mind_domain_model_t3mind]['.$T3mind->getUid().']=edit');
 		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'uid,title' ) );
 	}
 	
@@ -137,35 +137,35 @@ class Tx_Freemind2_Controller_FmConfigController extends Tx_Extbase_MVC_Controll
 	/**
 	 * action editPages
 	 *
-	 * @param $FmConfig
-	 * @dontvalidate $FmConfig
+	 * @param $T3mind
+	 * @dontvalidate $T3mind
 	 * @return void
 	 */
-	public function editPagesAction(Tx_Freemind2_Domain_Model_FmConfig $FmConfig = NULL) {
+	public function editPagesAction(Tx_Typo3mind_Domain_Model_T3mind $T3mind = NULL) {
 
-		if ($FmConfig == NULL) {
+		if ($T3mind == NULL) {
 
-			$FmConfig = $this->fmConfigRepository->findOneBypageUid( $this->pageUid );
+			$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
 
-			if( $FmConfig == NULL ){
-				$FmConfig = t3lib_div::makeInstance('Tx_Freemind2_Domain_Model_FmConfig');
-				$FmConfig->setpageUid( $this->pageUid );
-				$this->fmConfigRepository->add($FmConfig);
+			if( $T3mind == NULL ){
+				$T3mind = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Model_T3mind');
+				$T3mind->setpageUid( $this->pageUid );
+				$this->t3MindRepository->add($T3mind);
 			}
 		}
 
 /*
 echo '<pre>';
-var_dump($FmConfig);
+var_dump($T3mind);
 die( '</pre>');
 
 */
 
 
-		$this->view->assign('FmConfig', $FmConfig );
+		$this->view->assign('T3mind', $T3mind );
 		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'uid,title' ) );
-		$this->view->assign('icons', $this->fmConfigRepository->getIcons( $this->settings ) );
-		$this->view->assign('userIcons', $this->fmConfigRepository->getUserIcons( $this->settings ) );
+		$this->view->assign('icons', $this->t3MindRepository->getIcons( $this->settings ) );
+		$this->view->assign('userIcons', $this->t3MindRepository->getUserIcons( $this->settings ) );
 		$this->view->assign('nodePositions', $this->helpers->trimExplodeVK(',', $this->settings['nodePositions'] ) );
 		$this->view->assign('nodeStyles', $this->helpers->trimExplodeVK(',', $this->settings['nodeStyles'] ) );
 		$this->view->assign('edgeStyles', $this->helpers->trimExplodeVK(',', $this->settings['edgeStyles'] ) );
@@ -176,11 +176,11 @@ die( '</pre>');
 	/**
 	 * action editPagesSave
 	 *
-	 * @param $FmConfig
+	 * @param $T3mind
 	 * @param array $options
 	 * @return void
 	 */
-	public function editPagesSaveAction(Tx_Freemind2_Domain_Model_FmConfig $FmConfig, $options ) {
+	public function editPagesSaveAction(Tx_Typo3mind_Domain_Model_T3mind $T3mind, $options ) {
 
 		foreach($options as $k=>$v){
 			$options[$k] = (int)$v;
@@ -191,7 +191,7 @@ die( '</pre>');
 		echo '<pre>';
 		var_dump($options);
 		echo '<hr/>';
-		var_dump($FmConfig);
+		var_dump($T3mind);
 		echo '</pre>';
 
 
@@ -199,7 +199,7 @@ die( '</pre>');
 			$this->redirect('editPages');
 		}
 
-		$this->fmConfigRepository->update($FmConfig);
+		$this->t3MindRepository->update($T3mind);
 
 		$this->view->assign('options', $options );
 		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'title' ) );
@@ -214,7 +214,7 @@ die( '</pre>');
 	public function exportAction() {
 
 	
-		$expObj = t3lib_div::makeInstance('Tx_Freemind2_Export_mmExport');
+		$expObj = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExport');
 		$typo3tempFilename = $expObj->getContent();
 		
 		$this->view->assign('downloadURL', '/typo3temp/'.$typo3tempFilename);
@@ -223,7 +223,7 @@ die( '</pre>');
 
 	/**
 	 * action export via eID
-	 http://turmhof/index.php?eID=freemind2&id=6&apikey=tYeAvJ4rgxWSU9C!.mf5k:-dMQq_
+	 http://turmhof/index.php?eID=typo3mind&id=6&apikey=tYeAvJ4rgxWSU9C!.mf5k:-dMQq_
 	 *
 	 * $apikey string the key
 	 * @return void

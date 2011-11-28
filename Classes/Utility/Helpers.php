@@ -25,7 +25,7 @@
 
 
 
-class Tx_Freemind2_Utility_Helpers {
+class Tx_Typo3mind_Utility_Helpers {
 
 
 	/**

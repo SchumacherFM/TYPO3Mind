@@ -37,7 +37,7 @@
  * based on t3lib_treeView but modified for the FreeMind ext
  */
 
-class Tx_Freemind2_Utility_PageTree {
+class Tx_Typo3mind_Utility_PageTree {
 
 		// EXTERNAL, static:
 	public $expandFirst = 0; // If set, the first element in the tree is always expanded.

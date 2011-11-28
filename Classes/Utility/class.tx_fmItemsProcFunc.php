@@ -65,14 +65,14 @@ class tx_fmItemsProcFunc {
 		// global $TCA, $LANG;
 		// http://typo3.toaster-schwerin.de/typo3_dev/2011_11/msg00089.html
 
-		$typoscriptInclude = '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:freemind2/Configuration/TypoScript/setup.txt">';
+		$typoscriptInclude = '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:typo3mind/Configuration/TypoScript/setup.txt">';
 
 		$TSparserObject = t3lib_div::makeInstance('t3lib_tsparser');
 		$configTS = $TSparserObject->checkIncludeLines($typoscriptInclude);
 		$TSparserObject->parse($configTS, $matchObj);
 
 		$tsKey = $params['config']['itemsProcFunc_config']['tsKey'];
-  		$tsValue = $TSparserObject->setup['module.']['tx_freemind2.']['settings.'] [$tsKey];
+  		$tsValue = $TSparserObject->setup['module.']['tx_typo3mind.']['settings.'] [$tsKey];
 
 		$params['items'] = array();
 		if( isset($params['config']['itemsProcFunc_config']['type']) &&

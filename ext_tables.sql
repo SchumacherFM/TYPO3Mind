@@ -1,7 +1,7 @@
 #
-# Table structure for table 'tx_freemind2_domain_model_fmconfig'
+# Table structure for table 'tx_typo3mind_domain_model_t3mind'
 #
-CREATE TABLE tx_freemind2_domain_model_fmconfig (
+CREATE TABLE tx_typo3mind_domain_model_t3mind (
 	uid int(11) NOT NULL auto_increment,
 	pid int(11) DEFAULT '0' NOT NULL,
 

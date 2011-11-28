@@ -27,11 +27,11 @@
 /**
  *
  *
- * @package freemind2
+ * @package typo3mind
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *
  */
-class Tx_Freemind2_Domain_Model_FmConfig extends Tx_Extbase_DomainObject_AbstractEntity {
+class Tx_Typo3mind_Domain_Model_T3mind extends Tx_Extbase_DomainObject_AbstractEntity {
 
 	/**
 	 * Page ID

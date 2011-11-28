@@ -28,18 +28,18 @@
 /**
  *
  *
- * @package freemind2
+ * @package typo3mind
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *
  */
-class Tx_Freemind2_Export_mmExport extends Tx_Freemind2_Export_mmExportCommon implements Tx_Freemind2_Export_mmExportInterface {
+class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon implements Tx_Typo3mind_Export_mmExportInterface {
 
 	/**
-	 * fmConfigRepository
+	 * t3MindRepository
 	 *
-	 * @var Tx_Freemind2_Domain_Repository_FmConfigRepository
+	 * @var Tx_Typo3mind_Domain_Repository_T3mindRepository
 	 */
-	protected $fmConfigRepository;
+	protected $t3MindRepository;
 
 	/**
 	 * initializeAction
@@ -47,7 +47,7 @@ class Tx_Freemind2_Export_mmExport extends Tx_Freemind2_Export_mmExportCommon im
 	 * @return void
 	 */
 	public function __construct() {
-		$this->fmConfigRepository = t3lib_div::makeInstance('Tx_Freemind2_Domain_Repository_FmConfigRepository');
+		$this->t3MindRepository = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Repository_T3mindRepository');
 	}
 
 	/**
@@ -78,7 +78,7 @@ class Tx_Freemind2_Export_mmExport extends Tx_Freemind2_Export_mmExportCommon im
 		$rootNode = $this->addRichContentNode($mmXML,$attributes,$html);
 
 		
-		$mmExportLeftSide = t3lib_div::makeInstance('Tx_Freemind2_Export_mmExportLeftSide');
+		$mmExportLeftSide = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExportLeftSide');
 		$mmExportLeftSide->getTYPONode($rootNode);
 		$mmExportLeftSide->getExtensionNode($rootNode);
 		$mmExportLeftSide->getDatabaseNode($rootNode);
@@ -90,7 +90,7 @@ class Tx_Freemind2_Export_mmExport extends Tx_Freemind2_Export_mmExportCommon im
 		$treeStartingPoint = $this->pageUid;
 		$treeStartingPoint = 0;
 
-		$tree = t3lib_div::makeInstance('Tx_Freemind2_Utility_PageTree');
+		$tree = t3lib_div::makeInstance('Tx_Typo3mind_Utility_PageTree');
 		$tree->init('');
 
 		// Create the tree from starting point:
@@ -105,14 +105,14 @@ class Tx_Freemind2_Export_mmExport extends Tx_Freemind2_Export_mmExportCommon im
 
 
 
-		$FmConfig = $this->fmConfigRepository->findOneByPageUid( $treeStartingRecord['uid'] );
+		$T3mind = $this->t3MindRepository->findOneByPageUid( $treeStartingRecord['uid'] );
 
 
 		foreach($tree->buffer_idH as $uid=>$childUids){
 
-			$FmConfig = $this->fmConfigRepository->findOneByPageUid($uid);
+			$T3mind = $this->t3MindRepository->findOneByPageUid($uid);
 
-			$childs = $this->addNode($firstChild, $this->getAttrFromPage( $tree->recs[$uid] , $FmConfig ) );
+			$childs = $this->addNode($firstChild, $this->getAttrFromPage( $tree->recs[$uid] , $T3mind ) );
 		}
 	*/
 
