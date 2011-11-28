@@ -6,10 +6,10 @@ if (!defined ('TYPO3_MODE')) {
 $TCA['tx_typo3mind_domain_model_t3mind'] = array(
 	'ctrl' => $TCA['tx_typo3mind_domain_model_t3mind']['ctrl'],
 	'interface' => array(
-		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, page_uid, recursive, font_face, font_color, font_size, font_bold, font_italic, cloud_is, cloud_color, node_color, node_folded, node_position, node_style, node_icon, node_user_icon, edge_color, edge_style, edge_width',
+		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, page_uid, encrypt, recursive, font_face, font_color, font_size, font_bold, font_italic, cloud_is, cloud_color, node_color, node_folded, node_position, node_style, node_icon, node_user_icon, edge_color, edge_style, edge_width',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, recursive, page_uid, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.font, font_face, font_color, font_size, font_bold, font_italic, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.cloud, cloud_is, cloud_color, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.node,node_color, node_folded, node_position, node_style, node_icon, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.nodeui, node_user_icon, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.edge,edge_color, edge_style, edge_width,--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,starttime, endtime'),
+		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, recursive, page_uid, encrypt, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.font, font_face, font_color, font_size, font_bold, font_italic, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.cloud, cloud_is, cloud_color, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.node,node_color, node_folded, node_position, node_style, node_icon, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.nodeui, node_user_icon, --div--;LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tabs.edge,edge_color, edge_style, edge_width,--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,starttime, endtime'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -103,6 +103,16 @@ $TCA['tx_typo3mind_domain_model_t3mind'] = array(
                 'size' => 1,
                 'minitems' => 1,
                 'maxitems' => 1,
+			),
+		),
+		
+		'encrypt' => array(
+			'exclude' => 0,
+			'label' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_db.xml:tx_typo3mind_domain_model_t3mind.encrypt',
+			'config' => array(
+				'type' => 'check',
+				'default' => 0,
+				'eval' => 'int',
 			),
 		),
 		'recursive' => array(

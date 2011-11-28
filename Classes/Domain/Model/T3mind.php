@@ -41,6 +41,13 @@ class Tx_Typo3mind_Domain_Model_T3mind extends Tx_Extbase_DomainObject_AbstractE
 	protected $pageUid;
 
 	/**
+	 * encrypt - encrypts this and all sub nodes
+	 *
+	 * @var boolean
+	 */
+	protected $encrypt;
+
+	/**
 	 * Recursive - If recursive is set then all sub pages will have this value
 	 *
 	 * @var boolean
@@ -188,6 +195,25 @@ class Tx_Typo3mind_Domain_Model_T3mind extends Tx_Extbase_DomainObject_AbstractE
 	}
 
 	/**
+	 * Returns the encrypt
+	 *
+	 * @return boolean $encrypt
+	 */
+	public function getencrypt() {
+		return (boolean)$this->encrypt;
+	}
+
+	/**
+	 * Sets the encrypt
+	 *
+	 * @param boolean $encrypt
+	 * @return void
+	 */
+	public function setencrypt($encrypt) {
+		$this->encrypt = (boolean)$encrypt;
+	}
+
+	/**
 	 * Returns the recursive
 	 *
 	 * @return boolean $recursive
@@ -205,7 +231,7 @@ class Tx_Typo3mind_Domain_Model_T3mind extends Tx_Extbase_DomainObject_AbstractE
 	public function setrecursive($recursive) {
 		$this->recursive = (boolean)$recursive;
 	}
-
+	
 	
 	/**
 	 * Returns the fontFace

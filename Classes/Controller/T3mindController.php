@@ -106,7 +106,6 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 			// todo better error messages .... 8-)
 			die('no page uid specified');
 		}
-	
 			$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
 
 			if( $T3mind == NULL ){
@@ -117,13 +116,13 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 				$persistenceManager->persistAll();
 				$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
 			}
-			
-			
+
+
 		$T3_THIS_LOCATION = urlencode('mod.php?M=web_list&id='.$this->pageUid);
 		$this->view->assign('redirect','alt_doc.php?returnUrl='.$T3_THIS_LOCATION.'&edit[tx_typo3mind_domain_model_t3mind]['.$T3mind->getUid().']=edit');
 		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'uid,title' ) );
 	}
-	
+
 	/**
 	 * shows the flash browser and load the current tree
 	 *
@@ -133,7 +132,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 
 	}
 
-	
+
 	/**
 	 * action editPages
 	 *
@@ -213,10 +212,10 @@ die( '</pre>');
 	 */
 	public function exportAction() {
 
-	
+
 		$expObj = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExport');
 		$typo3tempFilename = $expObj->getContent();
-		
+
 		$this->view->assign('downloadURL', '/typo3temp/'.$typo3tempFilename);
 		$this->view->assign('filename', $typo3tempFilename);
 	}
