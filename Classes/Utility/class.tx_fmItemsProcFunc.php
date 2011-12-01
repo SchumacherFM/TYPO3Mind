@@ -78,6 +78,7 @@ class tx_fmItemsProcFunc {
 		$params['items'] = array();
 		if( isset($params['config']['itemsProcFunc_config']['type']) &&
 			$params['config']['itemsProcFunc_config']['type']=='folder' && 
+			$tsValue <> '' &&
 			is_dir(PATH_site.$tsValue) 
 		){
 			$pics = scandir(PATH_site.$tsValue);

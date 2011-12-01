@@ -16,7 +16,8 @@ module.tx_freemind2 {
 		# path below Resources/Public/ Supports only png files
 		iconsPath = typo3conf/ext/freemind2/Resources/Public/freemind_icons/
 
-		userIconsPath = fileadmin/nuvola/16x16/filesystems/
+		# set this to a convinient path
+		userIconsPath = 
 		
 		# first option is always default
 		# use keyword default for no entry in the DB/XML
