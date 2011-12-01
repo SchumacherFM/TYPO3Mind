@@ -26,10 +26,10 @@ Needs TYPO3 4.5 or later, SimpleXML, PHP5',
 	'internal' => '',
 	'uploadfolder' => '',
 	'createDirs' => '',
-	'modify_tables' => 'pages,tt_content',
+	'modify_tables' => '',
 	'clearCacheOnLoad' => 1,
 	'lockType' => '',
-	'version' => '0.0.2',
+	'version' => '0.0.3',
 	'constraints' => array(
 		'depends' => array(
 			'cms' => '',
