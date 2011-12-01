@@ -24,8 +24,6 @@ if(TYPO3_MODE === 'BE') {
 	);
 	
 	$GLOBALS['TYPO3_CONF_VARS']['BE']['defaultUserTSconfig'] .= "\n".'options.contextMenu.table.pages.items {
-			# 754 = DIVIDER
-
 			755 = ITEM
 			755 {
 				name = freemind2ClickMenu
