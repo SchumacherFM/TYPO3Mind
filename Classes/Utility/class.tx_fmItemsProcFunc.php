@@ -3,7 +3,7 @@
  *  Copyright notice
  *
  *  (c) 2011 Cyrill Schumacher <Cyrill@Schumacher.fm>
- *  
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -50,10 +50,10 @@ class tx_fmItemsProcFunc {
 	 * @return	array
 	 */
 	public function trimExplodeVK($d,$s) {
-	
+
 		return $this->arrayKeysEqualValues ( t3lib_div::trimExplode($d, $s ,1 ) );
 	}
-	
+
 	/**
 	 * trimExplode VK = value also in keys
 	 *
@@ -70,33 +70,32 @@ class tx_fmItemsProcFunc {
 		$TSparserObject = t3lib_div::makeInstance('t3lib_tsparser');
 		$configTS = $TSparserObject->checkIncludeLines($typoscriptInclude);
 		$TSparserObject->parse($configTS, $matchObj);
-  
+
 		$tsKey = $params['config']['itemsProcFunc_config']['tsKey'];
   		$tsValue = $TSparserObject->setup['module.']['tx_freemind2.']['settings.'] [$tsKey];
-  
-    
+
 		$params['items'] = array();
 		if( isset($params['config']['itemsProcFunc_config']['type']) &&
-			$params['config']['itemsProcFunc_config']['type']=='folder' && 
+			$params['config']['itemsProcFunc_config']['type']=='folder' &&
 			$tsValue <> '' &&
-			is_dir(PATH_site.$tsValue) 
+			is_dir(PATH_site.$tsValue)
 		){
 			$pics = scandir(PATH_site.$tsValue);
 			foreach($pics as $k=>$v){
 				if( preg_match('~\.(png|jpg|gif|jpeg|webp)$~i',$v) ){
 					$params['items'][] = array($v,$v,'../'.$tsValue.$v);
-				
+
 				}
 			}
 		}else{
 
-		
+
 			$tsValarray = $this->trimExplodeVK(',',$tsValue);
 
 			foreach($tsValarray as $k=>$v){
 				$vk = $v;
 				$vv = $v;
-				
+
 				if( strtolower($vk) == 'default' ){
 					switch($params['config']['eval']){
 						case 'int':
@@ -111,16 +110,16 @@ class tx_fmItemsProcFunc {
 						break;
 					}
 				}
-				
+
 				$params['items'][] = array($vk,$vv);
 			}
-		/*	
+		/*
 	echo '<pre>';
   var_dump($tsValarray);
   exit;	*/
 		}
-		
-		
+
+
 
 	}
 }

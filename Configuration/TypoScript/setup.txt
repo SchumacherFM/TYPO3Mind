@@ -17,7 +17,8 @@ module.tx_freemind2 {
 		iconsPath = typo3conf/ext/freemind2/Resources/Public/freemind_icons/
 		
 		# set this to a convinient path
-		userIconsPath = 
+		# todo find bug why in template in DB not values are taken ...
+		userIconsPath = fileadmin/nuvola/16x16/filesystems/
 		
 		# first option is always default
 		# use keyword default for no entry in the DB/XML
