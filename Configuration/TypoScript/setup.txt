@@ -15,7 +15,7 @@ module.tx_freemind2 {
 		# official buildin icons change only the filename if you know what to do
 		# path below Resources/Public/ Supports only png files
 		iconsPath = typo3conf/ext/freemind2/Resources/Public/freemind_icons/
-
+		
 		# set this to a convinient path
 		userIconsPath = 
 		
