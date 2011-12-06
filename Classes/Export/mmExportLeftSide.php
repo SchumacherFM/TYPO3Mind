@@ -367,26 +367,23 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 	//	echo '<pre>';   var_dump( $TCA["tt_content"]["columns"]['list_type']['config']['items'] ); exit;
 
+		/* frontend plugins which you can choose in the backend */
 		$selectableExtensions = $this->addNode($ChildFirst_Extensions,array(
 			'TEXT'=>$this->translate('tree.extensions.selectable'),
 			'FOLDED'=>'true',
 		));
 
 		foreach( $TCA["tt_content"]["columns"]['list_type']['config']['items'] as $ei=>$extA ){
-
-
 			$extA[0] = $this->SYSLANG->sL($extA[0]);
-
 			if( !empty($extA[0]) ){
-
 				$this->addImgNode($selectableExtensions,array(
 					'TEXT'=> '('.$extA[1].') '.$extA[0],
 				),$extA[2] );
 			}
-
-
 		}/*endforeach*/
 
+		
+		
 
 		$installedExt = $this->getInstalledExtensions();
 

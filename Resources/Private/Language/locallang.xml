@@ -24,7 +24,10 @@
 			<label index="tx_typo3mind_domain_model_t3mind.edge_color">Edge color</label>
 			<label index="tx_typo3mind_domain_model_t3mind.edge_style">Edge style</label>
 			<label index="tx_typo3mind_domain_model_t3mind.edge_width">Edge width</label>
+
+
 			
+			<label index="tree.fileInfo">About this file</label>
 			<label index="tree.extensions">Installed Extensions</label>
 			<label index="tree.extensions.selectable">Selectable active FE plugins</label>
 			<label index="tree.version">Version</label>
