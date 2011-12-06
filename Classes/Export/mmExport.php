@@ -75,8 +75,12 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 		);
 
 		
-		$html = '<center><img src="'.$this->httpHost.'typo3/sysext/t3skin/icons/gfx/loginlogo_transp.gif" alt="TYPO3 Logo" /></center>
-		<h2>'.$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'].'</h2><p style="text-align:center;">TYPO3: '.TYPO3_version.'</p>';
+		$html = '<center><img src="'.$this->httpHost.'typo3/sysext/t3skin/icons/gfx/loginlogo_transp.gif" alt="TYPO3 Logo" />
+		<h2>'.$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'].'</h2>
+		<p style="font-size:10px;">TYPO3: '.TYPO3_version.'<br />
+		Created: '.date('Y-m-d H:i:s').'<br />
+		MD5 Hash: ###MD5_FILE_HASH####
+		</p></center>';
 		$rootNode = $this->addRichContentNode($mmXML,$attributes,$html);
 
 		

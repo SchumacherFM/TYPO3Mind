@@ -97,12 +97,24 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	 */
 	protected function finalOutputFile(SimpleXMLElement &$xml) {
 
+		// todo add datetime here
 		$fileName = 'TYPO3Mind_'.preg_replace('~[^a-z0-9]+~i','',$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']).'.mm';
 		// that's quite a hack!
-		file_put_contents(PATH_site.'typo3temp/'.$fileName, str_replace(
+		
+		
+		
+		$xml = str_replace(
 			array('|lt|','|gt|','@#'),
 			array('<','>','&#'),
-			$xml->asXML() ) );
+			$xml->asXML() 
+		);
+		
+		$xml = str_replace(
+			'###MD5_FILE_HASH####',
+			md5($xml),
+			$xml
+		);		
+		file_put_contents(PATH_site.'typo3temp/'.$fileName, $xml );
 		return $fileName;
 	}
 
