@@ -92,9 +92,7 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 		$this->addNode($ThisFileInfoNode,array(
 			'TEXT'=>'MD5 Hash: ###MD5_FILE_HASH####',
 		));
-		$this->addNode($ThisFileInfoNode,array(
-			'TEXT'=>'Node count: ###NODE_COUNT####',
-		));
+
 		
 		$mmExportLeftSide = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExportLeftSide');
 		$mmExportLeftSide->getTYPONode($rootNode);

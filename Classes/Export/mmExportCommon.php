@@ -108,21 +108,21 @@ class Tx_Typo3mind_Export_mmExportCommon {
 		// todo add datetime here
 		$fileName = 'TYPO3Mind_'.preg_replace('~[^a-z0-9]+~i','',$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']).'-'.date('Y-m-d_His').'.mm';
 		// that's quite a hack!
-		
-		
-		
+
+
+
 		$xml = str_replace(
 			array('|lt|','|gt|','@#'),
 			array('<','>','&#'),
-			$xml->asXML() 
+			$xml->asXML()
 		);
-		
+
 		$md5 = md5($xml);
-		$xml = '<!--HiddenMD5:'.$md5.'-->' . str_replace( 
-			array('###MD5_FILE_HASH####','###NODE_COUNT###'), 
-			array($md5,$this->nodeIDcounter), 
-			$xml 
-		);		
+		$xml = str_replace(
+			array('###MD5_FILE_HASH####'),
+			array($md5),
+			$xml
+		).'<!--HiddenMD5:'.$md5.'-->';
 
 		file_put_contents(PATH_site.'typo3temp/'.$fileName, $xml );
 		return $fileName;
@@ -186,7 +186,7 @@ class Tx_Typo3mind_Export_mmExportCommon {
 			$edge->addAttribute($k,$v);
 		}
 	}
-	
+
 	/**
 	 * adds a font
 	 *
@@ -221,20 +221,20 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	protected function addImgNode(SimpleXMLElement $xmlNode,$attributes,$imgRelPath,$imgHTML='') {
 
 		$iconLocal = str_replace('../','',$imgRelPath);
-		
+
 		if( is_file(PATH_site.$iconLocal)  ){
-		
+
 			$nodeHTML = '<img '.$imgHTML.' src="'.$this->httpHost.$iconLocal.'"/>'.
 						'@#160;@#160;'.htmlspecialchars( $attributes['TEXT'] );
 			$childNode = $this->addRichContentNode($xmlNode, $attributes ,$nodeHTML);
-		
+
 		}else {
 			$childNode = $this->addNode($xmlNode,$attributes);
 		}
-		
+
 		return $childNode;
 	}
-	
+
 	/**
 	 * Creates a rich content node
 	 *
@@ -250,7 +250,7 @@ class Tx_Typo3mind_Export_mmExportCommon {
 		return $this->addRichContentNote($xml,$attributes,$htmlContent,$addEdgeAttr,$addFontAttr, 'NODE' );
 
 	}
-	
+
 	/**
 	 * Creates a rich content note
 	 *
@@ -267,7 +267,7 @@ class Tx_Typo3mind_Export_mmExportCommon {
 		$htmlContent = str_replace( array('<','>'), array('|lt|','|gt|'), $htmlContent );
 
 		$css = '';
-		
+
 		$node = $xml->addChild('node','');
 		$this->CheckAttributes($attributes);
 
@@ -287,11 +287,11 @@ class Tx_Typo3mind_Export_mmExportCommon {
 		if( count($addFontAttr)>0 ){
 			$this->addFont($node, $addFontAttr );
 		}
-				
+
 		return $node;
 	}
 
-		
+
 	/**
 	 * Creates the attributes from a page record
 	 *
