@@ -40,6 +40,13 @@
 class Tx_Typo3mind_Export_mmExportCommon {
 
 	/**
+	 * counts the nodes and uses this value as an id in the .mm file
+	 *
+	 * @var int
+	 */
+	protected $nodeIDcounter;
+
+	/**
 	 * pageUid of the current page
 	 *
 	 * @var int
@@ -74,6 +81,7 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	public function __construct() {
 	//	$this->t3MindRepository = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Repository_T3mindRepository');
 		$this->httpHost = 'http://'.t3lib_div::getIndpEnv('HTTP_HOST').'/';
+		$this->nodeIDcounter = 1;
 	}
 
 	/**
@@ -110,7 +118,11 @@ class Tx_Typo3mind_Export_mmExportCommon {
 		);
 		
 		$md5 = md5($xml);
-		$xml = str_replace( '###MD5_FILE_HASH####', $md5, $xml )."\n<!--HiddenMD5:".$md5.'-->';		
+		$xml = '<!--HiddenMD5:'.$md5.'-->' . str_replace( 
+			array('###MD5_FILE_HASH####','###NODE_COUNT###'), 
+			array($md5,$this->nodeIDcounter), 
+			$xml 
+		);		
 
 		file_put_contents(PATH_site.'typo3temp/'.$fileName, $xml );
 		return $fileName;
@@ -320,11 +332,11 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	protected function CheckAttributes(&$attributes,$defaultNodeIdConfigFromTSorDB = '') {
 
 		if( !isset($attributes['ID']) ){
-			$attributes['ID'] = 'node_'.$this->getMicrotime();
+			$attributes['ID'] = 't3m'.$this->nodeIDcounter;
 		}
 
 		$attributes['TEXT'] = str_replace('"','',$attributes['TEXT']);
-		 
+		 $this->nodeIDcounter++;
 	}
 
 	/**
