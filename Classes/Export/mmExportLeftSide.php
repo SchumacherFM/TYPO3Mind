@@ -114,11 +114,19 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	private function getTYPOFilesNode(SimpleXMLElement &$xmlNode) {
 
 		$MainNode = $this->addImgNode($xmlNode,array(
-	//		'FOLDED'=>'true',
+			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3filesandfolders'),
 		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-folder-default.png', 'height="16"' );
 
 		$dir = scandir(PATH_site.'fileadmin/');
+/*		echo '<pre>';
+		var_dump($dir);
+		exit;
+*/		foreach($dir as $k=>$v){
+			$this->addNode($MainNode,array(
+				'TEXT'=>$v
+			));
+		}
 
 	}
 	/**
@@ -135,6 +143,10 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'TEXT'=>$this->translate('tree.typo3'),
 		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-root.png', 'height="16"' );
 
+		
+		
+		$this->getTYPOFilesNode($MainNode);
+		
 
 		// logs
 		$LogsNode = $this->addImgNode($MainNode,array(
