@@ -118,6 +118,30 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'TEXT'=>$this->translate('tree.typo3filesandfolders'),
 		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-folder-default.png', 'height="16"' );
 
+/*
+function get_dir_size($dir_name){
+        $dir_size =0;
+           if (is_dir($dir_name)) {
+               if ($dh = opendir($dir_name)) {
+                  while (($file = readdir($dh)) !== false) {
+                        if($file !=”.” && $file != “..”){
+                              if(is_file($dir_name.”/”.$file)){
+                                   $dir_size += filesize($dir_name.”/”.$file);
+                             }
+                             // check for any new directory inside this directory 
+                             if(is_dir($dir_name.”/”.$file)){
+                                $dir_size +=  get_dir_size($dir_name.”/”.$file);
+                              }
+                           }
+                     }
+             }
+       }
+closedir($dh);
+return $dir_size;
+}
+*/
+		
+		// own class ... and diskfree function
 		$dir = scandir(PATH_site.'fileadmin/');
 /*		echo '<pre>';
 		var_dump($dir);
