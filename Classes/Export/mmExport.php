@@ -47,6 +47,7 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 	 * @return void
 	 */
 	public function __construct() {
+		parent::__construct();
 		$this->t3MindRepository = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Repository_T3mindRepository');
 	}
 
@@ -74,7 +75,8 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 		);
 
 		
-		$html = '<h2>'.$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'].'</h2><p>TYPO3: '.TYPO3_version.'</p>';
+		$html = '<center><img src="'.$this->httpHost.'typo3/sysext/t3skin/icons/gfx/loginlogo_transp.gif" alt="TYPO3 Logo" /></center>
+		<h2>'.$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'].'</h2><p style="text-align:center;">TYPO3: '.TYPO3_version.'</p>';
 		$rootNode = $this->addRichContentNode($mmXML,$attributes,$html);
 
 		

@@ -46,6 +46,13 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	 */
 	protected $pageUid;
 
+	/**
+	 * the http host with http prefix
+	 *
+	 * @var string
+	 */
+	protected $httpHost;
+
 
 	/**
 	 * @var string
@@ -66,6 +73,7 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	 */
 	public function __construct() {
 	//	$this->t3MindRepository = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Repository_T3mindRepository');
+		$this->httpHost = 'http://'.t3lib_div::getIndpEnv('HTTP_HOST').'/';
 	}
 
 	/**
@@ -89,7 +97,7 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	 */
 	protected function finalOutputFile(SimpleXMLElement &$xml) {
 
-		$fileName = 'fm2_'.preg_replace('~[^a-z0-9]+~i','',$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']).'.mm';
+		$fileName = 'TYPO3Mind_'.preg_replace('~[^a-z0-9]+~i','',$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']).'.mm';
 		// that's quite a hack!
 		file_put_contents(PATH_site.'typo3temp/'.$fileName, str_replace(
 			array('|lt|','|gt|','@#'),
@@ -185,15 +193,16 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	 * @param	SimpleXMLElement $xmlNode
 	 * @param	array $attributes
 	 * @param	string $imgRelPath relativ image path like ../typo3conf/ext/..../ext_icon.gif
+	 * @param	string $imgHTML additionl html for the img tag
 	 * @return	nothing
 	 */
-	protected function addImgNode(SimpleXMLElement $xmlNode,$attributes,$imgRelPath) {
+	protected function addImgNode(SimpleXMLElement $xmlNode,$attributes,$imgRelPath,$imgHTML='') {
 
 		$iconLocal = str_replace('../','',$imgRelPath);
 		
 		if( is_file(PATH_site.$iconLocal)  ){
 		
-			$nodeHTML = '<img src="http://'.t3lib_div::getIndpEnv('HTTP_HOST').'/'.$iconLocal.'"/>'.
+			$nodeHTML = '<img '.$imgHTML.' src="'.$this->httpHost.$iconLocal.'"/>'.
 						'@#160;@#160;'.htmlspecialchars( $attributes['TEXT'] );
 			$childNode = $this->addRichContentNode($xmlNode, $attributes ,$nodeHTML);
 		
@@ -235,6 +244,8 @@ class Tx_Typo3mind_Export_mmExportCommon {
 
 		$htmlContent = str_replace( array('<','>'), array('|lt|','|gt|'), $htmlContent );
 
+		$css = '';
+		
 		$node = $xml->addChild('node','');
 		$this->CheckAttributes($attributes);
 
@@ -245,7 +256,7 @@ class Tx_Typo3mind_Export_mmExportCommon {
 		$rc = $node->addChild('richcontent','');
 		$rc->addAttribute('TYPE',$type);
 		$html = $rc->addChild('html','');
-				$html->addChild('head','');
+				$html->addChild('head',$css);
 		$body = $html->addChild('body',$htmlContent);
 
 		if( count($addEdgeAttr)>0 ){

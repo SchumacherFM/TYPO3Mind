@@ -72,7 +72,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @return void
 	 */
 	public function __construct() {
-
+		parent::__construct();
 		$this->SYSLANG = t3lib_div::makeInstance('language');
 		$this->SYSLANG->init('default');	// initalize language-object with actual language
 		$this->categories = array(
@@ -112,12 +112,18 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @return	SimpleXMLElement
 	 */
 	public function getTYPONode(SimpleXMLElement &$xmlNode) {
-		$MainNode = $this->addNode($xmlNode,array(
+	
+		$MainNode = $this->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
-			'FOLDED'=>'true',
+	//		'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3'),
-		));
+		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-root.png', 'height="16"' );
 
+		
+		$LogsNode = $this->addImgNode($MainNode,array(
+			'FOLDED'=>'true',
+			'TEXT'=>$this->translate('tree.typo3logs'),
+		), 'typo3/sysext/t3skin/icons/module_tools_log.gif', 'height="16"' );
 		
 		$nodeHTML = array();
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,log_data', 
@@ -126,8 +132,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			$nodeHTML[ $r['LoggedDate'] ] = implode(' / ',unserialize($r['log_data']));
 		}
 		
-		// TODO this->translate()
-		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.typo3.SuccessfullBackendLogins') ),
+		$this->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.SuccessfullBackendLogins') ),
 			'<h3>'.$this->translate('tree.typo3.SuccessfullBackendLogins').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 	
 	
@@ -137,7 +142,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$nodeHTML[ $r['LoggedDate'] ] = implode(' / ',unserialize($r['log_data']));
 		}
-		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.typo3.FailedBackendLogins')), 
+		$this->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.FailedBackendLogins')), 
 			'<h3>'.$this->translate('tree.typo3.FailedBackendLogins').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 
 
@@ -150,13 +155,20 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		}
 //		echo '<pre>';   var_dump( $nodeHTML ); exit;
 
-		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.typo3.ErrorLog')),
+		$this->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.ErrorLog')),
 			'<h3>'.$this->translate('tree.typo3.ErrorLog').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 
 
 			
+			
+		$UsersNode = $this->addImgNode($MainNode,array(
+			'FOLDED'=>'true',
+			'TEXT'=>$this->translate('tree.typo3users'),
+		), 'typo3/sysext/t3skin/icons/gfx/i/be_users__x.gif', 'height="16"' );
+			
+			
 		/*<show all admins>*/
-		$UserAdminNode = $this->addNode($MainNode,array(
+		$UserAdminNode = $this->addNode($UsersNode,array(
 			'FOLDED'=>'false',
 			'TEXT'=>$this->translate('tree.typo3.useradmin'),
 		));
@@ -169,7 +181,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		/*</show all admins>*/
 		
 		/*<show all non admins>*/
-		$UserUserNode = $this->addNode($MainNode,array(
+		$UserUserNode = $this->addNode($UsersNode,array(
 			'FOLDED'=>'false',
 			'TEXT'=>$this->translate('tree.typo3.users'),
 		));
@@ -211,16 +223,27 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @return	SimpleXMLElement
 	 */
 	public function getServerNode(SimpleXMLElement &$xmlNode) {
-		$MainNode = $this->addNode($xmlNode,array(
+	
+		$MainNode = $this->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.server'),
-		));
+		), 'typo3/sysext/t3skin/images/icons/apps/filetree-root.png', 'height="16"' );
 
+		
 		$_SERVER['PHP_VERSION'] = phpversion();
+		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.server._server')),  $this->array2Html2ColTable($_SERVER) );
 
-		$this->addRichContentNode($MainNode, array(),  $this->array2Html2ColTable($_SERVER) );
+		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.server._env')),  $this->array2Html2ColTable($_ENV) );
 
+		/* nice, but needs deep reformatting ...
+		ob_start() ;
+		phpinfo(INFO_MODULES) ;
+		$pinfo = ob_get_contents () ;
+		ob_end_clean () ;		
+		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.server.phpModules')),  $pinfo );
+		*/
+		
 	}
 	/**
 	 * gets some database informations
@@ -229,10 +252,11 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @return	SimpleXMLElement
 	 */
 	public function getDatabaseNode(SimpleXMLElement &$xmlNode) {
-		$MainNode = $this->addNode($xmlNode,array(
+
+		$MainNode = $this->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
 			'TEXT'=>$this->translate('tree.database'),
-		));
+		), 'typo3/sysext/t3skin/icons/module_tools_dbint.gif', 'height="16"' );
 
 		// general mysql infos
 		$mysqlNode = $this->addNode($MainNode,array(
@@ -268,16 +292,21 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			));
 
 			foreach ($tables as $tkey => $tinfo){
+			
+				$ATableNode = $this->addNode($GroupTableNode,array(
+					'FOLDED'=>'true',
+					'TEXT'=>$tkey,
+				));
 
-				$nodeHTML = array('<table width="300" border="0" cellpadding="3" cellspacing="0">');
-				$nodeHTML[] = '<tr><th colspan="2">'.$tkey.'</th></tr>';
+				$nodeHTML = array('<table border="0" cellpadding="3" cellspacing="0">');
+				// $nodeHTML[] = '<tr><th colspan="2">'.$tkey.'</th></tr>';
 				$nodeHTML[] = '<tr><td>Rows</td><td style="text-align: right">'.$tinfo['Rows'].'</td></tr>';
 				$nodeHTML[] = '<tr><td>Data</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Data_length']/1024).'KiB</td></tr>';
 				$nodeHTML[] = '<tr><td>Index</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Index_length']/1024).'KiB</td></tr>';
 				if( $tinfo['Data_free']>0 ){ $nodeHTML[] = '<tr><td>Overhead</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Data_free']/1024).'KiB</td></tr>'; }
 				$nodeHTML[] = '</table>';
 
-				$tinfoNode = $this->addRichContentNode($GroupTableNode, array(),implode('',$nodeHTML) );
+				$tinfoNode = $this->addRichContentNode($ATableNode, array(),implode('',$nodeHTML) );
 			}
 
 		}/*endforeach*/
@@ -365,7 +394,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 				/*
 				if( file_exists(PATH_site.$extIcon) ){
-					$img = '<img src="http://'.t3lib_div::getIndpEnv('HTTP_HOST').'/'.$extIcon.'"/>';
+					$img = '<img src="'.$this->httpHost.$extIcon.'"/>';
 					$nodeHTML = $img.'@#160;@#160;'.htmlspecialchars($niceName);
 					$extNode = $this->addRichContentNode($catNode, array(
 						'FOLDED'=>'true',
