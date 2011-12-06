@@ -106,48 +106,64 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 
 	/**
+	 * gets some T3 specific informations about fileadmin and uploads folder ...
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @return	SimpleXMLElement
+	 */
+	private function getTYPOFilesNode(SimpleXMLElement &$xmlNode) {
+
+		$MainNode = $this->addImgNode($xmlNode,array(
+	//		'FOLDED'=>'true',
+			'TEXT'=>$this->translate('tree.typo3filesandfolders'),
+		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-folder-default.png', 'height="16"' );
+
+		$dir = scandir(PATH_site.'fileadmin/');
+
+	}
+	/**
 	 * gets some T3 specific informations
 	 *
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
 	public function getTYPONode(SimpleXMLElement &$xmlNode) {
-	
+
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
 	//		'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3'),
 		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-root.png', 'height="16"' );
 
-		
+
+		// logs
 		$LogsNode = $this->addImgNode($MainNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3logs'),
 		), 'typo3/sysext/t3skin/icons/module_tools_log.gif', 'height="16"' );
-		
+
 		$nodeHTML = array();
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,log_data', 
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,log_data',
 			'sys_log', 'error=0 AND type=255', '', 'tstamp DESC', 10 );
 		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$nodeHTML[ $r['LoggedDate'] ] = implode(' / ',unserialize($r['log_data']));
 		}
-		
+
 		$this->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.SuccessfullBackendLogins') ),
 			'<h3>'.$this->translate('tree.typo3.SuccessfullBackendLogins').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
-	
-	
+
+
 		$nodeHTML = array();
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,log_data', 
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,log_data',
 			'sys_log', 'error=3', '', 'tstamp DESC', 10 );
 		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$nodeHTML[ $r['LoggedDate'] ] = implode(' / ',unserialize($r['log_data']));
 		}
-		$this->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.FailedBackendLogins')), 
+		$this->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.FailedBackendLogins')),
 			'<h3>'.$this->translate('tree.typo3.FailedBackendLogins').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 
 
-		// typo3 log
-		$DBresult = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,details', 
+		$DBresult = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,details',
 			'sys_log', 'error=1', '', 'tstamp DESC', 10 /* TODO via TS ...*/ );
 		$nodeHTML = array();
 		while($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($DBresult) ){
@@ -159,45 +175,47 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'<h3>'.$this->translate('tree.typo3.ErrorLog').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 
 
-			
-			
+
+
+		// backend users groups and missing FE users ... must be implemented ...
+
 		$UsersNode = $this->addImgNode($MainNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3users'),
 		), 'typo3/sysext/t3skin/icons/gfx/i/be_users__x.gif', 'height="16"' );
-			
-			
+
+
 		/*<show all admins>*/
 		$UserAdminNode = $this->addNode($UsersNode,array(
 			'FOLDED'=>'false',
 			'TEXT'=>$this->translate('tree.typo3.useradmin'),
 		));
-		$this->addIcon($UserAdminNode,'penguin'); 
-	
+		$this->addIcon($UserAdminNode,'penguin');
+
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'username,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=1', '', 'username', '10' );
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$this->BeUsersHandleRow($UserAdminNode,$row);
 		}
 		/*</show all admins>*/
-		
+
 		/*<show all non admins>*/
 		$UserUserNode = $this->addNode($UsersNode,array(
 			'FOLDED'=>'false',
 			'TEXT'=>$this->translate('tree.typo3.users'),
 		));
-		$this->addIcon($UserUserNode,'male1'); 
-	
+		$this->addIcon($UserUserNode,'male1');
+
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'username,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=0', '', 'username', '10' );
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$this->BeUsersHandleRow($UserUserNode,$row);
 		}
 		/*</show all non admins>*/
 
-		
+
 	}/*endmethod*/
 
-	
-	
+
+
 	private function BeUsersHandleRow(SimpleXMLElement &$xmlNode,$row){
 
 		$aUserNode = $this->addNode($xmlNode,array(
@@ -207,15 +225,15 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			if( $row['deleted'] == 1 ) {	$this->addIcon($aUserNode,'button_cancel'); }
 			elseif( $row['disable'] == 1 ) {	$this->addIcon($aUserNode,'encrypted'); }
 			if( ($row['lastlogin']+(3600*24*9)) < time() ) {	$this->addIcon($aUserNode,'hourglass'); }
-			
+
 			if( !empty($row['realname']) ){ $this->addNode($aUserNode,array('TEXT'=>$row['realname'])); }
 			if( !empty($row['email']) ){ $this->addNode($aUserNode,array('TEXT'=>$row['email']));	}
-			
+
 			$this->addNode($aUserNode,array('TEXT'=>'Idea Show SysLog last 10 enries...'));
-	
+
 	} /* endfnc */
-	
-	
+
+
 	/**
 	 * gets some server informations
 	 *
@@ -223,14 +241,14 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @return	SimpleXMLElement
 	 */
 	public function getServerNode(SimpleXMLElement &$xmlNode) {
-	
+
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.server'),
 		), 'typo3/sysext/t3skin/images/icons/apps/filetree-root.png', 'height="16"' );
 
-		
+
 		$_SERVER['PHP_VERSION'] = phpversion();
 		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.server._server')),  $this->array2Html2ColTable($_SERVER) );
 
@@ -240,10 +258,10 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		ob_start() ;
 		phpinfo(INFO_MODULES) ;
 		$pinfo = ob_get_contents () ;
-		ob_end_clean () ;		
+		ob_end_clean () ;
 		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.server.phpModules')),  $pinfo );
 		*/
-		
+
 	}
 	/**
 	 * gets some database informations
@@ -292,7 +310,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			));
 
 			foreach ($tables as $tkey => $tinfo){
-			
+
 				$ATableNode = $this->addNode($GroupTableNode,array(
 					'FOLDED'=>'true',
 					'TEXT'=>$tkey,
@@ -323,17 +341,17 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 */
 	public function getExtensionNode(SimpleXMLElement &$xmlNode) {
 		global $TCA;
-		
+
 /*		$ChildFirst_Extensions = $this->addNode($xmlNode,array(
 			'POSITION'=>'left',
 			'TEXT'=>$this->translate('tree.extensions'),
 		)); */
-		
+
 		$ChildFirst_Extensions = $this->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
 			'TEXT'=>$this->translate('tree.extensions'),
-		), 'typo3/sysext/t3skin/icons/module_tools_em.png' );			
-		
+		), 'typo3/sysext/t3skin/icons/module_tools_em.png' );
+
 
 	//	echo '<pre>';   var_dump( $TCA["tt_content"]["columns"]['list_type']['config']['items'] ); exit;
 
@@ -341,20 +359,20 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'TEXT'=>$this->translate('tree.extensions.selectable'),
 			'FOLDED'=>'true',
 		));
-		
+
 		foreach( $TCA["tt_content"]["columns"]['list_type']['config']['items'] as $ei=>$extA ){
 
-			
+
 			$extA[0] = $this->SYSLANG->sL($extA[0]);
 
 			if( !empty($extA[0]) ){
-			
+
 				$this->addImgNode($selectableExtensions,array(
 					'TEXT'=> '('.$extA[1].') '.$extA[0],
-				),$extA[2] );			
+				),$extA[2] );
 			}
-			
-		
+
+
 		}/*endforeach*/
 
 
@@ -386,11 +404,11 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 				// ext icon
 				$extIcon = $preURI . $extKey . '/ext_icon.gif';
-				
+
 				$extNode = $this->addImgNode($catNode,array(
 					'FOLDED'=>'true',
 					'TEXT'=> $niceName,
-				), $extIcon );			
+				), $extIcon );
 
 				/*
 				if( file_exists(PATH_site.$extIcon) ){

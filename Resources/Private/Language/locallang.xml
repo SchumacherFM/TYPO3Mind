@@ -53,6 +53,7 @@
 			<label index="tree.typo3">TYPO3</label>
 			<label index="tree.typo3logs">Logs</label>
 			<label index="tree.typo3users">User, Groups</label>
+			<label index="tree.typo3filesandfolders">Files and Folders</label>
 			<label index="tree.typo3.SuccessfullBackendLogins">Successfull Backend Logins</label>
 			<label index="tree.typo3.FailedBackendLogins">Failed Backend Logins</label>
 			<label index="tree.typo3.ErrorLog">Error Log</label>
