@@ -459,11 +459,12 @@ return $dir_size;
 						'COLOR' => '#ffffff'
 					);
 					$aStateNode = $this->addNode($catNode,$attr);
-// echo $catName.' - '.$statek;
+					$this->addFont($aStateNode,array('BOLD'=>'true','SIZE'=>14));
+
 					$this->addCloud($aStateNode,array('COLOR'=>$this->stateColors[ $statek ]));
 
+					$extI = 0;
 					foreach($stateArray as $extKey=>$extArray ){
-// echo '<pre>';   var_dump( $extArray ); exit;
 
 						switch($extArray['type']){
 							case 'S':
@@ -485,10 +486,13 @@ return $dir_size;
 
 						$extNode = $this->addImgNode($aStateNode,array(
 							'FOLDED'=>'true',
-							'COLOR'=>'#ececec',
 							'TEXT'=> $extArray['EM_CONF']['title'],
 						), $extIcon );
 
+						$color = $extI%2==0 ? '#ececec' : '#ffffff';
+						$this->addCloud($extNode,array('COLOR'=>$color ));
+						
+						
 						// installed or not icon
 						$icon = $extArray['installed'] ? 'button_ok' : 'button_cancel';
 						$this->addIcon($extNode,$icon);
@@ -496,7 +500,6 @@ return $dir_size;
 						// node for system global or local ext
 						$this->addNode($extNode, array(
 							// 'FOLDED'=>'true',
-							'COLOR'=>'#ececec',
 							'TEXT'=>$this->types[ $extArray['type'] ],
 						) );
 
@@ -505,7 +508,6 @@ return $dir_size;
 							$this->addNode($extNode, array(
 								// 'FOLDED'=>'true',
 								'TEXT'=>$this->translate('tree.linkName2TER'),
-								'COLOR'=>'#ececec',
 								'LINK'=>'http://typo3.org/extensions/repository/view/'.$extKey.'/current/',
 							) );
 						}
@@ -527,7 +529,6 @@ return $dir_size;
 
 								$attr = array(
 									'TEXT'=>ucfirst($ek).': '.$ev,
-									'COLOR'=>'#ececec',
 								);
 
 								if( $ek == 'state' ){
@@ -539,7 +540,7 @@ return $dir_size;
 								$this->addNode($extNode, $attr );
 							}
 						}
-
+						$extI++;
 					} /*endforeach $installedExt[1]['state'][$statek]*/
 
 
