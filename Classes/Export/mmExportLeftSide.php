@@ -128,7 +128,7 @@ function get_dir_size($dir_name){
                               if(is_file($dir_name.”/”.$file)){
                                    $dir_size += filesize($dir_name.”/”.$file);
                              }
-                             // check for any new directory inside this directory 
+                             // check for any new directory inside this directory
                              if(is_dir($dir_name.”/”.$file)){
                                 $dir_size +=  get_dir_size($dir_name.”/”.$file);
                               }
@@ -140,7 +140,7 @@ closedir($dh);
 return $dir_size;
 }
 */
-		
+
 		// own class ... and diskfree function
 		$dir = scandir(PATH_site.'fileadmin/');
 /*		echo '<pre>';
@@ -167,10 +167,10 @@ return $dir_size;
 			'TEXT'=>$this->translate('tree.typo3'),
 		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-root.png', 'height="16"' );
 
-		
-		
+
+
 		$this->getTYPOFilesNode($MainNode);
-		
+
 
 		// logs
 		$LogsNode = $this->addImgNode($MainNode,array(
@@ -342,7 +342,7 @@ return $dir_size;
 		foreach ($groupedTables as $group => $tables){
 
 			$tGroup = $this->translate('tree.database.'.$group);
-		
+
 			$GroupTableNode = $this->addNode($MainNode,array(
 				'FOLDED'=>'true',
 				'TEXT'=> $tGroup == '' ? $group : $tGroup,
@@ -355,7 +355,7 @@ return $dir_size;
 						'FOLDED'=>'true',
 						'TEXT'=>$tkey,
 					));
-					
+
 					$nodeHTML = array('<table border="0" cellpadding="3" cellspacing="0">');
 					// $nodeHTML[] = '<tr><th colspan="2">'.$tkey.'</th></tr>';
 					$nodeHTML[] = '<tr><td>Rows</td><td style="text-align: right">'.$tinfo['Rows'].'</td></tr>';
@@ -368,7 +368,7 @@ return $dir_size;
 					$ATableNode = $this->addNode($GroupTableNode,array(
 						'TEXT'=>$tkey,
 					));
-				
+
 				}
 			}
 
@@ -415,18 +415,18 @@ return $dir_size;
 			}
 		}/*endforeach*/
 
-		
-		
+
+
 
 		$installedExt = $this->getInstalledExtensions();
 		/* extension by modul state */
-		
-	
+
+
 		$byStateExtensions = $this->addNode($ChildFirst_Extensions,array(
 			'TEXT'=>$this->translate('tree.extensions.byState'),
 			'FOLDED'=>'true',
 		));
-		
+
 		foreach($this->states as $statek=>$stateName){
 			$attr = array(
 				'FOLDED'=>'true',
@@ -461,15 +461,15 @@ return $dir_size;
 					$extNode = $this->addImgNode($aStateNode,array(
 						'TEXT'=> $extName,
 					), $extIcon );
-				
+
 					$icon = $installedExt[0][$extKey]['installed'] ? 'button_ok' : 'button_cancel';
 					$this->addIcon($extNode,$icon);
 				}/*endforeach*/
 			}
-		
-		
+
+
 		}/*endforeach*/
-		
+
 		/* extension by category = normal view */
 		foreach( $installedExt[1]['cat'] as $catName => $ext ){
 

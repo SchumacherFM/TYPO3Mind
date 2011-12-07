@@ -74,7 +74,7 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 			'COLOR'=>'#993300',
 		);
 
-		
+
 		$html = '<center><img src="'.$this->httpHost.'typo3/sysext/t3skin/icons/gfx/loginlogo_transp.gif" alt="TYPO3 Logo" />
 		<h2>'.$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'].'</h2>
 		<p style="font-size:10px;">TYPO3: '.TYPO3_version.'</p></center>';
@@ -85,9 +85,9 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 //			'FOLDED'=>'false',
 			'TEXT'=>$this->translate('tree.fileInfo'),
 		), 'typo3/sysext/about/ext_icon.gif' );
-		
-		
-		
+
+
+
 		$this->addNode($ThisFileInfoNode,array(
 			'TEXT'=>'HTTP Address: '.$this->httpHost,
 		));
@@ -98,59 +98,20 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 			'TEXT'=>'MD5 Hash: ###MD5_FILE_HASH####',
 		));
 
-		
+
 		$mmExportLeftSide = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExportLeftSide');
 		$mmExportLeftSide->getTYPONode($rootNode);
 		$mmExportLeftSide->getExtensionNode($rootNode);
 		$mmExportLeftSide->getDatabaseNode($rootNode);
 		$mmExportLeftSide->getServerNode($rootNode);
 
-		
-/*
-		// Initialize starting point of page tree:
-		$treeStartingPoint = $this->pageUid;
-		$treeStartingPoint = 0;
-
-		$tree = t3lib_div::makeInstance('Tx_Typo3mind_Utility_PageTree');
-		$tree->init('');
-
-		// Create the tree from starting point:
-		$tree->getTree($treeStartingPoint, 999, '');
-		$tree->recs[$treeStartingPoint] = $treeStartingRecord;
-
-		if( $treeStartingPoint > 0 ){
-			$treeStartingRecord = t3lib_BEfunc::getRecord('pages', $treeStartingPoint, implode(',',$tree->fieldArray) );
-		}else{
-		}
-
-
-
-
-		$T3mind = $this->t3MindRepository->findOneByPageUid( $treeStartingRecord['uid'] );
-
-
-		foreach($tree->buffer_idH as $uid=>$childUids){
-
-			$T3mind = $this->t3MindRepository->findOneByPageUid($uid);
-
-			$childs = $this->addNode($firstChild, $this->getAttrFromPage( $tree->recs[$uid] , $T3mind ) );
-		}
-	*/
-
-
-/*
-echo "<pre>\n\n";
- var_dump($treeStartingRecord);
- echo '<hr>'; var_dump($tree->buffer_idH);
-echo '<hr>'; var_dump($tree->recs);
-echo "\n\n</pre><hr>";  */
-
-
+		$mmExportRightSide = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExportRightSide');
+		$mmExportRightSide->getTree($rootNode);
 
 		return $this->finalOutputFile($mmXML);
 
 	} /* end fnc getContent */
- 
-	
+
+
 
 }
