@@ -185,6 +185,21 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	}
 
 	/**
+	 * adds a cloud
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	array $attributes
+	 * @return	nothing
+	 */
+	protected function addCloud(SimpleXMLElement $xmlNode,$attributes) {
+		$cloud = $xmlNode->addChild('cloud','');
+
+		foreach($attributes as $k=>$v){
+			$cloud->addAttribute($k,$v);
+		}
+	}
+
+	/**
 	 * adds a font
 	 *
 	 * @param	SimpleXMLElement $xmlNode

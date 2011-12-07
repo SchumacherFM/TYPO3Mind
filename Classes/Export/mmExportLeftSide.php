@@ -421,143 +421,130 @@ return $dir_size;
 		$installedExt = $this->getInstalledExtensions();
 		/* extension by modul state */
 
+		/* rebuilding the array by cat->state->name */
+//echo '<pre>';   var_dump( $installedExt[0]['div2007']['EM_CONF']['state'] ); exit;
 
-		$byStateExtensions = $this->addNode($ChildFirst_Extensions,array(
-			'TEXT'=>$this->translate('tree.extensions.byState'),
-			'FOLDED'=>'true',
-		));
+		$installExt2 = array();
+		foreach( $installedExt[1]['cat'] as $catName => $extArray ){
+			ksort($extArray);
+			foreach( $extArray as $extKey=>$extNiceName ){
+				foreach($this->states as $statek=>$stateName){
 
-		foreach($this->states as $statek=>$stateName){
-			$attr = array(
-				'FOLDED'=>'true',
-				'TEXT'=>$stateName,
-				'BACKGROUND_COLOR' => $this->stateColors[ $statek ],
-				'COLOR' => '#ffffff'
-			);
-			$aStateNode = $this->addNode($byStateExtensions,$attr);
-
-			if( isset($installedExt[1]['state'][$statek]) ){
-				ksort($installedExt[1]['state'][$statek]);
-				foreach($installedExt[1]['state'][$statek] as $extKey=>$extName ){
-
-					switch($installedExt[0][$extKey]['type']){
-						case 'S':
-							$preURI = TYPO3_mainDir.'sysext/';
-							$addTERLink = 0;
-						break;
-						case 'G':
-							$preURI = TYPO3_mainDir.'ext/';
-							$addTERLink = 1;
-						break;
-						case 'L':
-							$preURI = 'typo3conf/ext/';
-							$addTERLink = 1;
-						break;
+					if( $installedExt[0][ $extKey ]['EM_CONF']['state'] == $statek) {
+						$installExt2[$catName][$statek][$extKey] = $installedExt[0][ $extKey ];
 					}
-
-					// ext icon
-					$extIcon = $preURI . $extKey . '/ext_icon.gif';
-
-					$extNode = $this->addImgNode($aStateNode,array(
-						'TEXT'=> $extName,
-					), $extIcon );
-
-					$icon = $installedExt[0][$extKey]['installed'] ? 'button_ok' : 'button_cancel';
-					$this->addIcon($extNode,$icon);
-				}/*endforeach*/
+				}
 			}
+		}
+		$installedExt = $installExt2;
 
 
-		}/*endforeach*/
+		// echo '<pre>';   var_dump( $installedExt ); exit;
 
 		/* extension by category = normal view */
-		foreach( $installedExt[1]['cat'] as $catName => $ext ){
+		foreach( $installedExt as $catName => $catArray ){
 
 			$catNode = $this->addNode($ChildFirst_Extensions, array(
 				'FOLDED'=>'true',
 				'TEXT'=>$this->categories[$catName],
 			) );
-			ksort($ext);
-			foreach($ext as $extKey => $niceName ){
 
-				switch($installedExt[0][$extKey]['type']){
-					case 'S':
-						$preURI = TYPO3_mainDir.'sysext/';
-						$addTERLink = 0;
-					break;
-					case 'G':
-						$preURI = TYPO3_mainDir.'ext/';
-						$addTERLink = 1;
-					break;
-					case 'L':
-						$preURI = 'typo3conf/ext/';
-						$addTERLink = 1;
-					break;
-				}
-
-				// ext icon
-				$extIcon = $preURI . $extKey . '/ext_icon.gif';
-
-				$extNode = $this->addImgNode($catNode,array(
-					'FOLDED'=>'true',
-					'TEXT'=> $niceName,
-				), $extIcon );
+			foreach($catArray as $statek=>$stateArray){
 
 
+					$attr = array(
+						'FOLDED'=>'true',
+						'TEXT'=>$this->states[$statek],
+						'BACKGROUND_COLOR' => $this->stateColors[ $statek ],
+						'COLOR' => '#ffffff'
+					);
+					$aStateNode = $this->addNode($catNode,$attr);
+// echo $catName.' - '.$statek;
+					$this->addCloud($aStateNode,array('COLOR'=>$this->stateColors[ $statek ]));
 
-				// installed or not icon
-				$icon = $installedExt[0][$extKey]['installed'] ? 'button_ok' : 'button_cancel';
-				$this->addIcon($extNode,$icon);
+					foreach($stateArray as $extKey=>$extArray ){
+// echo '<pre>';   var_dump( $extArray ); exit;
 
-				// node for system global or local ext
-				$this->addNode($extNode, array(
-					// 'FOLDED'=>'true',
-					'TEXT'=>$this->types[ $installedExt[0][$extKey]['type'] ],
-				) );
-
-				// link to TER
-				if( $addTERLink == 1 ){
-					$this->addNode($extNode, array(
-						// 'FOLDED'=>'true',
-						'TEXT'=>$this->translate('tree.linkName2TER'),
-						'LINK'=>'http://typo3.org/extensions/repository/view/'.$extKey.'/current/',
-					) );
-				}
-
-
-				// displaying the rest of the config
-				$emconf = $installedExt[0][$extKey]['EM_CONF'];
-				$constraints = $this->humanizeConstraints($emconf['constraints']);
-				$emconf['depends'] = $constraints['depends'];
-				$emconf['conflicts'] = $constraints['conflicts'];
-				$emconf['suggests'] = $constraints['suggests'];
-				unset($emconf['title']);
-				unset($emconf['constraints']);
-				unset($emconf['category']);
-				unset($emconf['_md5_values_when_last_written']);
-
-
-				foreach($emconf as $ek=>$ev){
-					if( !empty($ev) ){
-
-						$attr = array(
-							'TEXT'=>ucfirst($ek).': '.$ev,
-						);
-
-						if( $ek == 'state' ){
-							$attr['BACKGROUND_COLOR'] = $this->stateColors[ $ev ];
-							$attr['COLOR'] = '#ffffff';
-							$attr['TEXT']  = $this->states[$ev];
+						switch($extArray['type']){
+							case 'S':
+								$preURI = TYPO3_mainDir.'sysext/';
+								$addTERLink = 0;
+							break;
+							case 'G':
+								$preURI = TYPO3_mainDir.'ext/';
+								$addTERLink = 1;
+							break;
+							case 'L':
+								$preURI = 'typo3conf/ext/';
+								$addTERLink = 1;
+							break;
 						}
 
-						$this->addNode($extNode, $attr );
-					}
-				}
+						// ext icon
+						$extIcon = $preURI . $extKey . '/ext_icon.gif';
 
-			}/*endforeach2*/
+						$extNode = $this->addImgNode($aStateNode,array(
+							'FOLDED'=>'true',
+							'COLOR'=>'#ececec',
+							'TEXT'=> $extArray['EM_CONF']['title'],
+						), $extIcon );
 
-		}/*endforeach*/
+						// installed or not icon
+						$icon = $extArray['installed'] ? 'button_ok' : 'button_cancel';
+						$this->addIcon($extNode,$icon);
 
+						// node for system global or local ext
+						$this->addNode($extNode, array(
+							// 'FOLDED'=>'true',
+							'COLOR'=>'#ececec',
+							'TEXT'=>$this->types[ $extArray['type'] ],
+						) );
+
+						// link to TER
+						if( $addTERLink == 1 ){
+							$this->addNode($extNode, array(
+								// 'FOLDED'=>'true',
+								'TEXT'=>$this->translate('tree.linkName2TER'),
+								'COLOR'=>'#ececec',
+								'LINK'=>'http://typo3.org/extensions/repository/view/'.$extKey.'/current/',
+							) );
+						}
+
+
+						// displaying the rest of the config
+						$constraints = $this->humanizeConstraints($extArray['EM_CONF']['constraints']);
+						$extArray['EM_CONF']['depends'] = $constraints['depends'];
+						$extArray['EM_CONF']['conflicts'] = $constraints['conflicts'];
+						$extArray['EM_CONF']['suggests'] = $constraints['suggests'];
+						unset($extArray['EM_CONF']['title']);
+						unset($extArray['EM_CONF']['constraints']);
+						unset($extArray['EM_CONF']['category']);
+						unset($extArray['EM_CONF']['_md5_values_when_last_written']);
+
+
+						foreach($extArray['EM_CONF'] as $ek=>$ev){
+							if( !empty($ev) ){
+
+								$attr = array(
+									'TEXT'=>ucfirst($ek).': '.$ev,
+									'COLOR'=>'#ececec',
+								);
+
+								if( $ek == 'state' ){
+									$attr['BACKGROUND_COLOR'] = $this->stateColors[ $ev ];
+									$attr['COLOR'] = '#ffffff';
+									$attr['TEXT']  = $this->states[$ev];
+								}
+
+								$this->addNode($extNode, $attr );
+							}
+						}
+
+					} /*endforeach $installedExt[1]['state'][$statek]*/
+
+
+			}/*endforeach $this->states*/
+		}/*endforeach $installedExt[1]['cat']*/
 		return $ChildFirst_Extensions;
 	}
 
