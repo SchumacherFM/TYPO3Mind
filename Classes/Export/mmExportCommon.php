@@ -105,8 +105,8 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	 */
 	protected function finalOutputFile(SimpleXMLElement &$xml) {
 
-		// todo add datetime here .'-'.date('Y-m-d_His')
-		$fileName = 'TYPO3Mind_'.preg_replace('~[^a-z0-9]+~i','',$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']).'.mm';
+		// todo add datetime here 
+		$fileName = 'TYPO3Mind_'.preg_replace('~[^a-z0-9]+~i','',$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']).'-'.date('Y-m-d_His').'.mm';
 		// that's quite a hack!
 
 
@@ -159,9 +159,6 @@ class Tx_Typo3mind_Export_mmExportCommon {
 		foreach($attributes as $k=>$v){
 			$child->addAttribute($k,$v);
 		}
-
-		// add icon if ...
-
 		return $child;
 	}
 
@@ -332,11 +329,11 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	protected function CheckAttributes(&$attributes,$defaultNodeIdConfigFromTSorDB = '') {
 
 		if( !isset($attributes['ID']) ){
-			$attributes['ID'] = 't3m'.$this->nodeIDcounter;
+			$attributes['ID'] = 't3m'.mt_rand().'.'.$this->nodeIDcounter;
 		}
 
 		$attributes['TEXT'] = str_replace('"','',$attributes['TEXT']);
-		 $this->nodeIDcounter++;
+		$this->nodeIDcounter++;
 	}
 
 	/**

@@ -101,20 +101,7 @@ echo "<pre>\n\n";
  var_dump($this->tree->recs);
 echo "\n\n</pre><hr>"; exit;
 */
-		$this->getTreeRecursive($pageTreeRoot,$this->tree->buffer_idH);
-
-/*
-		foreach($this->tree->buffer_idH as $uid=>$childUids){
-
-			$pageParent = $this->addNode($pageTreeRoot,array(
-				'TEXT'=>'('.$childUids['uid'].') '.$this->tree->recs[$childUids['uid']]['title'],
-				'FOLDED'=>'true',
-			));
-			
-			if( isset($childUids['subrow']) ){ $this->getTreeRecursive($pageParent,$childUids['subrow']); }
-		} *endforeach*/
-		
-		
+		$this->getTreeRecursive($pageTreeRoot,$this->tree->buffer_idH,0);
 		
 /*
 		// Initialize starting point of page tree:
@@ -166,9 +153,6 @@ echo "\n\n</pre><hr>"; exit;
 				'LINK'=>$this->httpHost.'index.php?id='.$childUids['uid'],
 			);
 			
-			if( $depth == 0 ){
-				$attr['FOLDED'] = 'true';
-			}
 // funzt nicht ... array umbauen ...
 			switch($record['doktype']){
 				case 254:
@@ -196,7 +180,15 @@ echo "\n\n</pre><hr>"; exit;
 			}	
 				// todo to opt the icon ... due to overlays ...
 			$iconDokType = $record['hidden'] == 1 ? 'typo3/sysext/t3skin/icons/gfx/hidden_page.gif' : $iconDokType;
+/* echo "<pre>\n\n";
+ var_dump($depth);
+ var_dump($attr);
+echo "\n\n</pre><hr>"; exit; */
 			
+			// funzt nicht
+			if( $depth == 0 || $depth == 1 ){
+				$attr['FOLDED'] = 'true';
+			}
 			$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
 			
 			if( isset($childUids['subrow']) ){ 
