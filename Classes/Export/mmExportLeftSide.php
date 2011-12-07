@@ -398,8 +398,6 @@ return $dir_size;
 		), 'typo3/sysext/t3skin/icons/module_tools_em.png' );
 
 
-	//	echo '<pre>';   var_dump( $TCA["tt_content"]["columns"]['list_type']['config']['items'] ); exit;
-
 		/* frontend plugins which you can choose in the backend */
 		$selectableExtensions = $this->addNode($ChildFirst_Extensions,array(
 			'TEXT'=>$this->translate('tree.extensions.selectable'),
@@ -422,8 +420,6 @@ return $dir_size;
 		/* extension by modul state */
 
 		/* rebuilding the array by cat->state->name */
-//echo '<pre>';   var_dump( $installedExt[0]['div2007']['EM_CONF']['state'] ); exit;
-
 		$installExt2 = array();
 		foreach( $installedExt[1]['cat'] as $catName => $extArray ){
 			ksort($extArray);

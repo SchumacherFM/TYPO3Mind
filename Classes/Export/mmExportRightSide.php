@@ -50,6 +50,11 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	protected $tree;
 
+	/**
+	 * icons by doktype
+	 * @var array
+	 */
+	protected $dokTypeIcon;
 
 
 
@@ -79,8 +84,18 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 		$this->tree->init('');
 		$this->tree->getTree(0, 999, '');
 
+		$this->dokTypeIcon = array();
+		$this->dokTypeIcon[254] = 'typo3/sysext/t3skin/images/icons/apps/pagetree-folder-default.png';
+		$this->dokTypeIcon[1] = 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-default.png';
+		// 3 URL
+		$this->dokTypeIcon[3] = 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-shortcut-external.png';
+		// 4 shortcut
+		$this->dokTypeIcon[4] = 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-shortcut.png';
+		$this->dokTypeIcon[199] = 'typo3/sysext/t3skin/images/icons/apps/pagetree-spacer.png';
+		$this->dokTypeIcon[254] = 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-default.png';
+		$this->dokTypeIcon[255] = 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-recycler.png';
 
-	}
+	} /* endconstruct */
 
 
 
@@ -92,16 +107,16 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	public function getTree(SimpleXMLElement &$xmlNode) {
 
-		$pageTreeRoot = $this->addNode($xmlNode,array(
+/*		$pageTreeRoot = $this->addNode($xmlNode,array(
 			'TEXT'=>'Page Tree',
 			// 'FOLDED'=>'true',
-		));
+		));	*/
 	/*
 echo "<pre>\n\n";
  var_dump($this->tree->recs);
 echo "\n\n</pre><hr>"; exit;
 */
-		$this->getTreeRecursive($pageTreeRoot,$this->tree->buffer_idH,0);
+		$this->getTreeRecursive($xmlNode,$this->tree->buffer_idH,0);
 		
 /*
 		// Initialize starting point of page tree:
@@ -135,7 +150,7 @@ echo "\n\n</pre><hr>"; exit;
 	}
 
 	/**
-	 * recursive tree printing
+	 * recursive tree printing - first time is for ... nothing
 	 *
 	 * @param	SimpleXMLElement 	$xmlNode
 	 * @param	array				$subTree
@@ -153,40 +168,15 @@ echo "\n\n</pre><hr>"; exit;
 				'LINK'=>$this->httpHost.'index.php?id='.$childUids['uid'],
 			);
 			
-// funzt nicht ... array umbauen ...
-			switch($record['doktype']){
-				case 254:
-					$iconDokType = 'typo3/sysext/t3skin/images/icons/apps/pagetree-folder-default.png';
-				break;
-				case 1:
-					$iconDokType = 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-default.png';
-				break;
-				case 3: /*URL*/
-					$iconDokType = 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-shortcut-external.png';
-				break;
-				case 4: /*Shortcut*/
-					$iconDokType = 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-shortcut.png';
-				break;
-				case 199:
-					$iconDokType = 'typo3/sysext/t3skin/images/icons/apps/pagetree-spacer.png';
-				break;
-				case 254:
-					$iconDokType = 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-default.png';
-				break;
-				case 255: /*muell*/
-					$iconDokType = 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-recycler.png';
-				break;
-				
-			}	
 				// todo to opt the icon ... due to overlays ...
-			$iconDokType = $record['hidden'] == 1 ? 'typo3/sysext/t3skin/icons/gfx/hidden_page.gif' : $iconDokType;
+			$iconDokType = $record['hidden'] == 1 ? 'typo3/sysext/t3skin/icons/gfx/hidden_page.gif' : $this->dokTypeIcon[$record['doktype']];
 /* echo "<pre>\n\n";
  var_dump($depth);
  var_dump($attr);
 echo "\n\n</pre><hr>"; exit; */
 			
-			// funzt nicht
-			if( $depth == 0 || $depth == 1 ){
+
+			if( $depth == 1 ){
 				$attr['FOLDED'] = 'true';
 			}
 			$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
