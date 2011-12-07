@@ -336,31 +336,40 @@ return $dir_size;
 			$groupedTables[ $te[0] ][$table] = $tinfo;
 		}
 		unset($agt);
-	//	echo '<pre>';   var_dump( $groupedTables ); exit;
+		ksort($groupedTables);
+//	echo '<pre>';   var_dump( $groupedTables ); exit;
 
 		foreach ($groupedTables as $group => $tables){
 
+			$tGroup = $this->translate('tree.database.'.$group);
+		
 			$GroupTableNode = $this->addNode($MainNode,array(
 				'FOLDED'=>'true',
-				'TEXT'=>$this->translate('tree.database.'.$group),
+				'TEXT'=> $tGroup == '' ? $group : $tGroup,
 			));
 
 			foreach ($tables as $tkey => $tinfo){
 
-				$ATableNode = $this->addNode($GroupTableNode,array(
-					'FOLDED'=>'true',
-					'TEXT'=>$tkey,
-				));
-
-				$nodeHTML = array('<table border="0" cellpadding="3" cellspacing="0">');
-				// $nodeHTML[] = '<tr><th colspan="2">'.$tkey.'</th></tr>';
-				$nodeHTML[] = '<tr><td>Rows</td><td style="text-align: right">'.$tinfo['Rows'].'</td></tr>';
-				$nodeHTML[] = '<tr><td>Data</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Data_length']/1024).'KiB</td></tr>';
-				$nodeHTML[] = '<tr><td>Index</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Index_length']/1024).'KiB</td></tr>';
-				if( $tinfo['Data_free']>0 ){ $nodeHTML[] = '<tr><td>Overhead</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Data_free']/1024).'KiB</td></tr>'; }
-				$nodeHTML[] = '</table>';
-
-				$tinfoNode = $this->addRichContentNode($ATableNode, array(),implode('',$nodeHTML) );
+				if( !empty($tinfo['Rows']) ){
+					$ATableNode = $this->addNode($GroupTableNode,array(
+						'FOLDED'=>'true',
+						'TEXT'=>$tkey,
+					));
+					
+					$nodeHTML = array('<table border="0" cellpadding="3" cellspacing="0">');
+					// $nodeHTML[] = '<tr><th colspan="2">'.$tkey.'</th></tr>';
+					$nodeHTML[] = '<tr><td>Rows</td><td style="text-align: right">'.$tinfo['Rows'].'</td></tr>';
+					$nodeHTML[] = '<tr><td>Data</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Data_length']/1024).'KiB</td></tr>';
+					$nodeHTML[] = '<tr><td>Index</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Index_length']/1024).'KiB</td></tr>';
+					if( $tinfo['Data_free']>0 ){ $nodeHTML[] = '<tr><td>Overhead</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Data_free']/1024).'KiB</td></tr>'; }
+					$nodeHTML[] = '</table>';
+					$tinfoNode = $this->addRichContentNode($ATableNode, array(),implode('',$nodeHTML) );
+				}else{
+					$ATableNode = $this->addNode($GroupTableNode,array(
+						'TEXT'=>$tkey,
+					));
+				
+				}
 			}
 
 		}/*endforeach*/
@@ -410,7 +419,58 @@ return $dir_size;
 		
 
 		$installedExt = $this->getInstalledExtensions();
+		/* extension by modul state */
+		
+	
+		$byStateExtensions = $this->addNode($ChildFirst_Extensions,array(
+			'TEXT'=>$this->translate('tree.extensions.byState'),
+			'FOLDED'=>'true',
+		));
+		
+		foreach($this->states as $statek=>$stateName){
+			$attr = array(
+				'FOLDED'=>'true',
+				'TEXT'=>$stateName,
+				'BACKGROUND_COLOR' => $this->stateColors[ $statek ],
+				'COLOR' => '#ffffff'
+			);
+			$aStateNode = $this->addNode($byStateExtensions,$attr);
 
+			if( isset($installedExt[1]['state'][$statek]) ){
+				ksort($installedExt[1]['state'][$statek]);
+				foreach($installedExt[1]['state'][$statek] as $extKey=>$extName ){
+
+					switch($installedExt[0][$extKey]['type']){
+						case 'S':
+							$preURI = TYPO3_mainDir.'sysext/';
+							$addTERLink = 0;
+						break;
+						case 'G':
+							$preURI = TYPO3_mainDir.'ext/';
+							$addTERLink = 1;
+						break;
+						case 'L':
+							$preURI = 'typo3conf/ext/';
+							$addTERLink = 1;
+						break;
+					}
+
+					// ext icon
+					$extIcon = $preURI . $extKey . '/ext_icon.gif';
+
+					$extNode = $this->addImgNode($aStateNode,array(
+						'TEXT'=> $extName,
+					), $extIcon );
+				
+					$icon = $installedExt[0][$extKey]['installed'] ? 'button_ok' : 'button_cancel';
+					$this->addIcon($extNode,$icon);
+				}/*endforeach*/
+			}
+		
+		
+		}/*endforeach*/
+		
+		/* extension by category = normal view */
 		foreach( $installedExt[1]['cat'] as $catName => $ext ){
 
 			$catNode = $this->addNode($ChildFirst_Extensions, array(
@@ -443,19 +503,6 @@ return $dir_size;
 					'TEXT'=> $niceName,
 				), $extIcon );
 
-				/*
-				if( file_exists(PATH_site.$extIcon) ){
-					$img = '<img src="'.$this->httpHost.$extIcon.'"/>';
-					$nodeHTML = $img.'@#160;@#160;'.htmlspecialchars($niceName);
-					$extNode = $this->addRichContentNode($catNode, array(
-						'FOLDED'=>'true',
-					),$nodeHTML);
-				}else{
-					$extNode = $this->addNode($catNode, array(
-						'FOLDED'=>'true',
-						'TEXT'=>htmlspecialchars($niceName),
-					) );
-				} */
 
 
 				// installed or not icon

@@ -80,12 +80,17 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 		<p style="font-size:10px;">TYPO3: '.TYPO3_version.'</p></center>';
 		$rootNode = $this->addRichContentNode($mmXML,$attributes,$html);
 
-		$ThisFileInfoNode = $this->addNode($rootNode,array(
+		$ThisFileInfoNode = $this->addImgNode($rootNode,array(
 			'POSITION'=>'left',
 //			'FOLDED'=>'false',
 			'TEXT'=>$this->translate('tree.fileInfo'),
-		));
+		), 'typo3/sysext/about/ext_icon.gif' );
 		
+		
+		
+		$this->addNode($ThisFileInfoNode,array(
+			'TEXT'=>'HTTP Address: '.$this->httpHost,
+		));
 		$this->addNode($ThisFileInfoNode,array(
 			'TEXT'=>'Created: '.date('Y-m-d H:i:s'),
 		));
