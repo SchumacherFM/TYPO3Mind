@@ -113,12 +113,44 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	} /* endconstruct */
 
 
+	/**
+	 * gets sys languages
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @return	SimpleXMLElement
+	 */
+	public function getSysLanguages(SimpleXMLElement &$xmlNode) {
 
+		// todo isBe reuild as property
+		$isBE = stristr($this->settings['mapMode'],'backend') !== false;
+
+		$MainNode = $this->addImgNode($xmlNode,array(
+			'FOLDED'=>'true',
+			'TEXT'=>$this->translate('tree.syslanguage'),
+		), 'typo3/sysext/t3skin/images/icons/mimetypes/x-sys_language.gif'  );
+
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,title,flag,hidden',
+			'sys_language', '', '', 'title' );
+		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
+		
+			$link = $isBE ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[sys_language]['.$r['uid'].']=edit' : '';
+		
+			$domainNode = $this->addImgNode($MainNode,	$this->createTLFattr($r['title'],$link), 
+				'typo3/sysext/t3skin/images/flags/'.$r['flag'].'.png' 
+			);
+
+			if( $r['hidden'] == 1 ){
+				$this->addIcon($domainNode, 'button_cancel' );
+			}
+		}
+	
+	}
+	
 	/**
 	 * gets sys domains
 	 *
 	 * @param	SimpleXMLElement $xmlNode
-	 * @return	SimpleXMLElement
+	 * @return	nothing
 	 */
 	public function getSysDomains(SimpleXMLElement &$xmlNode) {
 	
@@ -133,12 +165,11 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			$pageDomains[ $k ][] = $r;
 		}
 		
-		
 		if( count($pageDomains) > 0 ){
 			$MainNode = $this->addImgNode($xmlNode,array(
 				'FOLDED'=>'true',
 				'TEXT'=>$this->translate('tree.sysdomains'),
-			), 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-domain.png'  );
+			), 'typo3/sysext/t3skin/images/icons/mimetypes/x-content-domain.png'  );
 			
 			$isBE = stristr($this->settings['mapMode'],'backend') !== false;
 			
@@ -155,8 +186,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 					$domainNode = $this->addNode($titleNode,$this->createTLFattr($vd['domainName'],$link) );
 
 					$this->addIcon($domainNode, $vd['hidden'] == 1 ? 'button_cancel' : 'button_ok' );
-
-					
+	
 				}
 			}
 		} /*endif count*/

@@ -117,6 +117,7 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 		$mmExportLeftSide->getServerNode($rootNode);
 
 		$mmExportRightSide = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExportRightSide',$this->settings);
+		$mmExportRightSide->getSysLanguages($rootNode);
 		$mmExportRightSide->getSysDomains($rootNode);
 		$mmExportRightSide->getTree($rootNode);
 

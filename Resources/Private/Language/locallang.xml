@@ -67,6 +67,7 @@
 			<label index="tree.typo3.users">Backend Users</label>
 			
 			<label index="tree.sysdomains">System Domains</label>
+			<label index="tree.syslanguage">Website Language</label>
 			
 			
 			</languageKey>
