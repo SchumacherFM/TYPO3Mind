@@ -119,6 +119,8 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-folder-default.png', 'height="16"' );
 
 /*
+maybe via exec: du -chs uploads/*
+
 function get_dir_size($dir_name){
         $dir_size =0;
            if (is_dir($dir_name)) {
@@ -404,7 +406,7 @@ return $dir_size;
 			'FOLDED'=>'true',
 		));
 
-		foreach( $TCA["tt_content"]["columns"]['list_type']['config']['items'] as $ei=>$extA ){
+		foreach( $TCA['tt_content']['columns']['list_type']['config']['items'] as $ei=>$extA ){
 			$extA[0] = $this->SYSLANG->sL($extA[0]);
 			if( !empty($extA[0]) ){
 				$this->addImgNode($selectableExtensions,array(
@@ -586,7 +588,7 @@ return $dir_size;
 	 * @param	array		Array with information for each extension key found. Notice: passed by reference
 	 * @param	array		Categories index: Contains extension titles grouped by various criteria.
 	 * @param	string		Path-type: L, G or S
-	 * @return	void		"Returns" content by reference
+	 * @return	void		'Returns' content by reference
 	 * @see getInstalledExtensions()
 	 */
 	function getInstExtList($path, &$list, &$cat, $type) {
