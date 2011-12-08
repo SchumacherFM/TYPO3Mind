@@ -174,6 +174,8 @@ echo "\n\n</pre><hr>"; exit;
 	private function getTreeRecursive(SimpleXMLElement &$xmlNode,$subTree,$depth = 0) {
 		$depth++;
 
+		// todo get customization by user from database
+		
 		foreach($subTree as $uid=>$childUids){
 
 			$record = $this->tree->recs[$childUids['uid']];
@@ -194,7 +196,7 @@ echo "\n\n</pre><hr>"; exit;
 			}
 			
 			/*first 3 levels are folded*/
-			if( isset($childUids['subrow']) ){ $attr['FOLDED'] = 'true'; }			
+			if( $depth < 3 && isset($childUids['subrow']) ){ $attr['FOLDED'] = 'true'; }			
 			
 
 			/* module icon overwrites all */
@@ -212,6 +214,8 @@ echo "\n\n</pre><hr>"; exit;
  var_dump($record);
   echo '</pre><hr/>'; */
 
+			// if user assigns multiple images then use: addImagesNode
+  
 			$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
 
 			// add hidden icon
