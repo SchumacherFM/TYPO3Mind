@@ -212,7 +212,7 @@ die( '</pre>');
 	 */
 	public function exportAction() {
 
-
+	
 		$expObj = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExport',$this->settings);
 		$typo3tempFilename = $expObj->getContent();
 

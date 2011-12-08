@@ -121,6 +121,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	public function getSysLanguages(SimpleXMLElement &$xmlNode) {
 
+	
 		// todo isBe reuild as property
 		$isBE = stristr($this->settings['mapMode'],'backend') !== false;
 
@@ -129,13 +130,15 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			'TEXT'=>$this->translate('tree.syslanguage'),
 		), 'typo3/sysext/t3skin/images/icons/mimetypes/x-sys_language.gif'  );
 
+		// todo find out what the default language is ... currently it is 0 but how to access config.language
+		// $GLOBALS['TSFE']->config['config']['language'];
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,title,flag,hidden',
 			'sys_language', '', '', 'title' );
 		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 		
 			$link = $isBE ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[sys_language]['.$r['uid'].']=edit' : '';
 		
-			$domainNode = $this->addImgNode($MainNode,	$this->createTLFattr($r['title'],$link), 
+			$domainNode = $this->addImgNode($MainNode,	$this->createTLFattr('('.$r['uid'].')'.$r['title'],$link), 
 				'typo3/sysext/t3skin/images/flags/'.$r['flag'].'.png' 
 			);
 
