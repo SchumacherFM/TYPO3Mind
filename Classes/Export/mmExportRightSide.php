@@ -173,10 +173,7 @@ echo "\n\n</pre><hr>"; exit;
 	 */
 	private function getTreeRecursive(SimpleXMLElement &$xmlNode,$subTree,$depth = 0) {
 		$depth++;
-/* echo "<pre>\n\n";
- var_dump($depth);
- var_dump($attr);
-echo "\n\n</pre><hr>"; exit; */
+
 		foreach($subTree as $uid=>$childUids){
 
 			$record = $this->tree->recs[$childUids['uid']];
