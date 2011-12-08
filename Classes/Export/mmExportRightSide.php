@@ -115,6 +115,54 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 
 	/**
+	 * gets sys domains
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @return	SimpleXMLElement
+	 */
+	public function getSysDomains(SimpleXMLElement &$xmlNode) {
+	
+		$pageDomains = array();
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'p.title,p.uid as puid,sd.uid,sd.domainName,sd.hidden',
+			'sys_domain sd join pages p on sd.pid=p.uid', '', '', 'p.pid,p.sorting,sd.sorting' );
+		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
+			$k = $r['title'].'~#'.$r['puid'];
+			if( !isset($pageDomains[$k]) ){ 
+				$pageDomains[ $k ] = array(); 
+			}
+			$pageDomains[ $k ][] = $r;
+		}
+		// echo '<pre>'; var_dump($pageDomains); exit;
+		
+		$MainNode = $this->addImgNode($xmlNode,array(
+			'FOLDED'=>'true',
+			'TEXT'=>$this->translate('tree.sysdomains'),
+		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-domain.png'  );
+		
+		$isBE = stristr($this->settings['mapMode'],'backend') !== false;
+		
+		foreach($pageDomains as $kt=>$domains){
+		
+			$ktEx = explode('~#',$kt);
+			$ktlink = $isBE ? $this->getBEHttpHost().'typo3/mod.php?&M=web_list&id='.$ktEx[1].'&table=sys_domain' : '';
+		
+			$titleNode = $this->addNode($MainNode,$this->createTLFattr($ktEx[0],$ktlink) );
+			foreach($domains as $kd=>$vd){
+			
+				$link = $isBE ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[sys_domain]['.$kd.']=edit' : '';
+			
+				$domainNode = $this->addNode($titleNode,$this->createTLFattr($vd['domainName'],$link) );
+
+				$this->addIcon($domainNode, $vd['hidden'] == 1 ? 'button_cancel' : 'button_ok' );
+
+				
+			}
+		}
+		
+	}/*endfnc*/
+
+
+	/**
 	 * gets the whole typo3 tree
 	 *
 	 * @param	SimpleXMLElement $xmlNode
@@ -224,7 +272,7 @@ echo "\n\n</pre><hr>"; exit;
 
 			/*if we have a frontend map and the page is hidden ... then disable the LINK */
 			if( $record['hidden'] == 1 && $this->settings['mapMode'] == 'frontend' ){
-				unset($attr['LINK'])
+				unset($attr['LINK']);
 			}
 			
 			// if user assigns multiple images then use: addImagesNode

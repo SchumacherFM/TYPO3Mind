@@ -441,6 +441,22 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 		$attributes['TEXT'] = $this->strip_tags( str_replace('"','',$attributes['TEXT']) );
 		$this->nodeIDcounter++;
 	}
+	
+	/**
+	 * Creates the TLF attributes array (text, link, folded)
+	 *
+	 * @param	array $attributes
+	 * @return	nothing
+	 */
+	protected function createTLFattr($text,$link='',$folded='') {
+		$a = array();
+		if( !empty($text) ){ $a['TEXT'] = $text; }
+		if( !empty($link) ){ $a['LINK'] = $link; }
+		if( !empty($folded) ){ $a['FOLDED'] = $folded; }
+
+		return $a;
+
+	}
 
 	/**
 	 * Translate key from locallang.xml.

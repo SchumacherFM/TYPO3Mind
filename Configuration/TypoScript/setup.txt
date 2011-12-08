@@ -14,7 +14,7 @@ module.tx_typo3mind {
 		# Possible values: frontend, backend_list or backend_tv. This only changes the types of Links. Frontend just for viewing
 		# backend opens the templavoila editing section of a page or content element
 		# for backend mode you have to be logged in the backend in your default browser. 
-		mapMode = frontend
+		mapMode = backend_tv
 	
 		# set this to a convinient path, recursive searching of files
 		# todo find bug why in template in DB not values are taken ...

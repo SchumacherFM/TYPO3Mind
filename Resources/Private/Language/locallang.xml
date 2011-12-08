@@ -66,6 +66,8 @@
 			<label index="tree.typo3.useradmin">Administrators</label>
 			<label index="tree.typo3.users">Backend Users</label>
 			
+			<label index="tree.sysdomains">System Domains</label>
+			
 			
 			</languageKey>
 	</data>
