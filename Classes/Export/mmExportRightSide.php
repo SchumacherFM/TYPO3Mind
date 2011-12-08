@@ -132,32 +132,34 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			}
 			$pageDomains[ $k ][] = $r;
 		}
-		// echo '<pre>'; var_dump($pageDomains); exit;
 		
-		$MainNode = $this->addImgNode($xmlNode,array(
-			'FOLDED'=>'true',
-			'TEXT'=>$this->translate('tree.sysdomains'),
-		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-domain.png'  );
 		
-		$isBE = stristr($this->settings['mapMode'],'backend') !== false;
-		
-		foreach($pageDomains as $kt=>$domains){
-		
-			$ktEx = explode('~#',$kt);
-			$ktlink = $isBE ? $this->getBEHttpHost().'typo3/mod.php?&M=web_list&id='.$ktEx[1].'&table=sys_domain' : '';
-		
-			$titleNode = $this->addNode($MainNode,$this->createTLFattr($ktEx[0],$ktlink) );
-			foreach($domains as $kd=>$vd){
+		if( count($pageDomains) > 0 ){
+			$MainNode = $this->addImgNode($xmlNode,array(
+				'FOLDED'=>'true',
+				'TEXT'=>$this->translate('tree.sysdomains'),
+			), 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-domain.png'  );
 			
-				$link = $isBE ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[sys_domain]['.$kd.']=edit' : '';
+			$isBE = stristr($this->settings['mapMode'],'backend') !== false;
 			
-				$domainNode = $this->addNode($titleNode,$this->createTLFattr($vd['domainName'],$link) );
-
-				$this->addIcon($domainNode, $vd['hidden'] == 1 ? 'button_cancel' : 'button_ok' );
-
+			foreach($pageDomains as $kt=>$domains){
+			
+				$ktEx = explode('~#',$kt);
+				$ktlink = $isBE ? $this->getBEHttpHost().'typo3/mod.php?&M=web_list&id='.$ktEx[1].'&table=sys_domain' : '';
+			
+				$titleNode = $this->addNode($MainNode,$this->createTLFattr($ktEx[0],$ktlink) );
+				foreach($domains as $kd=>$vd){
 				
+					$link = $isBE ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[sys_domain]['.$kd.']=edit' : 'http://'.$vd['domainName'];
+				
+					$domainNode = $this->addNode($titleNode,$this->createTLFattr($vd['domainName'],$link) );
+
+					$this->addIcon($domainNode, $vd['hidden'] == 1 ? 'button_cancel' : 'button_ok' );
+
+					
+				}
 			}
-		}
+		} /*endif count*/
 		
 	}/*endfnc*/
 
