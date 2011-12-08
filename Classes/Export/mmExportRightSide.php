@@ -197,7 +197,7 @@ echo "\n\n</pre><hr>"; exit; */
 			}
 			
 			/*first 3 levels are folded*/
-			if( $depth < 3 && isset($childUids['subrow']) ){ $attr['FOLDED'] = 'true'; }			
+			if( isset($childUids['subrow']) ){ $attr['FOLDED'] = 'true'; }			
 			
 
 			/* module icon overwrites all */

@@ -248,7 +248,7 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	}
 
 	/**
-	 * adds multiple images with links to a node
+	 * adds multiple images with links to a node - hyperlinks are not supported!
 	 *
 	 * @param	SimpleXMLElement $xmlNode
 	 * @param	array $attributes
@@ -263,16 +263,18 @@ class Tx_Typo3mind_Export_mmExportCommon {
 			$iconLocal = str_replace('../','',$img['path']);
 			if( is_file(PATH_site.$iconLocal)  ){
 				
-				$html[] = (
-					isset($img['link']) ? '<a href="'.$img['link'].'">' : ''
-				).'<img '.$img['html'].' src="'.$this->httpHost.$iconLocal.'"/>'.(
-					isset($img['link']) ? '</a>' : ''
-				);
+				if( isset($img['link']) ){
+					$img['link'] = str_replace('&','&amp;',$img['link']);
+					$html[] = '<a href="'.$img['link'].'"><img border="0" '.$img['html'].' src="'.$this->httpHost.$iconLocal.'"/></a>';
+				}else{
+					$html[] = '<img '.$img['html'].' src="'.$this->httpHost.$iconLocal.'"/>';
+				}
+
 			}
 		}
 
 		if( count($html) > 0  ){
-
+ 
 			$nodeHTML = implode('@#160;@#160;',$html).'@#160;@#160;'.htmlspecialchars( $attributes['TEXT'] );
 			$childNode = $this->addRichContentNode($xmlNode, $attributes ,$nodeHTML);
 
@@ -383,7 +385,7 @@ class Tx_Typo3mind_Export_mmExportCommon {
 			$attributes['ID'] = 't3m'.mt_rand().'.'.$this->nodeIDcounter;
 		}
 
-		$attributes['TEXT'] = str_replace('"','',$attributes['TEXT']);
+		$attributes['TEXT'] = $this->strip_tags( str_replace('"','',$attributes['TEXT']) );
 		$this->nodeIDcounter++;
 	}
 
@@ -408,6 +410,16 @@ class Tx_Typo3mind_Export_mmExportCommon {
 		return mt_rand() .'' . ( (string)$m[0] );
 	}
 
+	/**
+	 * strip tags with preg_replace whitespaces
+	 *
+	 * @param string $string
+	 * @return string
+	 */
+	protected function strip_tags($string ){
+		return preg_replace('~\s+~',' ',strip_tags($string));
+	}
+	
 	/**
 	 * returns an array as an html table
 	 *
