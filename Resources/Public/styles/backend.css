@@ -28,3 +28,9 @@ div.colorarea {
 	margin:0;
 	float:right;
 }
+
+.flattr {
+	padding:1em 0;
+	margin:0 auto;
+	width:55px; height:62px;
+}

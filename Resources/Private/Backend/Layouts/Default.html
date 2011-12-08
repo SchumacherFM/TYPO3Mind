@@ -1,4 +1,5 @@
-<f:be.container addCssFile="{f:uri.resource(path:'styles/backend.css')}" addJsFile="{f:uri.resource(path:'scripts/jquery.min.js')}">
+<f:be.container pageTitle="TYPO3Mind Dispatcher" enableJumpToUrl="false" enableClickMenu="false" loadPrototype="false" loadScriptaculous="false" loadExtJs="false" extJsAdapter="jQuery" enableExtJsDebug="false" addCssFile="{f:uri.resource(path:'styles/backend.css')}" addJsFile="{f:uri.resource(path:'scripts/flattr.js')}">
+<script type="text/javascript" src="{f:uri.resource(path:'scripts/jquery.min.js')}"></script>
 <script type="text/javascript">jQuery.noConflict(); </script>
 <link rel="stylesheet" media="screen" type="text/css" href="{f:uri.resource(path:'colorpicker/css/colorpicker.css')}" />
 
@@ -34,6 +35,11 @@
 					<f:render section="content" />
 				 
 			</div>
+			
+			<div class="flattr">
+				<a class="FlattrButton" style="display:none;" href="https://github.com/SchumacherFM/TYPO3Mind"></a><noscript><a href="http://flattr.com/thing/450156/TYPO3Mind" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a></noscript>
+			</div>
+			
 		</div>
 	</div>
 <script type="text/javascript" src="{f:uri.resource(path:'colorpicker/js/colorpicker.js')}"></script>
