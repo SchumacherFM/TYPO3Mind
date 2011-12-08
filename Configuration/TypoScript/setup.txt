@@ -10,16 +10,15 @@ module.tx_typo3mind {
 	}
 	
 	settings {
-	
+		# set this to a convinient path, recursive searching of files
+		# todo find bug why in template in DB not values are taken ...
+		userIconsPath = typo3/sysext/t3skin/images/icons/actions/
+
 		# this values comes out of the freemind.properties file, unpack the lib/freemind.jar file in our FreeMind installation
 		# official buildin icons change only the filename if you know what to do
 		# path below Resources/Public/ Supports only png files
 		iconsPath = typo3conf/ext/typo3mind/Resources/Public/freemind_icons/
-		
-		# set this to a convinient path
-		# todo find bug why in template in DB not values are taken ...
-		userIconsPath = fileadmin/nuvola/16x16/filesystems/
-		
+				
 		# first option is always default
 		# use keyword default for no entry in the DB/XML
 		edgeStyles = bezier, linear, sharp_bezier, sharp_linear

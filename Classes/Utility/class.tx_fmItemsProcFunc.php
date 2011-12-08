@@ -74,19 +74,17 @@ class tx_fmItemsProcFunc {
 		$tsKey = $params['config']['itemsProcFunc_config']['tsKey'];
   		$tsValue = $TSparserObject->setup['module.']['tx_typo3mind.']['settings.'] [$tsKey];
 
+
+
 		$params['items'] = array();
 		if( isset($params['config']['itemsProcFunc_config']['type']) &&
 			$params['config']['itemsProcFunc_config']['type']=='folder' &&
 			$tsValue <> '' &&
 			is_dir(PATH_site.$tsValue)
 		){
-			$pics = scandir(PATH_site.$tsValue);
-			foreach($pics as $k=>$v){
-				if( preg_match('~\.(png|jpg|gif|jpeg|webp)$~i',$v) ){
-					$params['items'][] = array($v,$v,'../'.$tsValue.$v);
 
-				}
-			}
+			$params['items'] = $this->getFiles( $tsValue );
+
 		}else{
 
 
@@ -113,13 +111,32 @@ class tx_fmItemsProcFunc {
 
 				$params['items'][] = array($vk,$vv);
 			}
-		/*
-	echo '<pre>';
-  var_dump($tsValarray);
-  exit;	*/
+
 		}
+	}/*endfnc*/
+
+	/**
+	 * recursive read files
+	 *
+	 * @param	string 	path
+	 * @return	array
+	 */
+	private function getFiles( $path ) {
+			$subA = $fileArray = array();
+			$pics = scandir(PATH_site.$path);
+			foreach($pics as $k=>$v){
+				$subPath = $path.$v.'/';
+				if( $v!='.' && $v != '..' && is_dir(PATH_site.$subPath) ){
+					$subA = $this->getFiles( $subPath );
+					$fileArray = array_merge($fileArray,$subA);
+				}
+				if( preg_match('~\.(png|jpg|gif|jpeg|webp)$~i',$v) ){
+					$fileArray[] = array($v,$v,'../'.$path.$v );
+				}
+			}
 
 
-
+		return $fileArray;
 	}
+
 }
