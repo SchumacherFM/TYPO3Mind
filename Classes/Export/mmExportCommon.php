@@ -37,7 +37,7 @@
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *
  */
-class Tx_Typo3mind_Export_mmExportCommon {
+class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExportSimpleXML */ {
 
 	/**
 	 * counts the nodes and uses this value as an id in the .mm file
@@ -56,9 +56,9 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	/**
 	 * the http host with http prefix
 	 *
-	 * @var string
+	 * @var array
 	 */
-	protected $httpHost;
+	protected $httpHosts;
 
 
 	/**
@@ -74,16 +74,68 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	protected $t3MindRepository;
 
 	/**
+	 * TS settings
+	 *
+	 * @var array
+	 */
+	protected $settings;
+	
+	/**
+	 * Lists all valid SysDomains for viewing pages... will overwrite httpHost ...
+	 *
+	 * @var array
+	 */
+	protected $sysDomains;
+	
+	/**
 	 * initializeAction
 	 *
 	 * @return void
 	 */
-	public function __construct() {
+	public function __construct($settings) {
+		$this->settings = $settings;
 	//	$this->t3MindRepository = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Repository_T3mindRepository');
-		$this->httpHost = 'http://'.t3lib_div::getIndpEnv('HTTP_HOST').'/';
-		$this->nodeIDcounter = 1;
+		$this->initSysDomains();
+		$this->setHttpHosts();
+		$this->nodeIDcounter = 1;		
 	}
-
+	
+	/**
+	 * sets the http_host for frontend and backend
+	 *
+	 * @param	none
+	 * @return	string
+	 */
+	private function setHttpHosts() {
+	
+		$this->httpHosts = array(
+			'frontend'=>'http://'.t3lib_div::getIndpEnv('HTTP_HOST').'/',
+			'backend'=>'http://'.t3lib_div::getIndpEnv('HTTP_HOST').'/',
+		);
+	}
+	
+	/**
+	 * returns the http_host
+	 *
+	 * @param	none
+	 * @return	string
+	 */
+	protected function getBEHttpHost( $page_Uid ) {
+		return $this->httpHosts['backend'];
+	}
+	/**
+	 * returns the http_host
+	 *
+	 * @param	none
+	 * @return	string
+	 */
+	protected function getFEHttpHost( $page_Uid ) {
+		if( isset($this->sysDomains[$page_Uid]) ){
+			$this->httpHosts['frontend'] = 'http://'.$this->sysDomains[$page_Uid].'/';
+		}
+		return $this->httpHosts['frontend'];
+	}
+	
 	/**
 	 * gets the root map element and creates the map
 	 *
@@ -236,7 +288,7 @@ class Tx_Typo3mind_Export_mmExportCommon {
 
 		if( is_file(PATH_site.$iconLocal)  ){
 
-			$nodeHTML = '<img '.$imgHTML.' src="'.$this->httpHost.$iconLocal.'"/>'.
+			$nodeHTML = '<img '.$imgHTML.' src="'.$this->getBEHttpHost().$iconLocal.'"/>'.
 						'@#160;@#160;'.htmlspecialchars( $attributes['TEXT'] );
 			$childNode = $this->addRichContentNode($xmlNode, $attributes ,$nodeHTML);
 
@@ -265,9 +317,9 @@ class Tx_Typo3mind_Export_mmExportCommon {
 				
 				if( isset($img['link']) ){
 					$img['link'] = str_replace('&','&amp;',$img['link']);
-					$html[] = '<a href="'.$img['link'].'"><img border="0" '.$img['html'].' src="'.$this->httpHost.$iconLocal.'"/></a>';
+					$html[] = '<a href="'.$img['link'].'"><img border="0" '.$img['html'].' src="'.$this->getBEHttpHost().$iconLocal.'"/></a>';
 				}else{
-					$html[] = '<img '.$img['html'].' src="'.$this->httpHost.$iconLocal.'"/>';
+					$html[] = '<img '.$img['html'].' src="'.$this->getBEHttpHost().$iconLocal.'"/>';
 				}
 
 			}
@@ -367,6 +419,7 @@ class Tx_Typo3mind_Export_mmExportCommon {
 
 		// mvc webrequest -> base uri to build in!
 		if( in_array($pageRecord['doktype'], array(1,4) ) && $pageRecord['uid'] > 0 ){
+			// $this->settings['mapMode']
 			$attr['LINK'] = 'http://'.$_SERVER['HTTP_HOST'].'/index.php?id='.$pageRecord['uid'];
 		}
 
@@ -440,4 +493,18 @@ class Tx_Typo3mind_Export_mmExportCommon {
 		return implode('',$nodeHTML);
 	}
 
+	/**
+	 * gets all SysDomains
+	 *
+	 * @return string
+	 */
+	private function initSysDomains(){
+		$this->sysDomains = array();
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'pid,domainName',
+			'sys_domain', 'hidden=0', '', 'pid, sorting DESC' );
+		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
+			$this->sysDomains[ $r['pid'] ] = $r['domainName'];
+		}
+	}
+	
 }

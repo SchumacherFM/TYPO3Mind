@@ -35,6 +35,13 @@
 class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon implements Tx_Typo3mind_Export_mmExportInterface {
 
 	/**
+	 * TS settings
+	 *
+	 * @var array
+	 */
+	protected $settings;
+
+	/**
 	 * t3MindRepository
 	 *
 	 * @var Tx_Typo3mind_Domain_Repository_T3mindRepository
@@ -46,8 +53,9 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 	 *
 	 * @return void
 	 */
-	public function __construct() {
-		parent::__construct();
+	public function __construct($settings) {
+		parent::__construct($settings);
+		$this->settings = $settings;
 		$this->t3MindRepository = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Repository_T3mindRepository');
 	}
 
@@ -75,7 +83,7 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 		);
 
 
-		$html = '<center><img src="'.$this->httpHost.'typo3/sysext/t3skin/icons/gfx/loginlogo_transp.gif" alt="TYPO3 Logo" />
+		$html = '<center><img src="'.$this->getBEHttpHost().'typo3/sysext/t3skin/icons/gfx/loginlogo_transp.gif" alt="TYPO3 Logo" />
 		<h2>'.$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'].'</h2>
 		<p style="font-size:10px;">TYPO3: '.TYPO3_version.'</p></center>';
 		$rootNode = $this->addRichContentNode($mmXML,$attributes,$html);
@@ -89,7 +97,7 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 
 
 		$this->addNode($ThisFileInfoNode,array(
-			'TEXT'=>'HTTP Address: '.$this->httpHost,
+			'TEXT'=>'Backend HTTP Address: '.$this->getBEHttpHost(),
 		));
 		$this->addNode($ThisFileInfoNode,array(
 			'TEXT'=>'Created: '.date('Y-m-d H:i:s'),
@@ -99,13 +107,13 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 		));
 
 
-		$mmExportLeftSide = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExportLeftSide');
+		$mmExportLeftSide = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExportLeftSide',$this->settings);
 		$mmExportLeftSide->getTYPONode($rootNode);
 		$mmExportLeftSide->getExtensionNode($rootNode);
 		$mmExportLeftSide->getDatabaseNode($rootNode);
 		$mmExportLeftSide->getServerNode($rootNode);
 
-		$mmExportRightSide = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExportRightSide');
+		$mmExportRightSide = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExportRightSide',$this->settings);
 		$mmExportRightSide->getTree($rootNode);
 
 		return $this->finalOutputFile($mmXML);

@@ -63,8 +63,9 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 *
 	 * @return void
 	 */
-	public function __construct() {
-		parent::__construct();
+	public function __construct($settings) {
+		parent::__construct($settings);
+
 		$this->SYSLANG = t3lib_div::makeInstance('language');
 		$this->SYSLANG->init('default');	// initalize language-object with actual language
 /*		$this->categories = array(
@@ -121,15 +122,12 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	public function getTree(SimpleXMLElement &$xmlNode) {
 
-/*		$pageTreeRoot = $this->addNode($xmlNode,array(
-			'TEXT'=>'Page Tree',
-			// 'FOLDED'=>'true',
-		));	*/
-	/*
+ 
+	/* 
 echo "<pre>\n\n";
- var_dump($this->tree->recs);
+ var_dump( $this->settings );
 echo "\n\n</pre><hr>"; exit;
-*/
+ */
 		$this->getTreeRecursive($xmlNode,$this->tree->buffer_idH,-1);
 
 /*
@@ -156,7 +154,7 @@ echo "\n\n</pre><hr>"; exit;
 
 			$T3mind = $this->t3MindRepository->findOneByPageUid($uid);
 
-			$childs = $this->addNode($firstChild, $this->getAttrFromPage( $tree->recs[$uid] , $T3mind ) );
+			$childs = $this->addNode($firstChild, $this->getAttr___FromPage( $tree->recs[$uid] , $T3mind ) );
 		}
 	*/
 
@@ -175,15 +173,23 @@ echo "\n\n</pre><hr>"; exit;
 		$depth++;
 
 		// todo get customization by user from database
-		
+
 		foreach($subTree as $uid=>$childUids){
 
 			$record = $this->tree->recs[$childUids['uid']];
 
 			$attr = array(
 				'TEXT'=>'('.$childUids['uid'].') '.$record['title'],
-				'LINK'=>$this->httpHost.'index.php?id='.$childUids['uid'],
+				'LINK'=>$this->getFEHttpHost($uid).'index.php?id='.$childUids['uid'],
 			);
+
+			if( $this->settings['mapMode'] == 'backend_tv' ){
+				$attr['LINK'] = $this->getBEHttpHost().'typo3conf/ext/templavoila/mod1/index.php?id='.$childUids['uid'];
+			}
+			if( $this->settings['mapMode'] == 'backend_list' ){
+				$attr['LINK'] = $this->getBEHttpHost().'typo3/mod.php?M=web_list&id='.$childUids['uid'];
+			}
+
 
 				// todo to opt the icon ... due to overlays ...
 			$iconDokType = !isset($this->dokTypeIcon[$record['doktype']]) ? $this->dokTypeIcon['notFound'] : $this->dokTypeIcon[$record['doktype']];
@@ -194,19 +200,21 @@ echo "\n\n</pre><hr>"; exit;
 				$doktypeRoot = $record['doktype']*1000;
 				$iconDokType = isset($this->dokTypeIcon[$doktypeRoot]) ? $this->dokTypeIcon[$doktypeRoot] : $this->dokTypeIcon[$record['doktype']];
 			}
-			
+
 			/*first 3 levels are folded*/
-			if( $depth < 3 && isset($childUids['subrow']) ){ $attr['FOLDED'] = 'true'; }			
-			
+			if( $depth < 3 && isset($childUids['subrow']) ){ $attr['FOLDED'] = 'true'; }
+
 
 			/* module icon overwrites all */
 			if( !empty($record['module']) ){
 				$iconDokType = $this->dokTypeIcon[ $record['module'] ];
 			}
-			// build internal link to backend on folders, trashcans ,etc
-			if( $record['doktype'] > 100 ) {
-				$attr['LINK'] = $this->httpHost.'typo3/mod.php?M=web_list&id='.$childUids['uid'];
+			// build internal link to show in the backend the folders, trashcans ,etc
+			if( $record['doktype'] > 100 && stristr($this->settings['mapMode'],'backend') !== false ) {
+				$attr['LINK'] = $this->getBEHttpHost().'typo3/mod.php?M=web_list&id='.$childUids['uid'];
 			}
+
+
 /*
  echo '<pre>';
  var_dump($depth);
@@ -214,8 +222,12 @@ echo "\n\n</pre><hr>"; exit;
  var_dump($record);
   echo '</pre><hr/>'; */
 
+			/*if we have a frontend map and the page is hidden ... then disable the LINK */
+			if( $record['hidden'] == 1 && $this->settings['mapMode'] == 'frontend' ){
+				unset($attr['LINK'])
+			}
+			
 			// if user assigns multiple images then use: addImagesNode
-  
 			$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
 
 			// add hidden icon

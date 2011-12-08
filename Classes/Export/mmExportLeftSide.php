@@ -71,8 +71,9 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 *
 	 * @return void
 	 */
-	public function __construct() {
-		parent::__construct();
+	public function __construct($settings) {
+		parent::__construct($settings);
+
 		$this->SYSLANG = t3lib_div::makeInstance('language');
 		$this->SYSLANG->init('default');	// initalize language-object with actual language
 		$this->categories = array(
@@ -508,6 +509,7 @@ return $dir_size;
 								'TEXT'=>$this->translate('tree.linkName2TER'),
 								'LINK'=>'http://typo3.org/extensions/repository/view/'.$extKey.'/current/',
 							) );
+							// $this->settings['mapMode'] maybe ... if frontend then no TER link ...
 						}
 
 
