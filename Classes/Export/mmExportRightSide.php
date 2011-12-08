@@ -121,7 +121,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	public function getSysLanguages(SimpleXMLElement &$xmlNode) {
 
-	
+
 		// todo isBe reuild as property
 		$isBE = stristr($this->settings['mapMode'],'backend') !== false;
 
@@ -132,23 +132,29 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 		// todo find out what the default language is ... currently it is 0 but how to access config.language
 		// $GLOBALS['TSFE']->config['config']['language'];
+		// sure DE is not default ...
+		$domainNode = $this->addImgNode($MainNode,	$this->createTLFattr('(0) default',$link),
+			'typo3/sysext/t3skin/images/flags/de.png'
+		);
+
+
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,title,flag,hidden',
 			'sys_language', '', '', 'title' );
 		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
-		
+
 			$link = $isBE ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[sys_language]['.$r['uid'].']=edit' : '';
-		
-			$domainNode = $this->addImgNode($MainNode,	$this->createTLFattr('('.$r['uid'].')'.$r['title'],$link), 
-				'typo3/sysext/t3skin/images/flags/'.$r['flag'].'.png' 
+
+			$domainNode = $this->addImgNode($MainNode,	$this->createTLFattr('('.$r['uid'].') '.$r['title'],$link),
+				'typo3/sysext/t3skin/images/flags/'.$r['flag'].'.png'
 			);
 
 			if( $r['hidden'] == 1 ){
 				$this->addIcon($domainNode, 'button_cancel' );
 			}
 		}
-	
+
 	}
-	
+
 	/**
 	 * gets sys domains
 	 *
@@ -156,44 +162,44 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @return	nothing
 	 */
 	public function getSysDomains(SimpleXMLElement &$xmlNode) {
-	
+
 		$pageDomains = array();
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'p.title,p.uid as puid,sd.uid,sd.domainName,sd.hidden',
 			'sys_domain sd join pages p on sd.pid=p.uid', '', '', 'p.pid,p.sorting,sd.sorting' );
 		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$k = $r['title'].'~#'.$r['puid'];
-			if( !isset($pageDomains[$k]) ){ 
-				$pageDomains[ $k ] = array(); 
+			if( !isset($pageDomains[$k]) ){
+				$pageDomains[ $k ] = array();
 			}
 			$pageDomains[ $k ][] = $r;
 		}
-		
+
 		if( count($pageDomains) > 0 ){
 			$MainNode = $this->addImgNode($xmlNode,array(
 				'FOLDED'=>'true',
 				'TEXT'=>$this->translate('tree.sysdomains'),
 			), 'typo3/sysext/t3skin/images/icons/mimetypes/x-content-domain.png'  );
-			
+
 			$isBE = stristr($this->settings['mapMode'],'backend') !== false;
-			
+
 			foreach($pageDomains as $kt=>$domains){
-			
+
 				$ktEx = explode('~#',$kt);
 				$ktlink = $isBE ? $this->getBEHttpHost().'typo3/mod.php?&M=web_list&id='.$ktEx[1].'&table=sys_domain' : '';
-			
+
 				$titleNode = $this->addNode($MainNode,$this->createTLFattr($ktEx[0],$ktlink) );
 				foreach($domains as $kd=>$vd){
-				
+
 					$link = $isBE ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[sys_domain]['.$kd.']=edit' : 'http://'.$vd['domainName'];
-				
+
 					$domainNode = $this->addNode($titleNode,$this->createTLFattr($vd['domainName'],$link) );
 
 					$this->addIcon($domainNode, $vd['hidden'] == 1 ? 'button_cancel' : 'button_ok' );
-	
+
 				}
 			}
 		} /*endif count*/
-		
+
 	}/*endfnc*/
 
 
@@ -205,8 +211,8 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	public function getTree(SimpleXMLElement &$xmlNode) {
 
- 
-	/* 
+
+	/*
 echo "<pre>\n\n";
  var_dump( $this->settings );
 echo "\n\n</pre><hr>"; exit;
@@ -309,7 +315,7 @@ echo "\n\n</pre><hr>"; exit;
 			if( $record['hidden'] == 1 && $this->settings['mapMode'] == 'frontend' ){
 				unset($attr['LINK']);
 			}
-			
+
 			// if user assigns multiple images then use: addImagesNode
 			$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
 
