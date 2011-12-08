@@ -222,7 +222,7 @@ class Tx_Typo3mind_Export_mmExportCommon {
 	}
 
 	/**
-	 * adds a font
+	 * adds one image to a node
 	 *
 	 * @param	SimpleXMLElement $xmlNode
 	 * @param	array $attributes
@@ -238,6 +238,42 @@ class Tx_Typo3mind_Export_mmExportCommon {
 
 			$nodeHTML = '<img '.$imgHTML.' src="'.$this->httpHost.$iconLocal.'"/>'.
 						'@#160;@#160;'.htmlspecialchars( $attributes['TEXT'] );
+			$childNode = $this->addRichContentNode($xmlNode, $attributes ,$nodeHTML);
+
+		}else {
+			$childNode = $this->addNode($xmlNode,$attributes);
+		}
+
+		return $childNode;
+	}
+
+	/**
+	 * adds multiple images with links to a node
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	array $attributes
+	 * @param	array $images [] = array(path=>,html=>,link=>) relativ image path like ../typo3conf/ext/..../ext_icon.gif 
+	 * @return	nothing
+	 */
+	protected function addImagesNode(SimpleXMLElement $xmlNode,$attributes,$images) {
+
+		$html = array();
+		
+		foreach($images as $k=>$img){
+			$iconLocal = str_replace('../','',$img['path']);
+			if( is_file(PATH_site.$iconLocal)  ){
+				
+				$html[] = (
+					isset($img['link']) ? '<a href="'.$img['link'].'">' : ''
+				).'<img '.$img['html'].' src="'.$this->httpHost.$iconLocal.'"/>'.(
+					isset($img['link']) ? '</a>' : ''
+				);
+			}
+		}
+
+		if( count($html) > 0  ){
+
+			$nodeHTML = implode('@#160;@#160;',$html).'@#160;@#160;'.htmlspecialchars( $attributes['TEXT'] );
 			$childNode = $this->addRichContentNode($xmlNode, $attributes ,$nodeHTML);
 
 		}else {

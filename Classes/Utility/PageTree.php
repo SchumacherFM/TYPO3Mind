@@ -91,7 +91,7 @@ class Tx_Typo3mind_Utility_PageTree {
 	 * Make SURE that these fields names listed herein are actually possible to select from $this->table (if that variable is set to a TCA table name)
 	 * @see addField()
 	 */
-	public $fieldArray = array('uid', 'title','deleted','hidden','doktype','shortcut_mode','crdate','tstamp');
+	public $fieldArray = array('uid', 'title','deleted','hidden','doktype','shortcut_mode','crdate','tstamp','module');
 
 	/**
 	 * List of other fields which are ALLOWED to set (here, based on the "pages" table!)
