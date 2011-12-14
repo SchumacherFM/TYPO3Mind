@@ -257,7 +257,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @param	SimpleXMLElement 	$xmlNode
 	 * @param	array				$subTree
 	 * @param	integer				$depth
-	 * @param	Tx_Typo3mind_Domain_Model_T3mind				$t3mind		for recursive mode!
+	 * @param	array				$t3mind		for recursive mode!
 	 * @return	SimpleXMLElement
 	 */
 	private function getTreeRecursive(SimpleXMLElement &$xmlNode,$subTree,$depth = 0,$t3mind = NULL) {
@@ -265,7 +265,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 		
 		$alternatingColors = array('cloud'=>'');
 		if( is_object($t3mind) ){ /* only for recurisve mode */
-			$alternatingColors['cloud'] = $t3mind->getcloudColor();
+			$alternatingColors['cloud'] = $t3mind->getcloudColor(); hier weiter ...
 		} 
 		foreach($subTree as $uid=>$childUids){
 

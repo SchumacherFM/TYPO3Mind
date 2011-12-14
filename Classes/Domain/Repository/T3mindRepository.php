@@ -34,6 +34,16 @@
 class Tx_Typo3mind_Domain_Repository_T3mindRepository extends Tx_Extbase_Persistence_Repository {
 
 	/**
+	 * Finds all and returns all them as an array
+	 * @param none
+	 * @return array
+	 */
+	public function findAll(){
+			$query = $this->createQuery();
+			$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
+			return $query->execute();
+	}
+	/**
 	 * Gets the icons as an array
 	 * @param array $settingsIcons see setup.txt
 	 * @return array
