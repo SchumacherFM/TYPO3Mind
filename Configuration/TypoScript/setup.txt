@@ -41,6 +41,7 @@ module.tx_typo3mind {
 		nodePositions = right,left
 		nodeStyles = default,bubble,fork
 		
+		# left side of the tree for showing the logs.
 		numberOfLogRows = 10
 		
 	}
