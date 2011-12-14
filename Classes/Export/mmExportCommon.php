@@ -79,21 +79,21 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @var array
 	 */
 	protected $settings;
-	
+
 	/**
 	 * Lists all valid SysDomains for viewing pages... will overwrite httpHost ...
 	 *
 	 * @var array
 	 */
 	protected $sysDomains;
-	
+
 	/**
 	 * Check what type your are running ...
 	 *
 	 * @var array
 	 */
 	protected $mapMode;
-	
+
 	/**
 	 * initializeAction
 	 *
@@ -105,9 +105,9 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	//	$this->t3MindRepository = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Repository_T3mindRepository');
 		$this->initSysDomains();
 		$this->setHttpHosts();
-		$this->nodeIDcounter = 1;		
+		$this->nodeIDcounter = 1;
 	}
-	
+
 	/**
 	 * sets a array what kind of map will be generated
 	 *
@@ -121,7 +121,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 			'isbe'=>	stristr($this->settings['mapMode'],'backend') !== false,
 		);
 	}
-	
+
 	/**
 	 * sets the http_host for frontend and backend
 	 *
@@ -129,13 +129,13 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @return	string
 	 */
 	private function setHttpHosts() {
-	
+
 		$this->httpHosts = array(
 			'frontend'=>'http://'.t3lib_div::getIndpEnv('HTTP_HOST').'/',
 			'backend'=>'http://'.t3lib_div::getIndpEnv('HTTP_HOST').'/',
 		);
 	}
-	
+
 	/**
 	 * returns the http_host
 	 *
@@ -157,7 +157,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 		}
 		return $this->httpHosts['frontend'];
 	}
-	
+
 	/**
 	 * gets the root map element and creates the map
 	 *
@@ -178,11 +178,11 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @return	string the filename
 	 */
 	protected function finalOutputFile(SimpleXMLElement &$xml) {
-		
+
 		$fileName = str_replace('[sitename]',
 			preg_replace('~[^a-z0-9]+~i','',$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']),
 			$this->settings['outputFileName']);
-			
+
 		$fileName = preg_replace('~\[([a-z_\-]+)\]~ie','date(\'\\1\')',$fileName);
 		$fileName = empty($fileName) ? 'TYPO3Mind_'.mt_rand().'.mm' : $fileName;
 
@@ -205,8 +205,32 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 		return $fileName;
 	}
 
+   /**
+     * Converts meaningful xml characters to xml entities
+     *
+     * @param  string
+     * @return string
+     */
+    public function xmlentities($value = '')
+    {
 
+        return trim( str_replace(array('&', '"', "'", '<', '>'), array('&amp;', '&quot;', '&apos;', '&lt;', '&gt;'), (string)$value) );
 
+    }
+	/**
+	 * adds attributs to a Child
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	array $attributes
+	 * @return	nothing
+	 */
+	private function addAttributes(SimpleXMLElement $xmlNode,$attributes) {
+		foreach($attributes as $k=>$v){
+			if( $v <> '' ){
+				$xmlNode->addAttribute($k,$this->xmlentities($v) );
+			}
+		}
+	}
 
 	/**
 	 * adds an builtin icon
@@ -217,7 +241,8 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 */
 	protected function addIcon(SimpleXMLElement $xmlNode,$iconName) {
 		$icon = $xmlNode->addChild('icon','');
-		$icon->addAttribute('BUILTIN',$iconName);
+		$attr = array('BUILTIN'=>$iconName);
+		$this->addAttributes($icon,$attr);
 	}
 
 	/**
@@ -228,14 +253,9 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @return	SimpleXMLElement
 	 */
 	protected function addNode(SimpleXMLElement $xmlNode,$attributes) {
-
 		$child = $xmlNode->addChild('node','');
-
-		$this->CheckAttributes($attributes);
-
-		foreach($attributes as $k=>$v){
-			$child->addAttribute($k,$v);
-		}
+		$this->checkNodeAttr($attributes);
+		$this->addAttributes($child,$attributes);
 		return $child;
 	}
 
@@ -256,9 +276,8 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 			$attributes['WIDTH'] = 'thin';
 		}
 
-		foreach($attributes as $k=>$v){
-			$edge->addAttribute($k,$v);
-		}
+		$this->addAttributes($edge,$attributes);
+
 	}
 
 	/**
@@ -270,10 +289,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 */
 	protected function addCloud(SimpleXMLElement $xmlNode,$attributes) {
 		$cloud = $xmlNode->addChild('cloud','');
-
-		foreach($attributes as $k=>$v){
-			$cloud->addAttribute($k,$v);
-		}
+		$this->addAttributes($cloud,$attributes);
 	}
 
 	/**
@@ -293,9 +309,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 			$attributes['SIZE'] = 12;
 		}
 
-		foreach($attributes as $k=>$v){
-			$font->addAttribute($k,$v);
-		}
+		$this->addAttributes($font,$attributes);
 	}
 
 	/**
@@ -329,17 +343,17 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 *
 	 * @param	SimpleXMLElement $xmlNode
 	 * @param	array $attributes
-	 * @param	array $images [] = array(path=>,html=>,link=>) relativ image path like ../typo3conf/ext/..../ext_icon.gif 
+	 * @param	array $images [] = array(path=>,html=>,link=>) relativ image path like ../typo3conf/ext/..../ext_icon.gif
 	 * @return	nothing
 	 */
 	protected function addImagesNode(SimpleXMLElement $xmlNode,$attributes,$images) {
 
 		$html = array();
-		
+
 		foreach($images as $k=>$img){
 			$iconLocal = str_replace('../','',$img['path']);
 			if( is_file(PATH_site.$iconLocal)  ){
-				
+
 				if( isset($img['link']) ){
 					$img['link'] = str_replace('&','&amp;',$img['link']);
 					$html[] = '<a href="'.$img['link'].'"><img border="0" '.$img['html'].' src="'.$this->getBEHttpHost().$iconLocal.'"/></a>';
@@ -351,7 +365,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 		}
 
 		if( count($html) > 0  ){
- 
+
 			$nodeHTML = implode('@#160;@#160;',$html).'@#160;@#160;'.htmlspecialchars( $attributes['TEXT'] );
 			$childNode = $this->addRichContentNode($xmlNode, $attributes ,$nodeHTML);
 
@@ -396,11 +410,9 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 		$css = '';
 
 		$node = $xml->addChild('node','');
-		$this->CheckAttributes($attributes);
+		$this->checkNodeAttr($attributes);
 
-		foreach($attributes as $k=>$v){
-			$node->addAttribute($k,$v);
-		}
+		$this->addAttributes($node,$attributes);
 
 		$rc = $node->addChild('richcontent','');
 		$rc->addAttribute('TYPE',$type);
@@ -420,7 +432,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 
 
 	/**
-	 * Creates the attributes from a page record
+	 * Creates the attributes from a page record   MAYBE DEPRECATED
 	 *
 	 * @param	array $pageRecord
 	 * @param	Tx_Typo3mind_Domain_Model_T3mind $T3mind
@@ -452,12 +464,12 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	}
 
 	/**
-	 * Checks if neccessary attributes are set
+	 * Checks if neccessary attributes are set for a node
 	 *
 	 * @param	array $attributes
 	 * @return	nothing
 	 */
-	protected function CheckAttributes(&$attributes,$defaultNodeIdConfigFromTSorDB = '') {
+	protected function checkNodeAttr(&$attributes) {
 
 		if( !isset($attributes['ID']) ){
 			$attributes['ID'] = 't3m'.mt_rand().'.'.$this->nodeIDcounter;
@@ -466,7 +478,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 		$attributes['TEXT'] = $this->strip_tags( str_replace('"','',$attributes['TEXT']) );
 		$this->nodeIDcounter++;
 	}
-	
+
 	/**
 	 * Creates the TLF attributes array (text, link, folded)
 	 *
@@ -513,7 +525,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	protected function strip_tags($string ){
 		return preg_replace('~\s+~',' ',strip_tags($string));
 	}
-	
+
 	/**
 	 * returns an array as an html table
 	 *
@@ -560,7 +572,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 		elseif( $bytes < 1024*1000 ){ $return = sprintf('%.2f',$bytes/1024).'KB'; }
 		elseif( $bytes < 1024*1000*1000 ){ $return = sprintf('%.2f',$bytes/1024/1024).'MB'; }
 		elseif( $bytes < 1024*1000*1000*1000 ){ $return = sprintf('%.2f',$bytes/1024/1024/1024).'GB'; }
-		
+
 		return str_pad($return,15,' ', STR_PAD_LEFT);
 	}
 	/**
@@ -588,5 +600,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 		}
 		return $dir_size;
 	}
+
+
 	
 }

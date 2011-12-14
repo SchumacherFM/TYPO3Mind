@@ -225,6 +225,19 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	public function getTree(SimpleXMLElement &$xmlNode) {
 
+		$c1 = '#220066';
+		$colorInpo = t3lib_div::makeInstance('Tx_Typo3mind_Utility_RGBinterpolate');
+	 
+		echo '<div style="width:500px;height:50px; background-color:'.$c1.';">'.$c1.'</div>';
+
+		
+		for($i=0;$i<15;$i++){
+			$colorInpo->setColor( $c1, '#ffffff', 0.1 );
+			$c2 = $colorInpo->getColor();
+			echo '<div style="margin:3px;padding:2px;width:50px;height:50px; background-color:'.$c2.'; float:left;">'.$c2.'</div>';
+			$c1 = $c2;
+		} 
+exit;	
 		$this->getTreeRecursive($xmlNode,$this->tree->buffer_idH,-1);
 
 /*
@@ -308,6 +321,15 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			// if user assigns multiple images then use: addImagesNode
 			$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
 
+			
+			if( isset($this->t3mind[$uid]) ){
+				
+				if( $this->t3mind[$uid]->isCloudIs() ){
+					$this->addCloud($pageParent,array('COLOR'=>$this->t3mind[$uid]->getcloudColor()));
+				}
+			
+			}/* endif isset $this->t3mind[$uid] */
+			
 			// add hidden icon
 			if( $record['hidden'] == 1 ){
 				$this->addIcon($pageParent,'button_cancel');
