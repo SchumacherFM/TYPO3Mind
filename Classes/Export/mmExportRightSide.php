@@ -56,6 +56,12 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	protected $dokTypeIcon;
 
+	/**
+	 * T3Mind Config for each page ...
+	 * @var array
+	 */
+	protected $t3mind;
+
 
 
 	/**
@@ -112,6 +118,20 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 	} /* endconstruct */
 
+	
+	/**
+	 * sets the t3mind array, keys are the pageUid, for performance reasons
+	 *
+	 * @param	array $t3MindRepositoryFindAll
+	 * @return	nothing
+	 */
+	public function sett3mind(&$t3MindRepositoryFindAll) {
+	
+		foreach($t3MindRepositoryFindAll as $k=>$v){
+			$this->t3mind[ $v->getpageUid() ] = $v;
+		}
+		unset($t3MindRepositoryFindAll);
+	}
 
 	/**
 	 * gets sys languages
@@ -205,34 +225,9 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	public function getTree(SimpleXMLElement &$xmlNode) {
 
-
-	/*
-echo "<pre>\n\n";
- var_dump( $this->settings );
-echo "\n\n</pre><hr>"; exit;
- */
 		$this->getTreeRecursive($xmlNode,$this->tree->buffer_idH,-1);
 
 /*
-		// Initialize starting point of page tree:
-		$treeStartingPoint = $this->pageUid;
-		$treeStartingPoint = 0;
-
-
-		// Create the tree from starting point:
-		$tree->recs[$treeStartingPoint] = $treeStartingRecord;
-
-		if( $treeStartingPoint > 0 ){
-			$treeStartingRecord = t3lib_BEfunc::getRecord('pages', $treeStartingPoint, implode(',',$tree->fieldArray) );
-		}else{
-		}
-
-
-
-
-		$T3mind = $this->t3MindRepository->findOneByPageUid( $treeStartingRecord['uid'] );
-
-
 		foreach($tree->buffer_idH as $uid=>$childUids){
 
 			$T3mind = $this->t3MindRepository->findOneByPageUid($uid);
@@ -245,7 +240,7 @@ echo "\n\n</pre><hr>"; exit;
 	}
 
 	/**
-	 * recursive tree printing - first time is for ... nothing
+	 * recursive tree printing - first time is for ... nothing, therefore we start with -1
 	 *
 	 * @param	SimpleXMLElement 	$xmlNode
 	 * @param	array				$subTree
