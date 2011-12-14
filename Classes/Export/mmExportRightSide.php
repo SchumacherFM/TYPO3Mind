@@ -257,15 +257,16 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @param	SimpleXMLElement 	$xmlNode
 	 * @param	array				$subTree
 	 * @param	integer				$depth
-	 * @param	integer				$configUID	for recursive mode!
+	 * @param	Tx_Typo3mind_Domain_Model_T3mind				$t3mind		for recursive mode!
 	 * @return	SimpleXMLElement
 	 */
-	private function getTreeRecursive(SimpleXMLElement &$xmlNode,$subTree,$depth = 0,$configUID = 0) {
+	private function getTreeRecursive(SimpleXMLElement &$xmlNode,$subTree,$depth = 0,$t3mind = NULL) {
 		$depth++;
-
-		// todo get customization by user from database
-		$startRecursiveMode = 0;
 		
+		/* backup color */
+		if( is_object($t3mind) ){
+			$orgColor = $t3mind->getcloudColor();
+		}
 		foreach($subTree as $uid=>$childUids){
 
 			$record = $this->tree->recs[$childUids['uid']];
@@ -323,32 +324,31 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 			/* setting properties */
 			$useConfigUID = $configUID == 0 ? $uid : $configUID;
+			
+			$model = isset($t3mind) ? $t3mind : (isset($this->t3mind[$uid]) ? $this->t3mind[$uid] : NULL);
 
-			if( isset($this->t3mind[$useConfigUID]) ){
+			if( is_object($model) ){
 /*
  echo '<pre>';
- var_dump($this->t3mind[$useConfigUID]);
-  echo '</pre><hr/>'; exit;					*/
-  
-				/* start recursive mode */
-				if( isset($this->t3mind[$uid]) && $this->t3mind[$uid]->getrecursive() ){ // hmmmm
-					$startRecursiveMode = $uid;
-				}
+ var_dump($model);
+  echo '</pre><hr/>'; // exit;				 
+  */
 				
-								
+// todo geht nur bis auf zweite eben die farbe ... verdammt ...								
 				/* cloud */
-				if( isset($childUids['subrow']) && $this->t3mind[$useConfigUID]->isCloudIs() ){
-					$color = $this->t3mind[$useConfigUID]->getcloudColor();
-					
-					if( $startRecursiveMode == 0 ){
+				if( isset($childUids['subrow']) && $model->isCloudIs() ){
+
+					$color = $model->getcloudColor();
+					if( is_object($t3mind) ){
 						$this->RGBinterpolate->setColor( $color, '#ffffff', 0.075 ); // last value depends on the depth of the tree
 						$color = $this->RGBinterpolate->getColor();
+						$model->setcloudColor($color);
 					}
-				
+// echo "$uid / $color<br>\n";
 					$this->addCloud($pageParent,array('COLOR'=>$color));
 				}
 			
-			}/* endif isset $this->t3mind[$useConfigUID] */
+			}/* endif isset $model */
 			
 			// add hidden icon
 			if( $record['hidden'] == 1 ){
@@ -357,8 +357,15 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 
 			if( isset($childUids['subrow']) ){
-				$this->getTreeRecursive($pageParent,$childUids['subrow'],$depth,$startRecursiveMode);
-				$startRecursiveMode = 0;
+			
+				/* start recursive mode */
+				$subModel = NULL;
+				if( is_object($model) && $model->getrecursive() ){ // is always recursive!
+					$subModel = $model;
+				}
+				if( is_object($t3mind) && $subModel ){ $subModel->setcloudColor($orgColor); }
+				$this->getTreeRecursive($pageParent,$childUids['subrow'],$depth,$subModel);
+
 			}
 		} /*endforeach*/
 
