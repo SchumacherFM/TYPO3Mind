@@ -548,5 +548,45 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 		}
 	}
 
+
+	/**
+	 * format the size by bytes ... outputs human readable...
+	 *
+	 * @return integer bytes
+	 */
+	protected function formatBytes($bytes){
+		$return = '';
+		if( $bytes < 1024 ){ $return = sprintf('%.2f',$bytes).' B'; }
+		elseif( $bytes < 1024*1000 ){ $return = sprintf('%.2f',$bytes/1024).'KB'; }
+		elseif( $bytes < 1024*1000*1000 ){ $return = sprintf('%.2f',$bytes/1024/1024).'MB'; }
+		elseif( $bytes < 1024*1000*1000*1000 ){ $return = sprintf('%.2f',$bytes/1024/1024/1024).'GB'; }
+		
+		return str_pad($return,15,' ', STR_PAD_LEFT);
+	}
+	/**
+	 * gets all recurSive Directory size / func could be improved with scandir()
+	 *
+	 * @return integer bytes
+	 */
+	protected function getDirSize($dir_name){
+		$dir_size =0;
+		if (is_dir($dir_name)) {
+			if ($dh = opendir($dir_name)) {
+				while (($file = readdir($dh)) !== false) {
+					if($file !='.' && $file != '..'){
+						if(is_file($dir_name.'/'.$file)){
+							$dir_size += filesize($dir_name.'/'.$file);
+						 }
+						 // check for any new directory inside this directory
+						 if(is_dir($dir_name.'/'.$file)){
+							$dir_size +=$this->getDirSize($dir_name.'/'.$file);
+						}
+					}
+				}
+			 }
+			closedir($dh);
+		}
+		return $dir_size;
+	}
 	
 }

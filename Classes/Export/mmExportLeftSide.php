@@ -103,9 +103,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		$this->stateColors = tx_em_Tools::getStateColors();
 
 	}
-
-
-
+	
 	/**
 	 * gets some T3 specific informations about fileadmin and uploads folder ...
 	 *
@@ -119,57 +117,38 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'TEXT'=>$this->translate('tree.typo3filesandfolders'),
 		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-folder-default.png', 'height="16"' );
 
-/*
-maybe via exec: du -chs uploads/*
-
-function get_dir_size($dir_name){
-        $dir_size =0;
-           if (is_dir($dir_name)) {
-               if ($dh = opendir($dir_name)) {
-                  while (($file = readdir($dh)) !== false) {
-                        if($file !=”.” && $file != “..”){
-                              if(is_file($dir_name.”/”.$file)){
-                                   $dir_size += filesize($dir_name.”/”.$file);
-                             }
-                             // check for any new directory inside this directory
-                             if(is_dir($dir_name.”/”.$file)){
-                                $dir_size +=  get_dir_size($dir_name.”/”.$file);
-                              }
-                           }
-                     }
-             }
-       }
-closedir($dh);
-return $dir_size;
-}
-*/
 		$nodeFileadmin = $this->addNode($MainNode,array(
 			'TEXT'=>'fileadmin'
 		));
 
-		// own class ... and diskfree function
-//echo '<pre>';
-		$scandir = PATH_site.'fileadmin/';
-		$dir = scandir($scandir);
-		foreach($dir as $k=>$v){
+		$scandirLevel1 = PATH_site.'fileadmin/';
+		$dirLevel1 = scandir($scandirLevel1);
+		foreach($dirLevel1 as $k=>$vL1){
 
-			if( is_dir($scandir.$v) && preg_match('~^\..*~',$v)==false ){
-				$size = shell_exec('du -chs '.$scandir.$v.'/*' );
-				$size = str_replace($scandir.$v,'',$size);
-				$size = xmlentities($size);
-				$size = str_replace('&#','@#',$size);
-				
+			/* is dir and avoid .svn or .git or ... folders file starting with a . */
+			if( is_dir($scandirLevel1.$vL1) && preg_match('~^\..*~',$vL1)==false ){
+
 				$faLevel1 = $this->addNode($nodeFileadmin,array(
-					'TEXT'=>$v
+					'TEXT'=>$vL1
 				));
-//echo $size."\n\n\n";				
-				$this->addNode($faLevel1,array(
-					'TEXT'=>$size
-				));
+						
+				$dirLevel2 = scandir($scandirLevel1.$vL1);
+				foreach($dirLevel2 as $k2=>$vL2){
+					$Level2Dir = $scandirLevel1.$vL1.'/'.$vL2;
+					/* is dir and avoid .svn or .git or ... folders file starting with a . */
+					if( is_dir($Level2Dir) && preg_match('~^\..*~',$vL2)==false ){
+			
+						$size = $this->formatBytes( $this->getDirSize($Level2Dir) );
+			
+						$faLevel2 = $this->addNode($faLevel1,array(
+							'TEXT'=>xmlentities($vL2.' '.$size)
+						));
+					}
+				}/*endforeach*/
+
 				
 			}
 		} /*endforeach*/
-//exit;
 
 	}
 	/**
@@ -709,8 +688,10 @@ return $dir_size;
 
 
 }
-
-
+/*
+				$size = xmlentities($size);
+				$size = str_replace('&#','@#',$size);
+*/
 	 function xmlentities( $string ) { 
 		$not_in_list = ''; 
 		return preg_replace_callback( '/[^A-Z0-9a-z_-]/' , 'get_xml_entity_at_index_0' , $string ); 
@@ -727,5 +708,5 @@ return $dir_size;
 		}		
 	} 
 	 function numeric_entity_4_char( $char ) { 
-		return '&#'.str_pad(ord($char), 3, '0', STR_PAD_LEFT).';'; 
+		return '@#'.str_pad(ord($char), 3, '0', STR_PAD_LEFT).';'; 
 	}	
