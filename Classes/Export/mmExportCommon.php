@@ -67,13 +67,6 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	public $mmVersion = '0.9.0';
 
 	/**
-	 * t3MindRepository
-	 *
-	 * @var Tx_Typo3mind_Domain_Repository_T3mindRepository
-	 */
-	protected $t3MindRepository;
-
-	/**
 	 * TS settings
 	 *
 	 * @var array
@@ -102,7 +95,6 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	public function __construct($settings) {
 		$this->settings = $settings;
 		$this->setmapMode();
-	//	$this->t3MindRepository = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Repository_T3mindRepository');
 		$this->initSysDomains();
 		$this->setHttpHosts();
 		$this->nodeIDcounter = 1;

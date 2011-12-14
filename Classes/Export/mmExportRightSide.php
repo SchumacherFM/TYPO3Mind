@@ -40,13 +40,13 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	protected $xmlParentNode;
 
 	/**
-	 * @var object
+	 * @var language
 	 */
 	protected $SYSLANG;
 
 	/**
 	 * the whole tree
-	 * @var object
+	 * @var Tx_Typo3mind_Utility_PageTree
 	 */
 	protected $tree;
 
@@ -61,6 +61,12 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @var array
 	 */
 	protected $t3mind;
+	
+	/**
+	 * Interpolation colors from RGB to HSL to RGB with an interpolation factor
+	 * @var Tx_Typo3mind_Utility_RGBinterpolate
+	 */
+	protected $RGBinterpolate;
 
 
 
@@ -71,6 +77,8 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	public function __construct($settings) {
 		parent::__construct($settings);
+		
+		$this->RGBinterpolate = t3lib_div::makeInstance('Tx_Typo3mind_Utility_RGBinterpolate');
 
 		$this->SYSLANG = t3lib_div::makeInstance('language');
 		$this->SYSLANG->init('default');	// initalize language-object with actual language
@@ -225,29 +233,20 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	public function getTree(SimpleXMLElement &$xmlNode) {
 
-		$c1 = '#220066';
-		$colorInpo = t3lib_div::makeInstance('Tx_Typo3mind_Utility_RGBinterpolate');
-	 
+		/* COLOR TESTER
+		$c1 = '#996600';
 		echo '<div style="width:500px;height:50px; background-color:'.$c1.';">'.$c1.'</div>';
-
-		
 		for($i=0;$i<15;$i++){
-			$colorInpo->setColor( $c1, '#ffffff', 0.1 );
-			$c2 = $colorInpo->getColor();
+			$this->RGBinterpolate->setColor( $c1, '#ffffff', 0.075 ); // last value depends on the depth of the tree
+			$c2 = $this->RGBinterpolate->getColor();
 			echo '<div style="margin:3px;padding:2px;width:50px;height:50px; background-color:'.$c2.'; float:left;">'.$c2.'</div>';
 			$c1 = $c2;
 		} 
-exit;	
+		exit;	
+		*/
 		$this->getTreeRecursive($xmlNode,$this->tree->buffer_idH,-1);
 
-/*
-		foreach($tree->buffer_idH as $uid=>$childUids){
 
-			$T3mind = $this->t3MindRepository->findOneByPageUid($uid);
-
-			$childs = $this->addNode($firstChild, $this->getAttr___FromPage( $tree->recs[$uid] , $T3mind ) );
-		}
-	*/
 
 
 	}
@@ -258,9 +257,10 @@ exit;
 	 * @param	SimpleXMLElement 	$xmlNode
 	 * @param	array				$subTree
 	 * @param	integer				$depth
+	 * @param	integer				$configUID	for recursive mode!
 	 * @return	SimpleXMLElement
 	 */
-	private function getTreeRecursive(SimpleXMLElement &$xmlNode,$subTree,$depth = 0) {
+	private function getTreeRecursive(SimpleXMLElement &$xmlNode,$subTree,$depth = 0,$configUID = 0) {
 		$depth++;
 
 		// todo get customization by user from database
@@ -306,12 +306,12 @@ exit;
 			}
 
 
-/*
+
  echo '<pre>';
  var_dump($depth);
  var_dump($attr);
- var_dump($record);
-  echo '</pre><hr/>'; */
+ var_dump($this->t3mind[129]);
+  echo '</pre><hr/>'; exit;
 
 			/*if we have a frontend map and the page is hidden ... then disable the LINK */
 			if( $record['hidden'] == 1 && $this->mapMode['befe'] == 'frontend' ){
@@ -321,14 +321,24 @@ exit;
 			// if user assigns multiple images then use: addImagesNode
 			$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
 
-			
-			if( isset($this->t3mind[$uid]) ){
+			/* setting properties */
+			$configUID = $configUID === 0 ? $uid : $configUID;
+			if( isset($this->t3mind[$configUID]) ){
 				
-				if( $this->t3mind[$uid]->isCloudIs() ){
-					$this->addCloud($pageParent,array('COLOR'=>$this->t3mind[$uid]->getcloudColor()));
+				if( $this->t3mind[$uid]->getrecursive() ){ // hmmmm
+					$configUID = $uid;
+					$startRecursiveMode = 1;
+				}
+				
+				/* cloud */
+				if( $this->t3mind[$configUID]->isCloudIs() ){
+				
+					$color = $this->t3mind[$configUID]->getcloudColor();
+				
+					$this->addCloud($pageParent,array('COLOR'=>$color));
 				}
 			
-			}/* endif isset $this->t3mind[$uid] */
+			}/* endif isset $this->t3mind[$configUID] */
 			
 			// add hidden icon
 			if( $record['hidden'] == 1 ){
@@ -337,7 +347,7 @@ exit;
 
 
 			if( isset($childUids['subrow']) ){
-				$this->getTreeRecursive($pageParent,$childUids['subrow'],$depth);
+				$this->getTreeRecursive($pageParent,$childUids['subrow'],$depth,$configUID);
 			}
 		} /*endforeach*/
 
