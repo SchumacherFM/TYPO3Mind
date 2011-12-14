@@ -121,10 +121,6 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	public function getSysLanguages(SimpleXMLElement &$xmlNode) {
 
-
-		// todo isBe reuild as property
-		$isBE = stristr($this->settings['mapMode'],'backend') !== false;
-
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.syslanguage'),
@@ -142,7 +138,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			'sys_language', '', '', 'title' );
 		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 
-			$link = $isBE ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[sys_language]['.$r['uid'].']=edit' : '';
+			$link = $this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[sys_language]['.$r['uid'].']=edit' : '';
 
 			$domainNode = $this->addImgNode($MainNode,	$this->createTLFattr('('.$r['uid'].') '.$r['title'],$link),
 				'typo3/sysext/t3skin/images/flags/'.$r['flag'].'.png'
@@ -180,17 +176,15 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				'TEXT'=>$this->translate('tree.sysdomains'),
 			), 'typo3/sysext/t3skin/images/icons/mimetypes/x-content-domain.png'  );
 
-			$isBE = stristr($this->settings['mapMode'],'backend') !== false;
-
 			foreach($pageDomains as $kt=>$domains){
 
 				$ktEx = explode('~#',$kt);
-				$ktlink = $isBE ? $this->getBEHttpHost().'typo3/mod.php?&M=web_list&id='.$ktEx[1].'&table=sys_domain' : '';
+				$ktlink = $this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/mod.php?&M=web_list&id='.$ktEx[1].'&table=sys_domain' : '';
 
 				$titleNode = $this->addNode($MainNode,$this->createTLFattr($ktEx[0],$ktlink) );
 				foreach($domains as $kd=>$vd){
 
-					$link = $isBE ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[sys_domain]['.$kd.']=edit' : 'http://'.$vd['domainName'];
+					$link = $this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[sys_domain]['.$kd.']=edit' : 'http://'.$vd['domainName'];
 
 					$domainNode = $this->addNode($titleNode,$this->createTLFattr($vd['domainName'],$link) );
 
@@ -272,10 +266,10 @@ echo "\n\n</pre><hr>"; exit;
 				'LINK'=>$this->getFEHttpHost($uid).'index.php?id='.$childUids['uid'],
 			);
 
-			if( $this->settings['mapMode'] == 'backend_tv' ){
+			if( $this->mapMode['befe'] == 'backend_tv' ){
 				$attr['LINK'] = $this->getBEHttpHost().'typo3conf/ext/templavoila/mod1/index.php?id='.$childUids['uid'];
 			}
-			if( $this->settings['mapMode'] == 'backend_list' ){
+			if( $this->mapMode['befe'] == 'backend_list' ){
 				$attr['LINK'] = $this->getBEHttpHost().'typo3/mod.php?M=web_list&id='.$childUids['uid'];
 			}
 
@@ -299,7 +293,7 @@ echo "\n\n</pre><hr>"; exit;
 				$iconDokType = $this->dokTypeIcon[ $record['module'] ];
 			}
 			// build internal link to show in the backend the folders, trashcans ,etc
-			if( $record['doktype'] > 100 && stristr($this->settings['mapMode'],'backend') !== false ) {
+			if( $record['doktype'] > 100 && $this->mapMode['isbe'] ) {
 				$attr['LINK'] = $this->getBEHttpHost().'typo3/mod.php?M=web_list&id='.$childUids['uid'];
 			}
 
@@ -312,7 +306,7 @@ echo "\n\n</pre><hr>"; exit;
   echo '</pre><hr/>'; */
 
 			/*if we have a frontend map and the page is hidden ... then disable the LINK */
-			if( $record['hidden'] == 1 && $this->settings['mapMode'] == 'frontend' ){
+			if( $record['hidden'] == 1 && $this->mapMode['befe'] == 'frontend' ){
 				unset($attr['LINK']);
 			}
 

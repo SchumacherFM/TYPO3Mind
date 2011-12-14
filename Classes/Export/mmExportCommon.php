@@ -88,16 +88,38 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	protected $sysDomains;
 	
 	/**
+	 * Check what type your are running ...
+	 *
+	 * @var array
+	 */
+	protected $mapMode;
+	
+	/**
 	 * initializeAction
 	 *
 	 * @return void
 	 */
 	public function __construct($settings) {
 		$this->settings = $settings;
+		$this->setmapMode();
 	//	$this->t3MindRepository = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Repository_T3mindRepository');
 		$this->initSysDomains();
 		$this->setHttpHosts();
 		$this->nodeIDcounter = 1;		
+	}
+	
+	/**
+	 * sets a array what kind of map will be generated
+	 *
+	 * @param	none
+	 * @return	string
+	 */
+	private function setmapMode(){
+
+		$this->mapMode = array(
+			'befe'=>	$this->settings['mapMode'], /* bad content from outside ... so use properly */
+			'isbe'=>	stristr($this->settings['mapMode'],'backend') !== false,
+		);
 	}
 	
 	/**
@@ -422,7 +444,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 
 		// mvc webrequest -> base uri to build in!
 		if( in_array($pageRecord['doktype'], array(1,4) ) && $pageRecord['uid'] > 0 ){
-			// $this->settings['mapMode']
+			// $this->mapMode['befe']
 			$attr['LINK'] = 'http://'.$_SERVER['HTTP_HOST'].'/index.php?id='.$pageRecord['uid'];
 		}
 
