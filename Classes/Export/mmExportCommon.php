@@ -547,5 +547,6 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 			$this->sysDomains[ $r['pid'] ] = $r['domainName'];
 		}
 	}
+
 	
 }

@@ -143,17 +143,33 @@ closedir($dh);
 return $dir_size;
 }
 */
+		$nodeFileadmin = $this->addNode($MainNode,array(
+			'TEXT'=>'fileadmin'
+		));
 
 		// own class ... and diskfree function
-		$dir = scandir(PATH_site.'fileadmin/');
-/*		echo '<pre>';
-		var_dump($dir);
-		exit;
-*/		foreach($dir as $k=>$v){
-			$this->addNode($MainNode,array(
-				'TEXT'=>$v
-			));
-		}
+//echo '<pre>';
+		$scandir = PATH_site.'fileadmin/';
+		$dir = scandir($scandir);
+		foreach($dir as $k=>$v){
+
+			if( is_dir($scandir.$v) && preg_match('~^\..*~',$v)==false ){
+				$size = shell_exec('du -chs '.$scandir.$v.'/*' );
+				$size = str_replace($scandir.$v,'',$size);
+				$size = xmlentities($size);
+				$size = str_replace('&#','@#',$size);
+				
+				$faLevel1 = $this->addNode($nodeFileadmin,array(
+					'TEXT'=>$v
+				));
+//echo $size."\n\n\n";				
+				$this->addNode($faLevel1,array(
+					'TEXT'=>$size
+				));
+				
+			}
+		} /*endforeach*/
+//exit;
 
 	}
 	/**
@@ -693,3 +709,23 @@ return $dir_size;
 
 
 }
+
+
+	 function xmlentities( $string ) { 
+		$not_in_list = ''; 
+		return preg_replace_callback( '/[^A-Z0-9a-z_-]/' , 'get_xml_entity_at_index_0' , $string ); 
+	} 
+	 function get_xml_entity_at_index_0( $CHAR ) { 
+		if( !is_string( $CHAR[0] ) || ( strlen( $CHAR[0] ) > 1 ) ) { 
+			die( "function: 'get_xml_entity_at_index_0' requires data type: 'char' (single character). '{$CHAR[0]}' does not match this type." ); 
+		} 
+		switch( $CHAR[0] ) { 
+			case '\'':	case '"':	case '&':	case '<':	case '>': 
+				return htmlspecialchars( $CHAR[0], ENT_QUOTES );	break; 
+			default: 
+				return numeric_entity_4_char($CHAR[0]);				break; 
+		}		
+	} 
+	 function numeric_entity_4_char( $char ) { 
+		return '&#'.str_pad(ord($char), 3, '0', STR_PAD_LEFT).';'; 
+	}	
