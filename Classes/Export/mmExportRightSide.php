@@ -244,7 +244,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 		} 
 		exit;	
 		*/
-		$this->getTreeRecursive($xmlNode,$this->tree->buffer_idH,-1);
+		$this->getTreeRecursive($xmlNode,$this->tree->buffer_idH,-1,0);
 
 
 
@@ -305,13 +305,12 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				$attr['LINK'] = $this->getBEHttpHost().'typo3/mod.php?M=web_list&id='.$childUids['uid'];
 			}
 
-
-
+/*
  echo '<pre>';
  var_dump($depth);
  var_dump($attr);
  var_dump($this->t3mind[129]);
-  echo '</pre><hr/>'; exit;
+  echo '</pre><hr/>'; exit;	*/
 
 			/*if we have a frontend map and the page is hidden ... then disable the LINK */
 			if( $record['hidden'] == 1 && $this->mapMode['befe'] == 'frontend' ){
@@ -322,23 +321,34 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
 
 			/* setting properties */
-			$configUID = $configUID === 0 ? $uid : $configUID;
-			if( isset($this->t3mind[$configUID]) ){
-				
-				if( $this->t3mind[$uid]->getrecursive() ){ // hmmmm
+			$useConfigUID = $configUID == 0 ? $uid : $configUID;
+
+			if( isset($this->t3mind[$useConfigUID]) ){
+/*
+ echo '<pre>';
+ var_dump($this->t3mind[$useConfigUID]);
+  echo '</pre><hr/>'; exit;					*/
+  
+				/* start recursive mode */
+				if( isset($this->t3mind[$uid]) && $this->t3mind[$uid]->getrecursive() ){ // hmmmm
 					$configUID = $uid;
 					$startRecursiveMode = 1;
 				}
 				
+								
 				/* cloud */
-				if( $this->t3mind[$configUID]->isCloudIs() ){
-				
-					$color = $this->t3mind[$configUID]->getcloudColor();
+				if( isset($childUids['subrow']) && $this->t3mind[$useConfigUID]->isCloudIs() ){
+					$color = $this->t3mind[$useConfigUID]->getcloudColor();
+					
+					if( !isset($startRecursiveMode) ){
+						$this->RGBinterpolate->setColor( $color, '#ffffff', 0.075 ); // last value depends on the depth of the tree
+						$color = $this->RGBinterpolate->getColor();
+					}
 				
 					$this->addCloud($pageParent,array('COLOR'=>$color));
 				}
 			
-			}/* endif isset $this->t3mind[$configUID] */
+			}/* endif isset $this->t3mind[$useConfigUID] */
 			
 			// add hidden icon
 			if( $record['hidden'] == 1 ){
@@ -348,6 +358,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 			if( isset($childUids['subrow']) ){
 				$this->getTreeRecursive($pageParent,$childUids['subrow'],$depth,$configUID);
+				$configUID = 0;
 			}
 		} /*endforeach*/
 
