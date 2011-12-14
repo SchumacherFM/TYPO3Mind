@@ -264,7 +264,8 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 		$depth++;
 
 		// todo get customization by user from database
-
+		$startRecursiveMode = 0;
+		
 		foreach($subTree as $uid=>$childUids){
 
 			$record = $this->tree->recs[$childUids['uid']];
@@ -331,8 +332,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
   
 				/* start recursive mode */
 				if( isset($this->t3mind[$uid]) && $this->t3mind[$uid]->getrecursive() ){ // hmmmm
-					$configUID = $uid;
-					$startRecursiveMode = 1;
+					$startRecursiveMode = $uid;
 				}
 				
 								
@@ -340,7 +340,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				if( isset($childUids['subrow']) && $this->t3mind[$useConfigUID]->isCloudIs() ){
 					$color = $this->t3mind[$useConfigUID]->getcloudColor();
 					
-					if( !isset($startRecursiveMode) ){
+					if( $startRecursiveMode == 0 ){
 						$this->RGBinterpolate->setColor( $color, '#ffffff', 0.075 ); // last value depends on the depth of the tree
 						$color = $this->RGBinterpolate->getColor();
 					}
@@ -357,8 +357,8 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 
 			if( isset($childUids['subrow']) ){
-				$this->getTreeRecursive($pageParent,$childUids['subrow'],$depth,$configUID);
-				$configUID = 0;
+				$this->getTreeRecursive($pageParent,$childUids['subrow'],$depth,$startRecursiveMode);
+				$startRecursiveMode = 0;
 			}
 		} /*endforeach*/
 
