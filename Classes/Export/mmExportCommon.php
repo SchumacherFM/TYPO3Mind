@@ -156,10 +156,13 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @return	string the filename
 	 */
 	protected function finalOutputFile(SimpleXMLElement &$xml) {
-
-		// todo add datetime here  .'-'.date('Y-m-d_His')
-		$fileName = 'TYPO3Mind_'.preg_replace('~[^a-z0-9]+~i','',$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']).'.mm';
-		// that's quite a hack!
+		
+		$fileName = str_replace('[sitename]',
+			preg_replace('~[^a-z0-9]+~i','',$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']),
+			$this->settings['outputFileName']);
+			
+		$fileName = preg_replace('~\[([a-z_\-]+)\]~ie','date(\'\\1\')',$fileName);
+		$fileName = empty($fileName) ? 'TYPO3Mind_'.mt_rand().'.mm' : $fileName;
 
 
 

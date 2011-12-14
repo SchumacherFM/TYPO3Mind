@@ -76,6 +76,7 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 	right side same as the typo3 backend tree
 */
 
+
 		$mmXML = $this->getMap();
 
 		$attributes = array(
