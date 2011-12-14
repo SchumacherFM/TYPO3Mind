@@ -183,7 +183,7 @@ return $dir_size;
 
 		$nodeHTML = array();
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,log_data',
-			'sys_log', 'error=0 AND type=255', '', 'tstamp DESC', 10 );
+			'sys_log', 'error=0 AND type=255', '', 'tstamp DESC', (int)$this->settings['numberOfLogRows'] );
 		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$nodeHTML[ $r['LoggedDate'] ] = implode(' / ',unserialize($r['log_data']));
 		}
@@ -194,7 +194,7 @@ return $dir_size;
 
 		$nodeHTML = array();
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,log_data',
-			'sys_log', 'error=3', '', 'tstamp DESC', 10 );
+			'sys_log', 'error=3', '', 'tstamp DESC', (int)$this->settings['numberOfLogRows'] );
 		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$nodeHTML[ $r['LoggedDate'] ] = implode(' / ',unserialize($r['log_data']));
 		}
@@ -203,7 +203,7 @@ return $dir_size;
 
 
 		$DBresult = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,details',
-			'sys_log', 'error=1', '', 'tstamp DESC', 10 /* TODO via TS ...*/ );
+			'sys_log', 'error=1', '', 'tstamp DESC', (int)$this->settings['numberOfLogRows'] );
 		$nodeHTML = array();
 		while($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($DBresult) ){
 			$nodeHTML[ $r['LoggedDate'] ] = strip_tags(str_replace('|',' ',$r['details']));
@@ -244,7 +244,7 @@ return $dir_size;
 		));
 		$this->addIcon($UserUserNode,'male1');
 
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'username,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=0', '', 'username', '10' );
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'username,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=0', '', 'username', (int)$this->settings['numberOfLogRows'] );
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$this->BeUsersHandleRow($UserUserNode,$row);
 		}
@@ -268,7 +268,7 @@ return $dir_size;
 			if( !empty($row['realname']) ){ $this->addNode($aUserNode,array('TEXT'=>$row['realname'])); }
 			if( !empty($row['email']) ){ $this->addNode($aUserNode,array('TEXT'=>$row['email']));	}
 
-			$this->addNode($aUserNode,array('TEXT'=>'Idea Show SysLog last 10 enries...'));
+			$this->addNode($aUserNode,array('TEXT'=>'ToDO: Idea Show SysLog last 10 enries...'));
 
 	} /* endfnc */
 
