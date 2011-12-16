@@ -263,10 +263,10 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	private function getTreeRecursive(SimpleXMLElement &$xmlNode,$subTree,$depth = 0,$t3mind = NULL) {
 		$depth++;
 		
-		/* backup color */
-		if( is_object($t3mind) ){
-			$orgColor = $t3mind->getcloudColor();
-		}
+		$alternatingColors = array('cloud'=>'');
+		if( is_object($t3mind) ){ /* only for recurisve mode */
+			$alternatingColors['cloud'] = $t3mind->getcloudColor();
+		} 
 		foreach($subTree as $uid=>$childUids){
 
 			$record = $this->tree->recs[$childUids['uid']];
@@ -339,10 +339,12 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				if( isset($childUids['subrow']) && $model->isCloudIs() ){
 
 					$color = $model->getcloudColor();
-					if( is_object($t3mind) ){
-						$this->RGBinterpolate->setColor( $color, '#ffffff', 0.075 ); // last value depends on the depth of the tree
-						$color = $this->RGBinterpolate->getColor();
-						$model->setcloudColor($color);
+					if( $alternatingColors['cloud'] == '' ){
+						// hmmmm
+					}
+					elseif( $alternatingColors['cloud'] <> '' ){
+						$this->RGBinterpolate->setColor( $alternatingColors['cloud'], '#ffffff', 0.075 ); // last value depends on the depth of the tree
+						$color = $alternatingColors['cloud'] = $this->RGBinterpolate->getColor();
 					}
 // echo "$uid / $color<br>\n";
 					$this->addCloud($pageParent,array('COLOR'=>$color));
@@ -356,14 +358,16 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			}
 
 
-			if( isset($childUids['subrow']) ){
+			if( isset($childUids['subrow']) && count($childUids['subrow']) > 1 ){
 			
 				/* start recursive mode */
 				$subModel = NULL;
 				if( is_object($model) && $model->getrecursive() ){ // is always recursive!
 					$subModel = $model;
+					/* todo: implement here that the persistant manager will NOT save set temp settet cloud color */
+					if( is_object($t3mind) /*from the recursion*/ ){ $subModel->setcloudColor( $alternatingColors['cloud'] ); }
 				}
-				if( is_object($t3mind) && $subModel ){ $subModel->setcloudColor($orgColor); }
+				
 				$this->getTreeRecursive($pageParent,$childUids['subrow'],$depth,$subModel);
 
 			}
