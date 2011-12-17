@@ -103,7 +103,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		$this->stateColors = tx_em_Tools::getStateColors();
 
 	}
-	
+
 	/**
 	 * gets some T3 specific informations about fileadmin and uploads folder ...
 	 *
@@ -131,22 +131,22 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 				$faLevel1 = $this->addNode($nodeFileadmin,array(
 					'TEXT'=>$vL1
 				));
-						
+
 				$dirLevel2 = scandir($scandirLevel1.$vL1);
 				foreach($dirLevel2 as $k2=>$vL2){
 					$Level2Dir = $scandirLevel1.$vL1.'/'.$vL2;
 					/* is dir and avoid .svn or .git or ... folders file starting with a . */
 					if( is_dir($Level2Dir) && preg_match('~^\..*~',$vL2)==false ){
-			
+
 						$size = $this->formatBytes( $this->getDirSize($Level2Dir) );
-			
+
 						$faLevel2 = $this->addNode($faLevel1,array(
 							'TEXT'=>xmlentities($vL2.' '.$size)
 						));
 					}
 				}/*endforeach*/
 
-				
+
 			}
 		} /*endforeach*/
 
@@ -485,8 +485,8 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 						$color = $extI%2==0 ? '#ececec' : '#ffffff';
 						$this->addCloud($extNode,array('COLOR'=>$color ));
-						
-						
+
+
 						// installed or not icon
 						$icon = $extArray['installed'] ? 'button_ok' : 'button_cancel';
 						$this->addIcon($extNode,$icon);
@@ -692,21 +692,21 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 				$size = xmlentities($size);
 				$size = str_replace('&#','@#',$size);
 */
-	 function xmlentities( $string ) { 
-		$not_in_list = ''; 
-		return preg_replace_callback( '/[^A-Z0-9a-z_-]/' , 'get_xml_entity_at_index_0' , $string ); 
-	} 
-	 function get_xml_entity_at_index_0( $CHAR ) { 
-		if( !is_string( $CHAR[0] ) || ( strlen( $CHAR[0] ) > 1 ) ) { 
-			die( "function: 'get_xml_entity_at_index_0' requires data type: 'char' (single character). '{$CHAR[0]}' does not match this type." ); 
-		} 
-		switch( $CHAR[0] ) { 
-			case '\'':	case '"':	case '&':	case '<':	case '>': 
-				return htmlspecialchars( $CHAR[0], ENT_QUOTES );	break; 
-			default: 
-				return numeric_entity_4_char($CHAR[0]);				break; 
-		}		
-	} 
-	 function numeric_entity_4_char( $char ) { 
-		return '@#'.str_pad(ord($char), 3, '0', STR_PAD_LEFT).';'; 
-	}	
+	 function xmlentities( $string ) {
+		$not_in_list = '';
+		return preg_replace_callback( '/[^A-Z0-9a-z_-]/' , 'get_xml_entity_at_index_0' , $string );
+	}
+	 function get_xml_entity_at_index_0( $CHAR ) {
+		if( !is_string( $CHAR[0] ) || ( strlen( $CHAR[0] ) > 1 ) ) {
+			die( "function: 'get_xml_entity_at_index_0' requires data type: 'char' (single character). '{$CHAR[0]}' does not match this type." );
+		}
+		switch( $CHAR[0] ) {
+			case '\'':	case '"':	case '&':	case '<':	case '>':
+				return htmlspecialchars( $CHAR[0], ENT_QUOTES );	break;
+			default:
+				return numeric_entity_4_char($CHAR[0]);				break;
+		}
+	}
+	 function numeric_entity_4_char( $char ) {
+		return '@#'.str_pad(ord($char), 3, '0', STR_PAD_LEFT).';';
+	}

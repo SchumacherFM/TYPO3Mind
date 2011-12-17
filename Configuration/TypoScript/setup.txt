@@ -17,8 +17,8 @@ module.tx_typo3mind {
 		mapMode = backend_tv
 		
 		# only sitename variable is supported, the second variable will be used with the date() function
-		outputFileName = TYPO3Mind_[sitename]_[Y-m-d_H-i-s].mm
-		# outputFileName = TYPO3Mind_[sitename]_[Y-m-d].mm
+		# outputFileName = TYPO3Mind_[sitename]_[Y-m-d_H-i-s].mm
+		outputFileName = TYPO3Mind_[sitename]_[Y-m-d].mm
 	
 		# set this to a convinient path, recursive searching of files
 		# todo find bug why in template in DB not values are taken ...

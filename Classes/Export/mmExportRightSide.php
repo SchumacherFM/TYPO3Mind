@@ -61,7 +61,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @var array
 	 */
 	protected $t3mind;
-	
+
 	/**
 	 * Interpolation colors from RGB to HSL to RGB with an interpolation factor
 	 * @var Tx_Typo3mind_Utility_RGBinterpolate
@@ -77,7 +77,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	public function __construct($settings) {
 		parent::__construct($settings);
-		
+
 		$this->RGBinterpolate = t3lib_div::makeInstance('Tx_Typo3mind_Utility_RGBinterpolate');
 
 		$this->SYSLANG = t3lib_div::makeInstance('language');
@@ -126,7 +126,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 	} /* endconstruct */
 
-	
+
 	/**
 	 * sets the t3mind array, keys are the pageUid, for performance reasons
 	 *
@@ -134,9 +134,11 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @return	nothing
 	 */
 	public function sett3mind(&$t3MindRepositoryFindAll) {
-	
+
 		foreach($t3MindRepositoryFindAll as $k=>$v){
-			$this->t3mind[ $v->getpageUid() ] = $v;
+			unset($v['l10n_parent']);
+			unset($v['l10n_diffsource']);
+			$this->t3mind[ $v['page_uid'] ] = $v;
 		}
 		unset($t3MindRepositoryFindAll);
 	}
@@ -241,8 +243,8 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			$c2 = $this->RGBinterpolate->getColor();
 			echo '<div style="margin:3px;padding:2px;width:50px;height:50px; background-color:'.$c2.'; float:left;">'.$c2.'</div>';
 			$c1 = $c2;
-		} 
-		exit;	
+		}
+		exit;
 		*/
 		$this->getTreeRecursive($xmlNode,$this->tree->buffer_idH,-1,0);
 
@@ -262,11 +264,12 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	private function getTreeRecursive(SimpleXMLElement &$xmlNode,$subTree,$depth = 0,$t3mind = NULL) {
 		$depth++;
-		
+
 		$alternatingColors = array('cloud'=>'');
-		if( is_object($t3mind) ){ /* only for recurisve mode */
-			$alternatingColors['cloud'] = $t3mind->getcloudColor(); hier weiter ...
-		} 
+		if( is_array($t3mind) ){ /* only for recurisve mode */
+			$alternatingColors['cloud'] = $t3mind['cloud_color']; // shier weiter ...
+		}
+
 		foreach($subTree as $uid=>$childUids){
 
 			$record = $this->tree->recs[$childUids['uid']];
@@ -324,21 +327,20 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 			/* setting properties */
 			$useConfigUID = $configUID == 0 ? $uid : $configUID;
-			
-			$model = isset($t3mind) ? $t3mind : (isset($this->t3mind[$uid]) ? $this->t3mind[$uid] : NULL);
 
-			if( is_object($model) ){
+			$t3mindCurrent = isset($t3mind) ? $t3mind : (isset($this->t3mind[$uid]) ? $this->t3mind[$uid] : NULL);
+
+			if( is_array($t3mindCurrent) ){
 /*
  echo '<pre>';
- var_dump($model);
-  echo '</pre><hr/>'; // exit;				 
+ var_dump($t3mindCurrent);
+  echo '</pre><hr/>'; // exit;
   */
-				
-// todo geht nur bis auf zweite eben die farbe ... verdammt ...								
-				/* cloud */
-				if( isset($childUids['subrow']) && $model->isCloudIs() ){
 
-					$color = $model->getcloudColor();
+				/* cloud */
+				if( isset($childUids['subrow']) && $t3mindCurrent['cloud_is']==1 ){
+
+					$color = $t3mindCurrent['cloud_color'];
 					if( $alternatingColors['cloud'] == '' ){
 						// hmmmm
 					}
@@ -346,12 +348,12 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 						$this->RGBinterpolate->setColor( $alternatingColors['cloud'], '#ffffff', 0.075 ); // last value depends on the depth of the tree
 						$color = $alternatingColors['cloud'] = $this->RGBinterpolate->getColor();
 					}
-// echo "$uid / $color<br>\n";
+
 					$this->addCloud($pageParent,array('COLOR'=>$color));
 				}
-			
-			}/* endif isset $model */
-			
+
+			}/* endif isset $t3mindCurrent */
+
 			// add hidden icon
 			if( $record['hidden'] == 1 ){
 				$this->addIcon($pageParent,'button_cancel');
@@ -359,16 +361,16 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 
 			if( isset($childUids['subrow']) && count($childUids['subrow']) > 1 ){
-			
+
 				/* start recursive mode */
-				$subModel = NULL;
-				if( is_object($model) && $model->getrecursive() ){ // is always recursive!
-					$subModel = $model;
+				$subT3mindCurrent = NULL;
+				if( is_array($t3mindCurrent) && $t3mindCurrent['recursive']==1 ){ // is always recursive!
+					$subT3mindCurrent = $t3mindCurrent;
 					/* todo: implement here that the persistant manager will NOT save set temp settet cloud color */
-					if( is_object($t3mind) /*from the recursion*/ ){ $subModel->setcloudColor( $alternatingColors['cloud'] ); }
+					if( is_array($t3mind) /*from the recursion*/ ){ $subT3mindCurrent['cloud_color'] = $alternatingColors['cloud']; }
 				}
-				
-				$this->getTreeRecursive($pageParent,$childUids['subrow'],$depth,$subModel);
+
+				$this->getTreeRecursive($pageParent,$childUids['subrow'],$depth,$subT3mindCurrent);
 
 			}
 		} /*endforeach*/
