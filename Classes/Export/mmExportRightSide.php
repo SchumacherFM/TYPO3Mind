@@ -239,8 +239,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 		$c1 = '#996600';
 		echo '<div style="width:500px;height:50px; background-color:'.$c1.';">'.$c1.'</div>';
 		for($i=0;$i<15;$i++){
-			$this->RGBinterpolate->setColor( $c1, '#ffffff', 0.075 ); // last value depends on the depth of the tree
-			$c2 = $this->RGBinterpolate->getColor();
+			$c2 = $this->RGBinterpolate->interpolate( $c1, '#ffffff', 0.075 ); // last value depends on the depth of the tree
 			echo '<div style="margin:3px;padding:2px;width:50px;height:50px; background-color:'.$c2.'; float:left;">'.$c2.'</div>';
 			$c1 = $c2;
 		}
@@ -277,6 +276,15 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 			$record = $this->tree->recs[$childUids['uid']];
 
+			/* setting properties */
+			$useConfigUID = $configUID == 0 ? $uid : $configUID;
+
+			$t3mindCurrent = isset($t3mind) ? $t3mind : (isset($this->t3mind[$uid]) ? $this->t3mind[$uid] : NULL);
+
+			$hasMoreThanOneChild = ( isset($childUids['subrow']) && count($childUids['subrow']) > 1 ) ? true : false;
+			$isRecursive = (int)$t3mindCurrent['recursive'] == 1 ? true : false;
+			
+			
 			$attr = array(
 				'TEXT'=>'('.$childUids['uid'].') '.$record['title'],
 				'LINK'=>$this->getFEHttpHost($uid).'index.php?id='.$childUids['uid'],
@@ -300,9 +308,6 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				$iconDokType = isset($this->dokTypeIcon[$doktypeRoot]) ? $this->dokTypeIcon[$doktypeRoot] : $this->dokTypeIcon[$record['doktype']];
 			}
 
-			/*first 3 levels are folded*/
-			if( $depth < 3 && isset($childUids['subrow']) ){ $attr['FOLDED'] = 'true'; }
-
 
 			/* module icon overwrites all */
 			if( !empty($record['module']) ){
@@ -324,16 +329,20 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			if( $record['hidden'] == 1 && $this->mapMode['befe'] == 'frontend' ){
 				unset($attr['LINK']);
 			}
+			// isRecursive
+			if( isset($t3mindCurrent['font_color']) && $t3mindCurrent['font_color'] <> '' ){ $attr['COLOR'] = $t3mindCurrent['font_color']; }
+			if( isset($t3mindCurrent['node_color']) && $t3mindCurrent['node_color'] <> '' ){ $attr['BACKGROUND_COLOR'] = $t3mindCurrent['node_color']; }
 
+			if( isset($t3mindCurrent['node_folded']) && isset($childUids['subrow']) && $t3mindCurrent['node_folded'] == 1 ){ $attr['FOLDED'] = 'true'; }
+			if( isset($t3mindCurrent['node_style']) && $t3mindCurrent['node_style'] <> '' ){ $attr['STYLE'] = $t3mindCurrent['node_style']; }
+
+			/*first 3 levels are folded */
+			if( $settings['nodeAutoFold'] == 1 && $depth < 3 && isset($childUids['subrow']) ){ $attr['FOLDED'] = 'true'; }
+			
+			
 			// if user assigns multiple images then use: addImagesNode
 			$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
 
-			/* setting properties */
-			$useConfigUID = $configUID == 0 ? $uid : $configUID;
-
-			$t3mindCurrent = isset($t3mind) ? $t3mind : (isset($this->t3mind[$uid]) ? $this->t3mind[$uid] : NULL);
-
-			$hasMoreThanOneChild = ( isset($childUids['subrow']) && count($childUids['subrow']) > 1 ) ? true : false;
 			
 			if( is_array($t3mindCurrent) ){
 
@@ -341,7 +350,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				if( $hasMoreThanOneChild && $t3mindCurrent['cloud_is']==1 ){
 				
 					$color = $t3mindCurrent['cloud_color'];
-					if( !empty($color) && !empty($alternatingColors['cloud']) ){
+					if($isRecursive && !empty($color) && !empty($alternatingColors['cloud']) ){
 						/* last value depends on the depth of the tree */
 						$color = $alternatingColors['cloud'] = $this->RGBinterpolate->interpolate( $alternatingColors['cloud'], '#ffffff', 0.075 ); 
 						// $this->RGBinterpolate->getColor();
@@ -353,21 +362,39 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 				
 				/*<add Edge>*/
-				$edgeAttr = array();
+				$subNodeAttr = array();
 				// array('#FFFF00','STYLE'=>'sharp_bezier', 'WIDTH'=>'thin')
-				if( $t3mindCurrent['edge_color'] <> '' ){ $edgeAttr['COLOR'] = $t3mindCurrent['edge_color']; }
-				if( $t3mindCurrent['edge_style'] <> '' ){ $edgeAttr['STYLE'] = $t3mindCurrent['edge_style']; }
-				if( $t3mindCurrent['edge_width'] <> '' ){ $edgeAttr['WIDTH'] = $t3mindCurrent['edge_width']; }
+				if( $t3mindCurrent['edge_color'] <> '' ){ $subNodeAttr['COLOR'] = $t3mindCurrent['edge_color']; }
+				if( $t3mindCurrent['edge_style'] <> '' ){ $subNodeAttr['STYLE'] = $t3mindCurrent['edge_style']; }
+				if( $t3mindCurrent['edge_width'] <> '' ){ $subNodeAttr['WIDTH'] = $t3mindCurrent['edge_width']; }
 
-				if( !empty($edgeAttr['COLOR']) && !empty($alternatingColors['edge']) ){
-					$edgeAttr['COLOR'] = $alternatingColors['edge'] = $this->RGBinterpolate->interpolate( $alternatingColors['edge'], '#ffffff', 0.075 ); 
+				if($isRecursive &&  !empty($subNodeAttr['COLOR']) && !empty($alternatingColors['edge']) ){
+					$subNodeAttr['COLOR'] = $alternatingColors['edge'] = $this->RGBinterpolate->interpolate( $alternatingColors['edge'], '#ffffff', 0.075 ); 
 					// $this->RGBinterpolate->getColor();
 				}
 				
-				if( count($edgeAttr)>0 ){
-					$this->addEdge($pageParent,$edgeAttr);
+				if( count($subNodeAttr)>0 ){
+					$this->addEdge($pageParent,$subNodeAttr);
 				}
 				/*</add Edge>*/
+
+
+				/*<add font>*/
+				$subNodeAttr = array();
+				if( $t3mindCurrent['font_face'] <> '' ){ $subNodeAttr['NAME'] = $t3mindCurrent['font_face']; }
+				if( $t3mindCurrent['font_size'] > 0 ){ $subNodeAttr['SIZE'] = $t3mindCurrent['font_size']; }
+				if( $t3mindCurrent['font_bold'] == 1 ){ $subNodeAttr['BOLD'] = 'true'; }
+				if( $t3mindCurrent['font_italic'] == 1 ){ $subNodeAttr['ITALIC'] = 'true'; }
+
+				if($isRecursive &&  !empty($subNodeAttr['COLOR']) && !empty($alternatingColors['font']) ){
+					$subNodeAttr['COLOR'] = $alternatingColors['font'] = $this->RGBinterpolate->interpolate( $alternatingColors['font'], '#ffffff', 0.075 ); 
+					// $this->RGBinterpolate->getColor();
+				}
+				
+				if( count($subNodeAttr)>0 ){
+					$this->addFont($pageParent,$subNodeAttr);
+				}
+				/*</add font>*/
 				
 			}/* endif isset $t3mindCurrent */
 

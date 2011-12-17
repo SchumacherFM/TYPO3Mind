@@ -13,7 +13,8 @@ class Tx_Typo3mind_Utility_RGBinterpolate {
 	// Output:
 	//   array(int, int, int) being the resulting color in RGB)
 
-	public function color_inverse($color){
+	
+	public function inverse($color){
 		$color = str_replace('#', '', $color);
 		if (strlen($color) != 6){ return '000000'; }
 		$rgb = '';
