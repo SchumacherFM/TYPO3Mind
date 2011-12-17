@@ -13,10 +13,19 @@ class Tx_Typo3mind_Utility_RGBinterpolate {
 	// Output:
 	//   array(int, int, int) being the resulting color in RGB)
 
+	public function color_inverse($color){
+		$color = str_replace('#', '', $color);
+		if (strlen($color) != 6){ return '000000'; }
+		$rgb = '';
+		for ($x=0;$x<3;$x++){
+			$c = 255 - hexdec(substr($color,(2*$x),2));
+			$c = ($c < 0) ? 0 : dechex($c);
+			$rgb .= (strlen($c) < 2) ? '0'.$c : $c;
+		}
+		return '#'.$rgb;
+	}
 
-	private $return;
-
-	public function setColor( $start, $end, $dist ){
+	public function interpolate( $start, $end, $dist ){
 
 
 		$hsl_start = $this->rgb2hsl( $this->getCol($start) );
@@ -36,14 +45,10 @@ class Tx_Typo3mind_Utility_RGBinterpolate {
 		$hs = $this->interp( $hsl_start[0], $hsl_end[0], $dist );
 		$ss = $this->interp( $hsl_start[1], $hsl_end[1], $dist );
 		$ls = $this->interp( $hsl_start[2], $hsl_end[2], $dist );
-		$this->return = $this->col2string( $this->hsl2rgb( array( $hs, $ss, $ls ) ) );
-
+		return $this->col2string( $this->hsl2rgb( array( $hs, $ss, $ls ) ) );
+		// return $this->return;
 	}
 
-
-	public function getColor(){
-		return $this->return;
-	}
 
 
 	// Input: start-value, end-value, % distance as float in [0.0 .. 1.0]

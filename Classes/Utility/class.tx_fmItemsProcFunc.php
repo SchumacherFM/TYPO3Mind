@@ -51,7 +51,7 @@ class tx_fmItemsProcFunc {
 	 */
 	public function trimExplodeVK($d,$s) {
 
-		return $this->arrayKeysEqualValues ( t3lib_div::trimExplode($d, $s ,1 ) );
+		return $this->arrayKeysEqualValues ( t3lib_div::trimExplode($d, $s ,0 ) );
 	}
 
 	/**

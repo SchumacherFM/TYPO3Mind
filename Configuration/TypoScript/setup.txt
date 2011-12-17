@@ -31,13 +31,15 @@ module.tx_typo3mind {
 				
 		# first option is always default
 		# use keyword default for no entry in the DB/XML
-		edgeStyles = bezier, linear, sharp_bezier, sharp_linear
 		fontSize = default,10, 12, 14, 16, 18
 		
 		# any ttf font installed on the system
 		fontFace = default, SansSerif, Arial, Verdana, Tahoma, Times New Roman, Courier New
 		
-		edgeWidths = thin, parent, 1 , 2 ,  4 , 8
+		# if comma is first, then first value is blank
+		edgeWidths = ,thin, parent, 1 , 2 ,  4 , 8
+		edgeStyles = ,bezier, linear, sharp_bezier, sharp_linear
+
 		nodePositions = right,left
 		nodeStyles = default,bubble,fork
 		

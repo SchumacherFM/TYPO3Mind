@@ -246,7 +246,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 		}
 		exit;
 		*/
-		$this->getTreeRecursive($xmlNode,$this->tree->buffer_idH,-1,0);
+		$this->getTreeRecursive($xmlNode, $this->tree->buffer_idH, -1, NULL);
 
 
 
@@ -265,9 +265,12 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	private function getTreeRecursive(SimpleXMLElement &$xmlNode,$subTree,$depth = 0,$t3mind = NULL) {
 		$depth++;
 
-		$alternatingColors = array('cloud'=>'');
-		if( is_array($t3mind) ){ /* only for recurisve mode */
-			$alternatingColors['cloud'] = $t3mind['cloud_color']; // shier weiter ...
+		$alternatingColors = array();
+		if( is_array($t3mind) ){ /* only for recurisve mode use previous color ... */
+			$alternatingColors['cloud'] = $t3mind['cloud_color'];
+			$alternatingColors['node'] = $t3mind['node_color'];
+			$alternatingColors['font'] = $t3mind['font_color'];
+			$alternatingColors['edge'] = $t3mind['edge_color'];
 		}
 
 		foreach($subTree as $uid=>$childUids){
@@ -330,27 +333,42 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 			$t3mindCurrent = isset($t3mind) ? $t3mind : (isset($this->t3mind[$uid]) ? $this->t3mind[$uid] : NULL);
 
+			$hasMoreThanOneChild = ( isset($childUids['subrow']) && count($childUids['subrow']) > 1 ) ? true : false;
+			
 			if( is_array($t3mindCurrent) ){
-/*
- echo '<pre>';
- var_dump($t3mindCurrent);
-  echo '</pre><hr/>'; // exit;
-  */
 
-				/* cloud */
-				if( isset($childUids['subrow']) && $t3mindCurrent['cloud_is']==1 ){
-
-			//		$this->addEdge($pageParent,array('COLOR'=>'#FFFF00','STYLE'=>'sharp_bezier', 'WIDTH'=>'thin'));
+				/*<add cloud>*/
+				if( $hasMoreThanOneChild && $t3mindCurrent['cloud_is']==1 ){
 				
 					$color = $t3mindCurrent['cloud_color'];
-					if( $alternatingColors['cloud'] <> '' ){
-						$this->RGBinterpolate->setColor( $alternatingColors['cloud'], '#ffffff', 0.075 ); /* last value depends on the depth of the tree */
-						$color = $alternatingColors['cloud'] = $this->RGBinterpolate->getColor();
+					if( !empty($color) && !empty($alternatingColors['cloud']) ){
+						/* last value depends on the depth of the tree */
+						$color = $alternatingColors['cloud'] = $this->RGBinterpolate->interpolate( $alternatingColors['cloud'], '#ffffff', 0.075 ); 
+						// $this->RGBinterpolate->getColor();
 					}
 
 					$this->addCloud($pageParent,array('COLOR'=>$color));
 				}
+				/*</add cloud>*/
 
+				
+				/*<add Edge>*/
+				$edgeAttr = array();
+				// array('#FFFF00','STYLE'=>'sharp_bezier', 'WIDTH'=>'thin')
+				if( $t3mindCurrent['edge_color'] <> '' ){ $edgeAttr['COLOR'] = $t3mindCurrent['edge_color']; }
+				if( $t3mindCurrent['edge_style'] <> '' ){ $edgeAttr['STYLE'] = $t3mindCurrent['edge_style']; }
+				if( $t3mindCurrent['edge_width'] <> '' ){ $edgeAttr['WIDTH'] = $t3mindCurrent['edge_width']; }
+
+				if( !empty($edgeAttr['COLOR']) && !empty($alternatingColors['edge']) ){
+					$edgeAttr['COLOR'] = $alternatingColors['edge'] = $this->RGBinterpolate->interpolate( $alternatingColors['edge'], '#ffffff', 0.075 ); 
+					// $this->RGBinterpolate->getColor();
+				}
+				
+				if( count($edgeAttr)>0 ){
+					$this->addEdge($pageParent,$edgeAttr);
+				}
+				/*</add Edge>*/
+				
 			}/* endif isset $t3mindCurrent */
 
 			// add hidden icon
@@ -359,14 +377,17 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			}
 
 
-			if( isset($childUids['subrow']) && count($childUids['subrow']) > 1 ){
+			if( isset($childUids['subrow']) && count($childUids['subrow']) > 0 ){
 
 				/* start recursive mode */
 				$subT3mindCurrent = NULL;
 				if( is_array($t3mindCurrent) && $t3mindCurrent['recursive']==1 ){ // is always recursive!
 					$subT3mindCurrent = $t3mindCurrent;
 					/* todo: implement here that the persistant manager will NOT save set temp settet cloud color */
-					if( is_array($t3mind) /*from the recursion*/ ){ $subT3mindCurrent['cloud_color'] = $alternatingColors['cloud']; }
+					if( is_array($t3mind) /*from the recursion*/ ){ 
+		$subT3mindCurrent['cloud_color'] = empty($alternatingColors['cloud']) ? $subT3mindCurrent['cloud_color'] : $alternatingColors['cloud']; 
+		$subT3mindCurrent['edge_color'] = empty($alternatingColors['edge']) ? $subT3mindCurrent['edge_color'] : $alternatingColors['edge']; 
+					}
 				}
 
 				$this->getTreeRecursive($pageParent,$childUids['subrow'],$depth,$subT3mindCurrent);
