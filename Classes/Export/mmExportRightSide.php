@@ -340,12 +340,11 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				/* cloud */
 				if( isset($childUids['subrow']) && $t3mindCurrent['cloud_is']==1 ){
 
+			//		$this->addEdge($pageParent,array('COLOR'=>'#FFFF00','STYLE'=>'sharp_bezier', 'WIDTH'=>'thin'));
+				
 					$color = $t3mindCurrent['cloud_color'];
-					if( $alternatingColors['cloud'] == '' ){
-						// hmmmm
-					}
-					elseif( $alternatingColors['cloud'] <> '' ){
-						$this->RGBinterpolate->setColor( $alternatingColors['cloud'], '#ffffff', 0.075 ); // last value depends on the depth of the tree
+					if( $alternatingColors['cloud'] <> '' ){
+						$this->RGBinterpolate->setColor( $alternatingColors['cloud'], '#ffffff', 0.075 ); /* last value depends on the depth of the tree */
 						$color = $alternatingColors['cloud'] = $this->RGBinterpolate->getColor();
 					}
 
