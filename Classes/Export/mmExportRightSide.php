@@ -150,7 +150,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @return	SimpleXMLElement
 	 */
 	public function getSysLanguages(SimpleXMLElement &$xmlNode) {
-
+	
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.syslanguage'),
@@ -247,7 +247,25 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 		*/
 		$this->getTreeRecursive($xmlNode, $this->tree->buffer_idH, -1, NULL);
 
+		
+	hier weiter	
+/*
 
+	IF WE HAVE A SYSFOLDER then find out which tables has this pid of the sys folder
+
+
+		global $TCA;
+// 
+				$moduleLoader = t3lib_div::makeInstance('t3lib_loadModules');
+				$moduleLoader->load($GLOBALS['TBE_MODULES']);
+				$modules = $moduleLoader->modules;
+
+ echo '<pre>';
+ var_dump($modules);
+ 
+  echo '</pre><hr/>'; exit;		
+
+*/
 
 
 	}
@@ -318,12 +336,6 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				$attr['LINK'] = $this->getBEHttpHost().'typo3/mod.php?M=web_list&id='.$childUids['uid'];
 			}
 
-/*
- echo '<pre>';
- var_dump($this->settings);
- var_dump($attr);
- var_dump($this->t3mind[129]);
-  echo '</pre><hr/>'; exit;	*/
 
 			/*if we have a frontend map and the page is hidden ... then disable the LINK */
 			if( $record['hidden'] == 1 && $this->mapMode['befe'] == 'frontend' ){

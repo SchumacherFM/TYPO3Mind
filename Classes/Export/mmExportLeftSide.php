@@ -245,6 +245,13 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		}
 		/*</show all non admins>*/
 
+		/*<TYPO3_CONF_VARS>*/
+		$t3ConfVarNode = $this->addNode($UsersNode,array(
+			'FOLDED'=>'false',
+			'TEXT'=>'TYPO3_CONF_VARS', // $this->translate('tree.typo3.typo3_conf_vars'),
+		));
+		
+		/*</TYPO3_CONF_VARS>*/
 
 	}/*endmethod*/
 
