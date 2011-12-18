@@ -331,7 +331,27 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			}
 			// isRecursive
 			if( isset($t3mindCurrent['font_color']) && $t3mindCurrent['font_color'] <> '' ){ $attr['COLOR'] = $t3mindCurrent['font_color']; }
-			if( isset($t3mindCurrent['node_color']) && $t3mindCurrent['node_color'] <> '' ){ $attr['BACKGROUND_COLOR'] = $t3mindCurrent['node_color']; }
+			
+			/*
+				TESTING:
+				IF we have a cloud with a color, then the node itself has the opposide color!
+			
+			if( $hasMoreThanOneChild && $isRecursive && $t3mindCurrent['cloud_is']==1 && !empty($t3mindCurrent['cloud_color']) ){
+				$attr['COLOR'] = $this->RGBinterpolate->inverse($t3mindCurrent['cloud_color']);
+			} */
+			
+			if( isset($t3mindCurrent['node_color']) && $t3mindCurrent['node_color'] <> '' ){ 
+			
+				$attr['BACKGROUND_COLOR'] = $t3mindCurrent['node_color']; 
+				
+				if($isRecursive && !empty($alternatingColors['node'])){
+					$attr['BACKGROUND_COLOR'] = $alternatingColors['node'] = $this->RGBinterpolate->interpolate( 
+						$alternatingColors['node'], '#ffffff', 0.075 
+					);
+					
+				}
+			}
+			
 
 			if( isset($t3mindCurrent['node_folded']) && isset($childUids['subrow']) && $t3mindCurrent['node_folded'] == 1 ){ $attr['FOLDED'] = 'true'; }
 			if( isset($t3mindCurrent['node_style']) && $t3mindCurrent['node_style'] <> '' ){ $attr['STYLE'] = $t3mindCurrent['node_style']; }
@@ -433,6 +453,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 					if( is_array($t3mind) /*from the recursion*/ ){ 
 		$subT3mindCurrent['cloud_color'] = empty($alternatingColors['cloud']) ? $subT3mindCurrent['cloud_color'] : $alternatingColors['cloud']; 
 		$subT3mindCurrent['edge_color'] = empty($alternatingColors['edge']) ? $subT3mindCurrent['edge_color'] : $alternatingColors['edge']; 
+		$subT3mindCurrent['node_color'] = empty($alternatingColors['node']) ? $subT3mindCurrent['node_color'] : $alternatingColors['node']; 
 					}
 				}
 
