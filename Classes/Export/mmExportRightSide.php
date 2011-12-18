@@ -320,7 +320,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 /*
  echo '<pre>';
- var_dump($depth);
+ var_dump($this->settings);
  var_dump($attr);
  var_dump($this->t3mind[129]);
   echo '</pre><hr/>'; exit;	*/
@@ -337,12 +337,23 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			if( isset($t3mindCurrent['node_style']) && $t3mindCurrent['node_style'] <> '' ){ $attr['STYLE'] = $t3mindCurrent['node_style']; }
 
 			/*first 3 levels are folded */
-			if( $settings['nodeAutoFold'] == 1 && $depth < 3 && isset($childUids['subrow']) ){ $attr['FOLDED'] = 'true'; }
+			if( $this->settings['nodeAutoFold'] == 1 && $depth < 3 && isset($childUids['subrow']) ){ $attr['FOLDED'] = 'true'; }
 			
 			
 			// if user assigns multiple images then use: addImagesNode
-			$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
+			if( isset($this->t3mind[$uid]) && !empty($this->t3mind[$uid]['node_user_icon']) ){
+			
+				$ui = $this->t3mind[$uid]['node_user_icon'];
+				$iconArray = array( array('path'=>$iconDokType) );
+				$uicons = t3lib_div::trimExplode(',',$ui,1);
+				foreach($uicons as $k=>$name){
+					$iconArray[] = array('path'=>$this->settings['userIconsPath'].$name);
+				}
 
+				$pageParent = $this->addImagesNode($xmlNode,$attr,$iconArray,1);	
+			} else {
+				$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);	
+			}
 			
 			if( is_array($t3mindCurrent) ){
 
@@ -395,6 +406,14 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 					$this->addFont($pageParent,$subNodeAttr);
 				}
 				/*</add font>*/
+
+				/*<add node icon> not recursive*/
+				if( isset($this->t3mind[$uid]) && !empty($this->t3mind[$uid]['node_icon']) ){
+					$this->addIcon($pageParent,$t3mindCurrent['node_icon']);
+				}
+				
+				/*</add node icon>*/
+
 				
 			}/* endif isset $t3mindCurrent */
 

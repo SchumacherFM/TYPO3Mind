@@ -228,13 +228,22 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * adds an builtin icon
 	 *
 	 * @param	SimpleXMLElement $xmlNode
-	 * @param	string $iconName
+	 * @param	string $iconName the name or a comma seperate string with the names
 	 * @return	nothing
 	 */
 	protected function addIcon(SimpleXMLElement $xmlNode,$iconName) {
-		$icon = $xmlNode->addChild('icon','');
-		$attr = array('BUILTIN'=>$iconName);
-		$this->addAttributes($icon,$attr);
+	
+		$iconName = preg_replace('~\.[a-z]{3,4}~i','',$iconName);
+		if( stristr($iconName,',') !== false ){
+			$icons = t3lib_div::trimExplode(',',$iconName,1);
+			foreach($icons as $k=>$name){
+				$icon = $xmlNode->addChild('icon','');
+				$this->addAttributes($icon,array('BUILTIN'=>$name));
+			}
+		}else{
+			$icon = $xmlNode->addChild('icon','');
+			$this->addAttributes($icon,array('BUILTIN'=>$iconName));
+		}
 	}
 
 	/**
@@ -331,14 +340,14 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	}
 
 	/**
-	 * adds multiple images with links to a node - hyperlinks are not supported!
+	 * adds multiple images with links to a node - HYPERLINKS ARE NOT SUPPORTED BY FREEMIND IN RICHCONTENT NODES!
 	 *
 	 * @param	SimpleXMLElement $xmlNode
 	 * @param	array $attributes
 	 * @param	array $images [] = array(path=>,html=>,link=>) relativ image path like ../typo3conf/ext/..../ext_icon.gif
 	 * @return	nothing
 	 */
-	protected function addImagesNode(SimpleXMLElement $xmlNode,$attributes,$images) {
+	protected function addImagesNode(SimpleXMLElement $xmlNode,$attributes,$images,$x=0) {
 
 		$html = array();
 
