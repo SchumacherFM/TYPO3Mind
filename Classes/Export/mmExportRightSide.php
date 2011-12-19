@@ -248,24 +248,24 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 		$this->getTreeRecursive($xmlNode, $this->tree->buffer_idH, -1, NULL);
 
 		
-	hier weiter	
-/*
+/*	hier weiter	 
+
 
 	IF WE HAVE A SYSFOLDER then find out which tables has this pid of the sys folder
 
 
 		global $TCA;
-// 
-				$moduleLoader = t3lib_div::makeInstance('t3lib_loadModules');
-				$moduleLoader->load($GLOBALS['TBE_MODULES']);
-				$modules = $moduleLoader->modules;
+*/
+				$moduleLoader = t3lib_div::makeInstance('Tx_Typo3mind_Utility_DbList');
+				$moduleLoader->start(942,NULL);
+				$modules = $moduleLoader->generateList();
 
- echo '<pre>';
+				
+ echo '<hr><pre>';
  var_dump($modules);
  
   echo '</pre><hr/>'; exit;		
 
-*/
 
 
 	}
