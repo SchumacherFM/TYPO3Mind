@@ -46,11 +46,9 @@
  *  319:     function showSysNotesForPage()
  *
  *              SECTION: Various helper functions
- *  396:     function setDispFields()
  *  421:     function thumbCode($row,$table,$field)
  *  434:     function makeQueryArray($table, $id, $addWhere="",$fieldList='*')
  *  481:     function setTotalItems($queryParts)
- *  497:     function makeSearchString($table)
  *  536:     function linkWrapTable($table,$code)
  *  553:     function linkWrapItems($table,$uid,$code,$row)
  *  617:     function linkUrlMail($code,$testString)
@@ -93,7 +91,7 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 	var $itemsLimitSingleTable = 100;		// default Max items shown per table in "single-table mode", may be overridden by tables.php
 	var $widthGif = '<img src="clear.gif" width="1" height="4" hspace="160" alt="" />';
 	var $script = 'index.php';			// Current script name
-	var $allFields=0;				// Indicates if all available fields for a user should be selected or not.
+	var $allFields=1;				// Indicates if all available fields for a user should be selected or not.
 	var $localizationView=FALSE;			// Whether to show localization view or not.
 
 		// Internal, static: GPvar:
@@ -108,8 +106,6 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 	var $table='';					// Tablename if single-table mode
 	var $listOnlyInSingleTableMode=FALSE;		// If true, records are listed only if a specific table is selected.
 	var $firstElementNumber=0;			// Pointer for browsing list
-	var $searchString='';				// Search string
-	var $searchLevels='';				// Levels to search down.
 	var $showLimit=0;				// Number of records to show
 	var $pidSelect='';				// List of ids from which to select/search etc. (when search-levels are set high). See start()
 	var $perms_clause='';				// Page select permissions
@@ -134,7 +130,11 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 
 	var $modTSconfig;				// module configuratio
 
-
+	
+	
+	public function setPID($pid){
+		$this->id = (int)$pid;
+	}
 
 	/**
 	 * Initializes the list generation
@@ -154,8 +154,7 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 		$this->id=intval($id);					// sets the parent id
 		if ($TCA[$table])	$this->table=$table;		// Setting single table mode, if table exists:
 		$this->firstElementNumber=$pointer;
-		$this->searchString=trim($search);
-		$this->searchLevels=trim($levels);
+
 		$this->showLimit=t3lib_div::intInRange($showLimit,0,10000);
 
 
@@ -202,14 +201,27 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 	function generateList()	{
 		global $TCA;
 
-			// Set page record in header
-		$this->pageRecord = t3lib_BEfunc::getRecordWSOL('pages',$this->id);
 
+		/* see TCA */
+		$addFieldsDependedIfTheyAreSetOrNot = array( /*yeah nice array name ;-) */
+			'label',
+			'tstamp',
+			'crdate',
+			'cruser_id',
+			'languageField',
+			'delete',
+			'enablecolumns' => array(
+				'disabled',
+				'starttime',
+				'endtime',
+			),
+		
+		);
+	
 			// Traverse the TCA table array:
 		foreach ($TCA as $tableName => $value) {
 
-				// Checking if the table should be rendered:
-			if ((!$this->table || $tableName==$this->table) && (!$this->tableList || t3lib_div::inList($this->tableList,$tableName)) && $GLOBALS['BE_USER']->check('tables_select',$tableName))	{		// Checks that we see only permitted/requested tables:
+	
 
 					// Load full table definitions:
 				t3lib_div::loadTCA($tableName);
@@ -219,46 +231,50 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 
 				
 				
-					// iLimit is set depending on whether we're in single- or multi-table mode
-				if ($this->table)	{
-					$this->iLimit=(isset($TCA[$tableName]['interface']['maxSingleDBListItems'])?intval($TCA[$tableName]['interface']['maxSingleDBListItems']):$this->itemsLimitSingleTable);
-				} else {
-					$this->iLimit=(isset($TCA[$tableName]['interface']['maxDBListItems'])?intval($TCA[$tableName]['interface']['maxDBListItems']):$this->itemsLimitPerTable);
-				}
-				if ($this->showLimit)	$this->iLimit = $this->showLimit;
 
 					// Setting fields to select:
-				if ($this->allFields)	{
-					$fields = $this->makeFieldList($tableName);
-					$fields[]='tstamp';
-					$fields[]='crdate';
-					$fields[]='_PATH_';
-					$fields[]='_CONTROL_';
-					if (is_array($this->setFields[$tableName]))	{
-						$fields = array_intersect($fields,$this->setFields[$tableName]);
-					} else {
-						$fields = array();
+
+				// $fields = $this->makeFieldList($tableName);
+				$fields = array('uid','pid');
+
+				foreach($addFieldsDependedIfTheyAreSetOrNot as $k=>$column){
+					if( isset( $value['ctrl'][$column] ) && !empty($value['ctrl'][$column]) ){
+						$fields[]=$value['ctrl'][$column];
 					}
-				} /* else {
+					
+					if( $k == 'enablecolumns' ){
+						foreach($column as $kc=>$vc){
+							
+							if( isset( $value['ctrl'][$k][$vc] ) && !empty($value['ctrl'][$k][$vc]) ){
+								$fields[]=$value['ctrl'][$k][$vc];
+							}						
+						}
+					}
+
+				}
+/*
+ echo '<pre>'; 
+ var_dump( $value['ctrl']['enablecolumns'] ); 
+ //var_dump($this->setFields);
+ exit; */
+				
+/*				if (is_array($this->setFields[$tableName]))	{
+					$fields = array_intersect($fields,$this->setFields[$tableName]);
+				} else {
 					$fields = array();
 				} */
-echo '<pre>'; var_dump($this->allFields); var_dump($value); exit;
 
-					// Find ID to use (might be different for "versioning_followPages" tables)
-				if (intval($this->searchLevels)==0)	{
-					if ($TCA[$tableName]['ctrl']['versioning_followPages'] && $this->pageRecord['_ORIG_pid']==-1 && $this->pageRecord['t3ver_swapmode']==0)	{
-						$this->pidSelect = 'pid='.intval($this->pageRecord['_ORIG_uid']);
-					} else {
-						$this->pidSelect = 'pid='.intval($this->id);
-					}
-				}
+					// keine ahnung ob wir das hier brauchen ...
+					$this->pidSelect = 'pid='.intval($this->id);
+				
 
 				// Finally, render the list:
 					
 				// $this->HTMLcode.=$this->getTable($tableName, $this->id, implode(',',$fields));
-echo "$tableName - $this->id - ".implode(',',$fields)."<br>";				
-			}
-		}
+				$sql = 'select '.implode(',',$fields).' from '.$tableName.' where '.$this->pidSelect;
+echo "$sql<br>";				
+			
+		}/* endforeach */
 		
 	}
 
@@ -369,8 +385,6 @@ echo "$tableName - $this->id - ".implode(',',$fields)."<br>";
 			// Filtering on displayable pages (permissions):
 		$pC = ($table=='pages' && $this->perms_clause)?' AND '.$this->perms_clause:'';
 
-			// Adding search constraints:
-		$search = $this->makeSearchString($table);
 
 			// Compiling query array:
 		$queryParts = array(
@@ -476,6 +490,6 @@ echo "$tableName - $this->id - ".implode(',',$fields)."<br>";
 		}
 		return $fieldListArr;
 	}
-
+ 
 
 }

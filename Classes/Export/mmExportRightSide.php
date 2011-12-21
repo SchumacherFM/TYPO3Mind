@@ -245,7 +245,8 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 		}
 		exit;
 		*/
-		$this->getTreeRecursive($xmlNode, $this->tree->buffer_idH, -1, NULL);
+		
+//		$this->getTreeRecursive($xmlNode, $this->tree->buffer_idH, -1, NULL);
 
 		
 /*	hier weiter	 
@@ -254,10 +255,16 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	IF WE HAVE A SYSFOLDER then find out which tables has this pid of the sys folder
 
 
-		global $TCA;
+	should return the following:
+	array(
+		942 => array(
+			tableName1 => row ... 
+			tableName2 => array() 
+		)
+	)
 */
 				$moduleLoader = t3lib_div::makeInstance('Tx_Typo3mind_Utility_DbList');
-				$moduleLoader->start(942,NULL);
+				$modules->setPID(942);
 				$modules = $moduleLoader->generateList();
 
 				
