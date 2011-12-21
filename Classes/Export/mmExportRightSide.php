@@ -49,15 +49,15 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @var Tx_Typo3mind_Utility_PageTree
 	 */
 	protected $tree;
-	
+
 	/**
 	 * fetches all tables with 10 rows for a sysfolder ID
 	 * @var Tx_Typo3mind_Utility_DbList
 	 */
 	protected $dbList;
 
-	
-	
+
+
 	/**
 	 * icons by doktype
 	 * @var array
@@ -107,9 +107,9 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 		$this->tree->init('');
 		$this->tree->getTree(0, 999, '');
 
-		$this->dbList = t3lib_div::makeInstance('Tx_Typo3mind_Utility_DbList');
-		
-		
+		$this->dbList = t3lib_div::makeInstance('Tx_Typo3mind_Utility_DbList',$this);
+
+
 		$this->dokTypeIcon = array();
 
 
@@ -161,7 +161,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @return	SimpleXMLElement
 	 */
 	public function getSysLanguages(SimpleXMLElement &$xmlNode) {
-	
+
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.syslanguage'),
@@ -256,11 +256,11 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 		}
 		exit;
 		*/
-		
+
 		$this->getTreeRecursive($xmlNode, $this->tree->buffer_idH, -1, NULL);
 
 	}
-	
+
 	/**
 	 * recursive tree printing - first time is for ... nothing, therefore we start with -1
 	 *
@@ -292,8 +292,8 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 			$hasMoreThanOneChild = ( isset($childUids['subrow']) && count($childUids['subrow']) > 1 ) ? true : false;
 			$isRecursive = (int)$t3mindCurrent['recursive'] == 1 ? true : false;
-			
-			
+
+
 			$attr = array(
 				'TEXT'=>'('.$childUids['uid'].') '.$record['title'],
 				'LINK'=>$this->getFEHttpHost($uid).'index.php?id='.$childUids['uid'],
@@ -334,38 +334,38 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			}
 			// isRecursive
 			if( isset($t3mindCurrent['font_color']) && $t3mindCurrent['font_color'] <> '' ){ $attr['COLOR'] = $t3mindCurrent['font_color']; }
-			
+
 			/*
 				TESTING:
 				IF we have a cloud with a color, then the node itself has the opposide color!
-			
+
 			if( $hasMoreThanOneChild && $isRecursive && $t3mindCurrent['cloud_is']==1 && !empty($t3mindCurrent['cloud_color']) ){
 				$attr['COLOR'] = $this->RGBinterpolate->inverse($t3mindCurrent['cloud_color']);
 			} */
-			
-			if( isset($t3mindCurrent['node_color']) && $t3mindCurrent['node_color'] <> '' ){ 
-			
-				$attr['BACKGROUND_COLOR'] = $t3mindCurrent['node_color']; 
-				
+
+			if( isset($t3mindCurrent['node_color']) && $t3mindCurrent['node_color'] <> '' ){
+
+				$attr['BACKGROUND_COLOR'] = $t3mindCurrent['node_color'];
+
 				if($isRecursive && !empty($alternatingColors['node'])){
-					$attr['BACKGROUND_COLOR'] = $alternatingColors['node'] = $this->RGBinterpolate->interpolate( 
-						$alternatingColors['node'], '#ffffff', 0.075 
+					$attr['BACKGROUND_COLOR'] = $alternatingColors['node'] = $this->RGBinterpolate->interpolate(
+						$alternatingColors['node'], '#ffffff', 0.075
 					);
-					
+
 				}
 			}
-			
+
 
 			if( isset($t3mindCurrent['node_folded']) && isset($childUids['subrow']) && $t3mindCurrent['node_folded'] == 1 ){ $attr['FOLDED'] = 'true'; }
 			if( isset($t3mindCurrent['node_style']) && $t3mindCurrent['node_style'] <> '' ){ $attr['STYLE'] = $t3mindCurrent['node_style']; }
 
 			/*first 3 levels are folded */
 			if( $this->settings['nodeAutoFold'] == 1 && $depth < 3 && isset($childUids['subrow']) ){ $attr['FOLDED'] = 'true'; }
-			
-			
+
+
 			// if user assigns multiple images then use: addImagesNode
 			if( isset($this->t3mind[$uid]) && !empty($this->t3mind[$uid]['node_user_icon']) ){
-			
+
 				$ui = $this->t3mind[$uid]['node_user_icon'];
 				$iconArray = array( array('path'=>$iconDokType) );
 				$uicons = t3lib_div::trimExplode(',',$ui,1);
@@ -373,20 +373,20 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 					$iconArray[] = array('path'=>$this->settings['userIconsPath'].$name);
 				}
 
-				$pageParent = $this->addImagesNode($xmlNode,$attr,$iconArray,1);	
+				$pageParent = $this->addImagesNode($xmlNode,$attr,$iconArray,1);
 			} else {
-				$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);	
+				$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
 			}
-			
+
 			if( is_array($t3mindCurrent) ){
 
 				/*<add cloud>*/
 				if( $hasMoreThanOneChild && $t3mindCurrent['cloud_is']==1 ){
-				
+
 					$color = $t3mindCurrent['cloud_color'];
 					if($isRecursive && !empty($color) && !empty($alternatingColors['cloud']) ){
 						/* last value depends on the depth of the tree */
-						$color = $alternatingColors['cloud'] = $this->RGBinterpolate->interpolate( $alternatingColors['cloud'], '#ffffff', 0.075 ); 
+						$color = $alternatingColors['cloud'] = $this->RGBinterpolate->interpolate( $alternatingColors['cloud'], '#ffffff', 0.075 );
 						// $this->RGBinterpolate->getColor();
 					}
 
@@ -394,7 +394,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				}
 				/*</add cloud>*/
 
-				
+
 				/*<add Edge>*/
 				$subNodeAttr = array();
 				// array('#FFFF00','STYLE'=>'sharp_bezier', 'WIDTH'=>'thin')
@@ -403,10 +403,10 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				if( $t3mindCurrent['edge_width'] <> '' ){ $subNodeAttr['WIDTH'] = $t3mindCurrent['edge_width']; }
 
 				if($isRecursive &&  !empty($subNodeAttr['COLOR']) && !empty($alternatingColors['edge']) ){
-					$subNodeAttr['COLOR'] = $alternatingColors['edge'] = $this->RGBinterpolate->interpolate( $alternatingColors['edge'], '#ffffff', 0.075 ); 
+					$subNodeAttr['COLOR'] = $alternatingColors['edge'] = $this->RGBinterpolate->interpolate( $alternatingColors['edge'], '#ffffff', 0.075 );
 					// $this->RGBinterpolate->getColor();
 				}
-				
+
 				if( count($subNodeAttr)>0 ){
 					$this->addEdge($pageParent,$subNodeAttr);
 				}
@@ -421,10 +421,10 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				if( $t3mindCurrent['font_italic'] == 1 ){ $subNodeAttr['ITALIC'] = 'true'; }
 
 				if($isRecursive &&  !empty($subNodeAttr['COLOR']) && !empty($alternatingColors['font']) ){
-					$subNodeAttr['COLOR'] = $alternatingColors['font'] = $this->RGBinterpolate->interpolate( $alternatingColors['font'], '#ffffff', 0.075 ); 
+					$subNodeAttr['COLOR'] = $alternatingColors['font'] = $this->RGBinterpolate->interpolate( $alternatingColors['font'], '#ffffff', 0.075 );
 					// $this->RGBinterpolate->getColor();
 				}
-				
+
 				if( count($subNodeAttr)>0 ){
 					$this->addFont($pageParent,$subNodeAttr);
 				}
@@ -434,10 +434,10 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				if( isset($this->t3mind[$uid]) && !empty($this->t3mind[$uid]['node_icon']) ){
 					$this->addIcon($pageParent,$t3mindCurrent['node_icon']);
 				}
-				
+
 				/*</add node icon>*/
 
-				
+
 			}/* endif isset $t3mindCurrent */
 
 			// add hidden icon
@@ -453,10 +453,10 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				if( is_array($t3mindCurrent) && $t3mindCurrent['recursive']==1 ){ // is always recursive!
 					$subT3mindCurrent = $t3mindCurrent;
 					/* todo: implement here that the persistant manager will NOT save set temp settet cloud color */
-					if( is_array($t3mind) /*from the recursion*/ ){ 
-		$subT3mindCurrent['cloud_color'] = empty($alternatingColors['cloud']) ? $subT3mindCurrent['cloud_color'] : $alternatingColors['cloud']; 
-		$subT3mindCurrent['edge_color'] = empty($alternatingColors['edge']) ? $subT3mindCurrent['edge_color'] : $alternatingColors['edge']; 
-		$subT3mindCurrent['node_color'] = empty($alternatingColors['node']) ? $subT3mindCurrent['node_color'] : $alternatingColors['node']; 
+					if( is_array($t3mind) /*from the recursion*/ ){
+		$subT3mindCurrent['cloud_color'] = empty($alternatingColors['cloud']) ? $subT3mindCurrent['cloud_color'] : $alternatingColors['cloud'];
+		$subT3mindCurrent['edge_color'] = empty($alternatingColors['edge']) ? $subT3mindCurrent['edge_color'] : $alternatingColors['edge'];
+		$subT3mindCurrent['node_color'] = empty($alternatingColors['node']) ? $subT3mindCurrent['node_color'] : $alternatingColors['node'];
 					}
 				}
 

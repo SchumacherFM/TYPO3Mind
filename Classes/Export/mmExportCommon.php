@@ -231,7 +231,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @param	string $iconName the name or a comma seperate string with the names
 	 * @return	nothing
 	 */
-	protected function addIcon(SimpleXMLElement $xmlNode,$iconName) {
+	public function addIcon(SimpleXMLElement $xmlNode,$iconName) {
 	
 		$iconName = preg_replace('~\.[a-z]{3,4}~i','',$iconName);
 		if( stristr($iconName,',') !== false ){
@@ -253,7 +253,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @param	array $attributes  key is the name and value the value
 	 * @return	SimpleXMLElement
 	 */
-	protected function addNode(SimpleXMLElement $xmlNode,$attributes) {
+	public function addNode(SimpleXMLElement $xmlNode,$attributes) {
 		$child = $xmlNode->addChild('node','');
 		$this->checkNodeAttr($attributes);
 		$this->addAttributes($child,$attributes);
@@ -267,7 +267,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @param	array $attributes
 	 * @return	nothing
 	 */
-	protected function addEdge(SimpleXMLElement $xmlNode,$attributes) {
+	public function addEdge(SimpleXMLElement $xmlNode,$attributes) {
 		$edge = $xmlNode->addChild('edge','');
 
 		if( !isset($attributes['STYLE']) ){
@@ -288,7 +288,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @param	array $attributes
 	 * @return	nothing
 	 */
-	protected function addCloud(SimpleXMLElement $xmlNode,$attributes) {
+	public function addCloud(SimpleXMLElement $xmlNode,$attributes) {
 		$cloud = $xmlNode->addChild('cloud','');
 		$this->addAttributes($cloud,$attributes);
 	}
@@ -300,7 +300,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @param	array $attributes
 	 * @return	nothing
 	 */
-	protected function addFont(SimpleXMLElement $xmlNode,$attributes) {
+	public function addFont(SimpleXMLElement $xmlNode,$attributes) {
 		$font = $xmlNode->addChild('font','');
 
 		if( !isset($attributes['NAME']) ){
@@ -322,7 +322,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @param	string $imgHTML additionl html for the img tag
 	 * @return	nothing
 	 */
-	protected function addImgNode(SimpleXMLElement $xmlNode,$attributes,$imgRelPath,$imgHTML='') {
+	public function addImgNode(SimpleXMLElement $xmlNode,$attributes,$imgRelPath,$imgHTML='') {
 
 		$iconLocal = str_replace('../','',$imgRelPath);
 
@@ -347,7 +347,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @param	array $images [] = array(path=>,html=>,link=>) relativ image path like ../typo3conf/ext/..../ext_icon.gif
 	 * @return	nothing
 	 */
-	protected function addImagesNode(SimpleXMLElement $xmlNode,$attributes,$images,$x=0) {
+	public function addImagesNode(SimpleXMLElement $xmlNode,$attributes,$images,$x=0) {
 
 		$html = array();
 
@@ -387,7 +387,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @param	array $addFontAttr
 	 * @return	SimpleXMLElement
 	 */
-	protected function addRichContentNode(SimpleXMLElement $xml,$attributes,$htmlContent,$addEdgeAttr = array(),$addFontAttr = array()  ) {
+	public function addRichContentNode(SimpleXMLElement $xml,$attributes,$htmlContent,$addEdgeAttr = array(),$addFontAttr = array()  ) {
 
 		return $this->addRichContentNote($xml,$attributes,$htmlContent,$addEdgeAttr,$addFontAttr, 'NODE' );
 
@@ -404,7 +404,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @param	string $type defined how this rich content will look... like a node or a note!
 	 * @return	SimpleXMLElement
 	 */
-	protected function addRichContentNote(SimpleXMLElement $xml,$attributes,$htmlContent,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' ) {
+	public function addRichContentNote(SimpleXMLElement $xml,$attributes,$htmlContent,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' ) {
 
 		$htmlContent = str_replace( array('<','>'), array('|lt|','|gt|'), $htmlContent );
 

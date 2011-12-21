@@ -90,6 +90,21 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 	private $tablesInSysFolder;
 
 	/**
+	 * the parent object
+	 * @var object
+	 */
+	private $parentObject;
+
+	/**
+	 * sets the pid
+	 * @param pid
+	 * @return	void
+	 */
+	public function __construct(&$parentObject){
+		$this->parentObject = $parentObject;
+	}
+	
+	/**
 	 * sets the pid
 	 * @param pid
 	 * @return	void
@@ -108,16 +123,20 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 	 * @param	array				$t3mind		for recursive mode!
 	 * @return	SimpleXMLElement
 	 */
-	private function getTRsysFolderContent(SimpleXMLElement &$xmlNode,$uid,$depth,$t3mind = NULL) {
-	
+	public function getTRsysFolderContent(SimpleXMLElement &$xmlNode,$uid,$depth,$t3mind = NULL) {
+
 		$this->setPID($uid);
 		$this->generateList();
 //		$this->tablesInSysFolder
-				
-echo '<pre>';
+
+		foreach($this->tablesInSysFolder as $tableName=>$values){
+			$this->parentObject->addNode($xmlNode,array('TEXT'=>$tableName));
+		} /* endforeach */
+
+/* echo '<pre>';
 var_dump($this->tablesInSysFolder);
-echo '</pre><hr/>'; exit;		
-	}	
+echo '</pre><hr/>'; exit; */
+	}
 
 	/**
 	 * Traverses the table(s) to be listed and renders the output code for each:
