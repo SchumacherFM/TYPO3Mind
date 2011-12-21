@@ -87,7 +87,7 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 	 * returns all
 	 * @var array
 	 */
-	public $tablesInSysFolder;
+	private $tablesInSysFolder;
 
 	/**
 	 * sets the pid
@@ -98,6 +98,26 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 		$this->id = (int)$pid;
 	}
 
+	/**
+	 * prints the sysfolder content for ONE uid
+	 * TR = Tree recursive
+	 *
+	 * @param	SimpleXMLElement 	$xmlNode
+	 * @param	integer				$uid
+	 * @param	integer				$depth
+	 * @param	array				$t3mind		for recursive mode!
+	 * @return	SimpleXMLElement
+	 */
+	private function getTRsysFolderContent(SimpleXMLElement &$xmlNode,$uid,$depth,$t3mind = NULL) {
+	
+		$this->setPID($uid);
+		$this->generateList();
+//		$this->tablesInSysFolder
+				
+echo '<pre>';
+var_dump($this->tablesInSysFolder);
+echo '</pre><hr/>'; exit;		
+	}	
 
 	/**
 	 * Traverses the table(s) to be listed and renders the output code for each:
@@ -106,7 +126,7 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 	 *
 	 * @return	void
 	 */
-	public function generateList()	{
+	private function generateList()	{
 		global $TCA;
 
 
@@ -177,7 +197,7 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 	 * @param	array		Query array
 	 * @return	void
 	 */
-	function getTotalItems($queryParts)	{
+	private function getTotalItems($queryParts)	{
 		return $GLOBALS['TYPO3_DB']->exec_SELECTcountRows(
 			'*',
 			$queryParts['FROM'],
@@ -195,7 +215,7 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 	 * @param	boolean		If set, users access to the field (non-exclude-fields) is NOT checked.
 	 * @return	array		Array, where values are fieldnames to include in query
 	 */
-	function makeFieldList($tcaCurrent,$table)	{
+	private function makeFieldList($tcaCurrent,$table)	{
 		global $TCA;
 
 		$fields = array();

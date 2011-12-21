@@ -49,7 +49,15 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @var Tx_Typo3mind_Utility_PageTree
 	 */
 	protected $tree;
+	
+	/**
+	 * fetches all tables with 10 rows for a sysfolder ID
+	 * @var Tx_Typo3mind_Utility_DbList
+	 */
+	protected $dbList;
 
+	
+	
 	/**
 	 * icons by doktype
 	 * @var array
@@ -251,20 +259,8 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 		
 		$this->getTreeRecursive($xmlNode, $this->tree->buffer_idH, -1, NULL);
 
-	
-				$dbList->setPID(942);
-				$dbList->generateList();
-
-				
- echo '<hr><pre>';
- var_dump($dbList->tablesInSysFolder);
- 
-  echo '</pre><hr/>'; exit;		
-
-
-
 	}
-
+	
 	/**
 	 * recursive tree printing - first time is for ... nothing, therefore we start with -1
 	 *
@@ -466,6 +462,10 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 				$this->getTreeRecursive($pageParent,$childUids['subrow'],$depth,$subT3mindCurrent);
 
+			}
+			/* IF we have a sysfolder .. then list it's content */
+			elseif( $record['doktype'] == 254 ){
+				$this->dbList->getTRsysFolderContent($pageParent,$uid,$depth,$t3mindCurrent);
 			}
 		} /*endforeach*/
 
