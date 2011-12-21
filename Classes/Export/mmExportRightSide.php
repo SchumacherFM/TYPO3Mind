@@ -186,7 +186,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			);
 
 			if( $r['hidden'] == 1 ){
-				$this->addIcon($domainNode, 'button_cancel' );
+				$this->addIcon($domainNode, 'closed' );
 			}
 		}
 
@@ -229,7 +229,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 					$domainNode = $this->addNode($titleNode,$this->createTLFattr($vd['domainName'],$link) );
 
-					$this->addIcon($domainNode, $vd['hidden'] == 1 ? 'button_cancel' : 'button_ok' );
+					$this->addIcon($domainNode, $vd['hidden'] == 1 ? 'closed' : 'button_ok' );
 
 				}
 			}
@@ -442,7 +442,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 			// add hidden icon
 			if( $record['hidden'] == 1 ){
-				$this->addIcon($pageParent,'button_cancel');
+				$this->addIcon($pageParent,'closed');
 			}
 
 

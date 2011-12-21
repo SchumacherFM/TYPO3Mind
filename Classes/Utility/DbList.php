@@ -124,18 +124,47 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 	 * @return	SimpleXMLElement
 	 */
 	public function getTRsysFolderContent(SimpleXMLElement &$xmlNode,$uid,$depth,$t3mind = NULL) {
-
+		GLOBAL $TCA;
 		$this->setPID($uid);
 		$this->generateList();
 //		$this->tablesInSysFolder
 
+
+// todo hier geht es weiter ... LINKS einbauen, icons, etc TCA hide table auswerten ...
 		foreach($this->tablesInSysFolder as $tableName=>$values){
-			$this->parentObject->addNode($xmlNode,array('TEXT'=>$tableName));
+	
+			$attr = array();
+			$llangTitle = $GLOBALS['LANG']->sL( $TCA[$tableName]['ctrl']['title'] );
+			$attr['TEXT'] = ( !empty($llangTitle) ? $llangTitle : $tableName ) . ' (C:'.$values['TotalItems'].')';
+			
+			unset($values['TotalItems']);
+			if( count($values) > 1 ){
+				$attr['FOLDED'] = 'true';
+			}
+			
+			$tableNode = $this->parentObject->addNode($xmlNode,$attr);
+			
+			
+			foreach($values as $k=>$row){
+				$text = $row['titInt0'].' (ID:'.$row['uid'].')';
+				$rowNode = $this->parentObject->addNode($tableNode,array('TEXT'=>$text));
+				if( isset($row['deleted']) && $row['deleted'] == 1 ){
+					$this->parentObject->addIcon($rowNode,'button_cancel');
+				}
+				if( isset($row['hidden']) && $row['hidden'] == 1 ){
+					$this->parentObject->addIcon($rowNode,'closed');
+				}
+				
+				
+			}
+			/*
+ echo '<pre>'.$tableName;
+var_dump( $text );
+ var_dump($this->tablesInSysFolder);
+echo '</pre><hr/>'; exit; 	*/
 		} /* endforeach */
 
-/* echo '<pre>';
-var_dump($this->tablesInSysFolder);
-echo '</pre><hr/>'; exit; */
+
 	}
 
 	/**
