@@ -1,93 +1,44 @@
 <?php
 /***************************************************************
-*  Copyright notice
-*
-*  (c) 1999-2009 Kasper Skårhøj (kasperYYYY@typo3.com)
-*  All rights reserved
-*
-*  This script is part of the TYPO3 project. The TYPO3 project is
-*  free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  The GNU General Public License can be found at
-*  http://www.gnu.org/copyleft/gpl.html.
-*  A copy is found in the textfile GPL.txt and important notices to the license
-*  from the author is found in LICENSE.txt distributed with these scripts.
-*
-*
-*  This script is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  This copyright notice MUST APPEAR in all copies of the script!
-***************************************************************/
-/**
- * Include file extending t3lib_recordList
- * Shared between Web>List (db_list.php) and Web>Page (sysext/cms/layout/db_layout.php)
+ *  Copyright notice
  *
- * $Id$
- * Revised for TYPO3 3.6 December/2003 by Kasper Skårhøj
- * XHTML compliant
+ *  (c) 2011 Cyrill Schumacher <Cyrill@Schumacher.fm>
  *
- * @author	Kasper Skårhøj <kasperYYYY@typo3.com>
- */
-/**
- * [CLASS/FUNCTION INDEX of SCRIPT]
+ *  All rights reserved
  *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
  *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
  *
- *   86: class recordList extends t3lib_recordList
- *  148:     function start($id,$table,$pointer,$search="",$levels="",$showLimit=0)
- *  211:     function generateList()
- *  275:     function getSearchBox($formFields=1)
- *  319:     function showSysNotesForPage()
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *              SECTION: Various helper functions
- *  421:     function thumbCode($row,$table,$field)
- *  434:     function makeQueryArray($table, $id, $addWhere="",$fieldList='*')
- *  481:     function setTotalItems($queryParts)
- *  536:     function linkWrapTable($table,$code)
- *  553:     function linkWrapItems($table,$uid,$code,$row)
- *  617:     function linkUrlMail($code,$testString)
- *  644:     function listURL($altId='',$table=-1,$exclList='')
- *  663:     function requestUri()
- *  674:     function makeFieldList($table,$dontCheckUser=0)
- *  721:     function getTreeObject($id,$depth,$perms_clause)
- *  739:     function localizationRedirect($justLocalized)
- *
- * TOTAL FUNCTIONS: 17
- * (This index is automatically created/updated by the extension "extdeveval")
- *
- */
-
-
-
-
-
-
-
-
-
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
 
 
 /**
- * Child class for rendering of Web > List (not the final class. see class.db_list_extra)
  *
- * @author	Kasper Skårhøj <kasperYYYY@typo3.com>
- * @package TYPO3
- * @subpackage core
- * @see localRecordList
+ *
+ * @package typo3mind
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ *
  */
+
 class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
-  
+
 		// Internal, static:
 	private $id;					// Page id
 	/*
 	not needed but for future implementations for T3Mind
-	
+
 	private $table='';					// Tablename if single-table mode
 	private $listOnlyInSingleTableMode=FALSE;		// If true, records are listed only if a specific table is selected.
 	private $firstElementNumber=0;			// Pointer for browsing list
@@ -133,6 +84,12 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 		);
 
 	/**
+	 * returns all
+	 * @var array
+	 */
+	public $tablesInSysFolder;
+
+	/**
 	 * sets the pid
 	 * @param pid
 	 * @return	void
@@ -156,7 +113,7 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 		$this->pidSelect = 'pid='.intval($this->id);
 
 
-
+		$this->tablesInSysFolder = array();
 			// Traverse the TCA table array:
 		foreach ($TCA as $tableName => $value) {
 
@@ -176,8 +133,37 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 
 				$orderBy = ($value['ctrl']['sortby']) ? 'ORDER BY '.$value['ctrl']['sortby'] : ( isset($value['ctrl']['default_sortby']) ? $value['ctrl']['default_sortby'] : 'ORDER BY uid desc' );
 
-				$sql = 'select '.implode(',',$fields).' from '.$tableName.' where '.$this->pidSelect.' '.$orderBy.' limit 0,10';
-echo "$sql<br>";
+//				$sql = 'select '..' from '.$tableName.' where '.$this->pidSelect.' '.$orderBy.' limit ';
+				$queryParts = array(
+					'SELECT' => implode(',',$fields),
+					'FROM' => $tableName,
+					'WHERE' => $this->pidSelect,
+					'GROUPBY' => '',
+					'ORDERBY' => $GLOBALS['TYPO3_DB']->stripOrderBy($orderBy),
+					'LIMIT' => '0,10'
+				);
+
+				$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
+				$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
+
+				$accRows = false;
+				if( $dbCount ){
+					$this->tablesInSysFolder[$tableName] = array(
+						'TotalItems'=>$this->getTotalItems($queryParts),
+					);
+					$accRows = array();	// Accumulate rows here
+					while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result))	{
+						// In offline workspace, look for alternative record:
+						// t3lib_BEfunc::workspaceOL($table, $row, $GLOBALS['BE_USER']->workspace, TRUE);
+
+						if (is_array($row))	{
+							$accRows = true;
+							$this->tablesInSysFolder[$tableName][] = $row;
+						}
+					}
+					$GLOBALS['TYPO3_DB']->sql_free_result($result);
+				} /* endif $dbCount */
+
 
 		}/* endforeach */
 
@@ -186,14 +172,13 @@ echo "$sql<br>";
 
 
 	/**
-	 * Based on input query array (query for selecting count(*) from a table) it will select the number of records and set the value in $this->totalItems
+	 * Based on input query array
 	 *
 	 * @param	array		Query array
 	 * @return	void
-	 * @see makeQueryArray()
 	 */
-	function setTotalItems($queryParts)	{
-		$this->totalItems = $GLOBALS['TYPO3_DB']->exec_SELECTcountRows(
+	function getTotalItems($queryParts)	{
+		return $GLOBALS['TYPO3_DB']->exec_SELECTcountRows(
 			'*',
 			$queryParts['FROM'],
 			$queryParts['WHERE']
@@ -215,7 +200,7 @@ echo "$sql<br>";
 
 		$fields = array();
 		if (is_array($TCA[$table]))	{
-			 
+
 
 			$fields = array('uid','pid');
 			foreach($this->addFieldsDependedIfTheyAreSetOrNot as $k=>$column){
@@ -233,7 +218,7 @@ echo "$sql<br>";
 						}
 						$fields[$column] = implode(',',$exploded);
 					}
-					
+
 				}
 
 				if( $k == 'enablecolumns' ){
@@ -250,8 +235,8 @@ echo "$sql<br>";
 		return $fields;
 
 	}
-	
-	
+
+
 	/**
 
 	SchumacherFM for later implementation
