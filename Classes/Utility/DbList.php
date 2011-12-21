@@ -82,57 +82,43 @@
  * @see localRecordList
  */
 class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
-
-		// External, static:
-	var $tableList='';				// Specify a list of tables which are the only ones allowed to be displayed.
-	var $returnUrl='';				// Return URL
-	var $thumbs = 0;				// Boolean. Thumbnails on records containing files (pictures)
-	var $itemsLimitPerTable = 20;			// default Max items shown per table in "multi-table mode", may be overridden by tables.php
-	var $itemsLimitSingleTable = 100;		// default Max items shown per table in "single-table mode", may be overridden by tables.php
-	var $widthGif = '<img src="clear.gif" width="1" height="4" hspace="160" alt="" />';
-	var $script = 'index.php';			// Current script name
-	var $allFields=1;				// Indicates if all available fields for a user should be selected or not.
-	var $localizationView=FALSE;			// Whether to show localization view or not.
-
-		// Internal, static: GPvar:
-	var $csvOutput=FALSE;				// If set, csvList is outputted.
-	var $sortField;					// Field, to sort list by
-	var $sortRev;					// Field, indicating to sort in reverse order.
-	var $displayFields;				// Array, containing which fields to display in extended mode
-	var $duplicateField;				// String, can contain the field name from a table which must have duplicate values marked.
-
+  
 		// Internal, static:
 	private $id;					// Page id
-	var $table='';					// Tablename if single-table mode
-	var $listOnlyInSingleTableMode=FALSE;		// If true, records are listed only if a specific table is selected.
-	var $firstElementNumber=0;			// Pointer for browsing list
-	var $showLimit=0;				// Number of records to show
-	var $pidSelect='';				// List of ids from which to select/search etc. (when search-levels are set high). See start()
-	var $perms_clause='';				// Page select permissions
-	var $calcPerms=0;				// Some permissions...
-	var $clickTitleMode = '';			// Mode for what happens when a user clicks the title of a record.
-	var $modSharedTSconfig = array();		// Shared module configuration, used by localization features
-	var $pageRecord = array();		// Loaded with page record with version overlay if any.
-	var $hideTables = '';			// Tables which should not get listed
-	var $tableTSconfigOverTCA = array(); //TSconfig which overwrites TCA-Settings
-	var $tablesCollapsed = array(); // Array of collapsed / uncollapsed tables in multi table view
+	/*
+	not needed but for future implementations for T3Mind
+	
+	private $table='';					// Tablename if single-table mode
+	private $listOnlyInSingleTableMode=FALSE;		// If true, records are listed only if a specific table is selected.
+	private $firstElementNumber=0;			// Pointer for browsing list
+	private $showLimit=0;				// Number of records to show
+	private $pidSelect='';				// List of ids from which to select/search etc. (when search-levels are set high). See start()
+	private $perms_clause='';				// Page select permissions
+	private $calcPerms=0;				// Some permissions...
+	private $clickTitleMode = '';			// Mode for what happens when a user clicks the title of a record.
+	private $modSharedTSconfig = array();		// Shared module configuration, used by localization features
+	private $pageRecord = array();		// Loaded with page record with version overlay if any.
+	private $hideTables = '';			// Tables which should not get listed
+	private $tableTSconfigOverTCA = array(); //TSconfig which overwrites TCA-Settings
+	private $tablesCollapsed = array(); // Array of collapsed / uncollapsed tables in multi table view
 
 		// Internal, dynamic:
-	var $JScode = '';				// JavaScript code accumulation
-	var $HTMLcode = '';				// HTML output
-	var $iLimit=0;					// "LIMIT " in SQL...
-	var $eCounter=0;				// Counting the elements no matter what...
-	var $totalItems='';				// Set to the total number of items for a table when selecting.
-	var $recPath_cache=array();			// Cache for record path
-	var $setFields=array();				// Fields to display for the current table
-	var $currentTable = array();			// Used for tracking next/prev uids
-	var $duplicateStack=array();			// Used for tracking duplicate values of fields
+	private $JScode = '';				// JavaScript code accumulation
+	private $HTMLcode = '';				// HTML output
+	private $iLimit=0;					// "LIMIT " in SQL...
+	private $eCounter=0;				// Counting the elements no matter what...
+	private $totalItems='';				// Set to the total number of items for a table when selecting.
+	private $recPath_cache=array();			// Cache for record path
+	private $setFields=array();				// Fields to display for the current table
+	private $currentTable = array();			// Used for tracking next/prev uids
+	private $duplicateStack=array();			// Used for tracking duplicate values of fields
 
-	var $modTSconfig;				// module configuratio
-
+	private $modTSconfig;				// module configuratio
+	*/
 		/* see TCA */
 	private $addFieldsDependedIfTheyAreSetOrNot = array( /*yeah nice array name ;-) */
 			'label',
+			'label_alt',
 			'tstamp',
 			'crdate',
 			'cruser_id',
@@ -174,27 +160,21 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 			// Traverse the TCA table array:
 		foreach ($TCA as $tableName => $value) {
 
+			// Load full table definitions:
+			t3lib_div::loadTCA($tableName);
 
+// for later ... Don't show table if hidden by TCA ctrl section
+//		$hideTable = $GLOBALS['TCA'][$tableName]['ctrl']['hideTable'] ? TRUE : FALSE;
 
-					// Load full table definitions:
-		//		t3lib_div::loadTCA($tableName);
-
-					// Don't show table if hidden by TCA ctrl section
-		//		$hideTable = $GLOBALS['TCA'][$tableName]['ctrl']['hideTable'] ? TRUE : FALSE;
-
-
-
-
-					// Setting fields to select:
-
-				$fields = $this->makeFieldList($value,$tableName);
+			// Setting fields to select:
+			$fields = $this->makeFieldList($value,$tableName);
 /*
  echo '<pre>';
  var_dump( $value['ctrl']['enablecolumns'] );
  //var_dump($this->setFields);
  exit; */
 
-		$orderBy = ($value['ctrl']['sortby']) ? 'ORDER BY '.$value['ctrl']['sortby'] : ( isset($value['ctrl']['default_sortby']) ? $value['ctrl']['default_sortby'] : 'ORDER BY uid desc' );
+				$orderBy = ($value['ctrl']['sortby']) ? 'ORDER BY '.$value['ctrl']['sortby'] : ( isset($value['ctrl']['default_sortby']) ? $value['ctrl']['default_sortby'] : 'ORDER BY uid desc' );
 
 				$sql = 'select '.implode(',',$fields).' from '.$tableName.' where '.$this->pidSelect.' '.$orderBy.' limit 0,10';
 echo "$sql<br>";
@@ -235,19 +215,32 @@ echo "$sql<br>";
 
 		$fields = array();
 		if (is_array($TCA[$table]))	{
-			t3lib_div::loadTCA($table);
+			 
 
 			$fields = array('uid','pid');
 			foreach($this->addFieldsDependedIfTheyAreSetOrNot as $k=>$column){
 				if( isset( $tcaCurrent['ctrl'][$column] ) && !empty($tcaCurrent['ctrl'][$column]) ){
-					$fields[]=$tcaCurrent['ctrl'][$column];
+					$fields[$column]=$tcaCurrent['ctrl'][$column];
+					if( $column == 'label' ){
+						$fields[$column] .= ' as titInt0'; /* title internal */
+					}
+					elseif( $column == 'label_alt' ){
+						/* just to be secure that no one has entered several commas without column names, avoid SQL errors */
+						$exploded = t3lib_div::trimExplode(',',$tcaCurrent['ctrl'][$column],1);
+						foreach($exploded as $ke=>$ve){
+							$ke++;
+							$exploded[$ke] = $ve.' as titInt'.$ke;
+						}
+						$fields[$column] = implode(',',$exploded);
+					}
+					
 				}
 
 				if( $k == 'enablecolumns' ){
 					foreach($column as $kc=>$vc){
 
 						if( isset( $tcaCurrent['ctrl'][$k][$vc] ) && !empty($tcaCurrent['ctrl'][$k][$vc]) ){
-							$fields[]=$tcaCurrent['ctrl'][$k][$vc];
+							$fields[$vc]=$tcaCurrent['ctrl'][$k][$vc];
 						}
 					}
 				}
