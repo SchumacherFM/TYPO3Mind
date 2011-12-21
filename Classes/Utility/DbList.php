@@ -102,7 +102,7 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 	var $duplicateField;				// String, can contain the field name from a table which must have duplicate values marked.
 
 		// Internal, static:
-	var $id;					// Page id
+	private $id;					// Page id
 	var $table='';					// Tablename if single-table mode
 	var $listOnlyInSingleTableMode=FALSE;		// If true, records are listed only if a specific table is selected.
 	var $firstElementNumber=0;			// Pointer for browsing list
@@ -130,80 +130,8 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 
 	var $modTSconfig;				// module configuratio
 
-	
-	
-	public function setPID($pid){
-		$this->id = (int)$pid;
-	}
-
-	/**
-	 * Initializes the list generation
-	 *
-	 * @param	integer		Page id for which the list is rendered. Must be >= 0
-	 * @param	string		Tablename - if extended mode where only one table is listed at a time.
-	 * @param	integer		Browsing pointer.
-	 * @param	string		Search word, if any
-	 * @param	integer		Number of levels to search down the page tree
-	 * @param	integer		Limit of records to be listed.
-	 * @return	void
-	 */
-	function start($id,$table,$pointer,$search="",$levels="",$showLimit=0)	{
-		global $TCA;
-
-			// Setting internal variables:
-		$this->id=intval($id);					// sets the parent id
-		if ($TCA[$table])	$this->table=$table;		// Setting single table mode, if table exists:
-		$this->firstElementNumber=$pointer;
-
-		$this->showLimit=t3lib_div::intInRange($showLimit,0,10000);
-
-
-
-			// Init dynamic vars:
-		$this->counter=0;
-		$this->JScode='';
-		$this->HTMLcode='';
-
-			// limits
-		if(isset($this->modTSconfig['properties']['itemsLimitPerTable'])) {
-			$this->itemsLimitPerTable = t3lib_div::intInRange(intval($this->modTSconfig['properties']['itemsLimitPerTable']), 1, 10000);
-		}
-		if(isset($this->modTSconfig['properties']['itemsLimitSingleTable'])) {
-			$this->itemsLimitSingleTable = t3lib_div::intInRange(intval($this->modTSconfig['properties']['itemsLimitSingleTable']), 1, 10000);
-		}
-
-			// Set select levels:
-		$this->perms_clause = $GLOBALS['BE_USER']->getPagePermsClause(1);
-
-			// this will hide records from display - it has nothing todo with user rights!!
-		if ($pidList = $GLOBALS['BE_USER']->getTSConfigVal('options.hideRecords.pages')) {
-			if ($pidList = $GLOBALS['TYPO3_DB']->cleanIntList($pidList)) {
-				$this->perms_clause .= ' AND pages.uid NOT IN ('.$pidList.')';
-			}
-		}
-
-
-		$this->pidSelect = 'pid='.intval($id);
-
-			// Initialize languages:
-		if ($this->localizationView)	{
-			$this->initializeLanguages();
-		}
-	}
-
-	/**
-	 * Traverses the table(s) to be listed and renders the output code for each:
-	 * The HTML is accumulated in $this->HTMLcode
-	 * Finishes off with a stopper-gif
-	 *
-	 * @return	void
-	 */
-	function generateList()	{
-		global $TCA;
-
-
 		/* see TCA */
-		$addFieldsDependedIfTheyAreSetOrNot = array( /*yeah nice array name ;-) */
+	private $addFieldsDependedIfTheyAreSetOrNot = array( /*yeah nice array name ;-) */
 			'label',
 			'tstamp',
 			'crdate',
@@ -215,74 +143,126 @@ class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
 				'starttime',
 				'endtime',
 			),
-		
+
 		);
-	
+
+	/**
+	 * sets the pid
+	 * @param pid
+	 * @return	void
+	 */
+	public function setPID($pid){
+		$this->id = (int)$pid;
+	}
+
+
+	/**
+	 * Traverses the table(s) to be listed and renders the output code for each:
+	 * The HTML is accumulated in $this->HTMLcode
+	 * Finishes off with a stopper-gif
+	 *
+	 * @return	void
+	 */
+	public function generateList()	{
+		global $TCA;
+
+
+		$this->pidSelect = 'pid='.intval($this->id);
+
+
+
 			// Traverse the TCA table array:
 		foreach ($TCA as $tableName => $value) {
 
-	
+
 
 					// Load full table definitions:
-				t3lib_div::loadTCA($tableName);
+		//		t3lib_div::loadTCA($tableName);
 
 					// Don't show table if hidden by TCA ctrl section
-				$hideTable = $GLOBALS['TCA'][$tableName]['ctrl']['hideTable'] ? TRUE : FALSE;
+		//		$hideTable = $GLOBALS['TCA'][$tableName]['ctrl']['hideTable'] ? TRUE : FALSE;
 
-				
-				
+
+
 
 					// Setting fields to select:
 
-				// $fields = $this->makeFieldList($tableName);
-				$fields = array('uid','pid');
-
-				foreach($addFieldsDependedIfTheyAreSetOrNot as $k=>$column){
-					if( isset( $value['ctrl'][$column] ) && !empty($value['ctrl'][$column]) ){
-						$fields[]=$value['ctrl'][$column];
-					}
-					
-					if( $k == 'enablecolumns' ){
-						foreach($column as $kc=>$vc){
-							
-							if( isset( $value['ctrl'][$k][$vc] ) && !empty($value['ctrl'][$k][$vc]) ){
-								$fields[]=$value['ctrl'][$k][$vc];
-							}						
-						}
-					}
-
-				}
+				$fields = $this->makeFieldList($value,$tableName);
 /*
- echo '<pre>'; 
- var_dump( $value['ctrl']['enablecolumns'] ); 
+ echo '<pre>';
+ var_dump( $value['ctrl']['enablecolumns'] );
  //var_dump($this->setFields);
  exit; */
-				
-/*				if (is_array($this->setFields[$tableName]))	{
-					$fields = array_intersect($fields,$this->setFields[$tableName]);
-				} else {
-					$fields = array();
-				} */
 
-					// keine ahnung ob wir das hier brauchen ...
-					$this->pidSelect = 'pid='.intval($this->id);
-				
+		$orderBy = ($value['ctrl']['sortby']) ? 'ORDER BY '.$value['ctrl']['sortby'] : ( isset($value['ctrl']['default_sortby']) ? $value['ctrl']['default_sortby'] : 'ORDER BY uid desc' );
 
-				// Finally, render the list:
-					
-				// $this->HTMLcode.=$this->getTable($tableName, $this->id, implode(',',$fields));
-				$sql = 'select '.implode(',',$fields).' from '.$tableName.' where '.$this->pidSelect;
-echo "$sql<br>";				
-			
+				$sql = 'select '.implode(',',$fields).' from '.$tableName.' where '.$this->pidSelect.' '.$orderBy.' limit 0,10';
+echo "$sql<br>";
+
 		}/* endforeach */
-		
+
 	}
 
+
+
+	/**
+	 * Based on input query array (query for selecting count(*) from a table) it will select the number of records and set the value in $this->totalItems
+	 *
+	 * @param	array		Query array
+	 * @return	void
+	 * @see makeQueryArray()
+	 */
+	function setTotalItems($queryParts)	{
+		$this->totalItems = $GLOBALS['TYPO3_DB']->exec_SELECTcountRows(
+			'*',
+			$queryParts['FROM'],
+			$queryParts['WHERE']
+		);
+	}
+
+
+
+
+	/**
+	 * Makes the list of fields to select for a table
+	 *
+	 * @param	string		Table name
+	 * @param	boolean		If set, users access to the field (non-exclude-fields) is NOT checked.
+	 * @return	array		Array, where values are fieldnames to include in query
+	 */
+	function makeFieldList($tcaCurrent,$table)	{
+		global $TCA;
+
+		$fields = array();
+		if (is_array($TCA[$table]))	{
+			t3lib_div::loadTCA($table);
+
+			$fields = array('uid','pid');
+			foreach($this->addFieldsDependedIfTheyAreSetOrNot as $k=>$column){
+				if( isset( $tcaCurrent['ctrl'][$column] ) && !empty($tcaCurrent['ctrl'][$column]) ){
+					$fields[]=$tcaCurrent['ctrl'][$column];
+				}
+
+				if( $k == 'enablecolumns' ){
+					foreach($column as $kc=>$vc){
+
+						if( isset( $tcaCurrent['ctrl'][$k][$vc] ) && !empty($tcaCurrent['ctrl'][$k][$vc]) ){
+							$fields[]=$tcaCurrent['ctrl'][$k][$vc];
+						}
+					}
+				}
+
+			}/*endforeach*/
+		} /*endif is array*/
+		return $fields;
+
+	}
+	
 	
 	/**
-	
+
 	SchumacherFM for later implementation
-	
+
 	 * Creates the display of sys_notes for the page.
 	 * Relies on the "sys_note" extension to be loaded.
 	 *
@@ -350,146 +330,5 @@ echo "$sql<br>";
 
 
 
-	
-	/**
-	 * Returns the SQL-query array to select the records from a table $table with pid = $id
-	 *
-	 * @param	string		Table name
-	 * @param	integer		Page id (NOT USED! $this->pidSelect is used instead)
-	 * @param	string		Additional part for where clause
-	 * @param	string		Field list to select, * for all (for "SELECT [fieldlist] FROM ...")
-	 * @return	array		Returns query array
-	 */
-	function makeQueryArray($table, $id, $addWhere='', $fieldList='*')	{
-		global $TCA, $TYPO3_CONF_VARS;
-
-		$hookObjectsArr = array();
-		if (is_array ($TYPO3_CONF_VARS['SC_OPTIONS']['typo3/class.db_list.inc']['makeQueryArray'])) {
-			foreach ($TYPO3_CONF_VARS['SC_OPTIONS']['typo3/class.db_list.inc']['makeQueryArray'] as $classRef) {
-				$hookObjectsArr[] = t3lib_div::getUserObj($classRef);
-			}
-		}
-
-			// Set ORDER BY:
-		$orderBy = ($TCA[$table]['ctrl']['sortby']) ? 'ORDER BY '.$TCA[$table]['ctrl']['sortby'] : $TCA[$table]['ctrl']['default_sortby'];
-		if ($this->sortField)	{
-			if (in_array($this->sortField,$this->makeFieldList($table,1)))	{
-				$orderBy = 'ORDER BY '.$this->sortField;
-				if ($this->sortRev)	$orderBy.=' DESC';
-			}
-		}
-
-			// Set LIMIT:
-		$limit = $this->iLimit ? ($this->firstElementNumber ? $this->firstElementNumber.',' : '').($this->iLimit+1) : '';
-
-			// Filtering on displayable pages (permissions):
-		$pC = ($table=='pages' && $this->perms_clause)?' AND '.$this->perms_clause:'';
-
-
-			// Compiling query array:
-		$queryParts = array(
-			'SELECT' => $fieldList,
-			'FROM' => $table,
-			'WHERE' => $this->pidSelect.
-						' '.$pC.
-						t3lib_BEfunc::deleteClause($table).
-						t3lib_BEfunc::versioningPlaceholderClause($table).
-						' '.$addWhere.
-						' '.$search,
-			'GROUPBY' => '',
-			'ORDERBY' => $GLOBALS['TYPO3_DB']->stripOrderBy($orderBy),
-			'LIMIT' => $limit
-		);
-
-			// Apply hook as requested in http://bugs.typo3.org/view.php?id=4361
-		foreach ($hookObjectsArr as $hookObj) {
-			if (method_exists($hookObj, 'makeQueryArray_post')) {
-				$_params = array(
-					'orderBy' => $orderBy,
-					'limit' => $limit,
-					'pC' => $pC,
-					'search' => $search,
-				);
-				$hookObj->makeQueryArray_post($queryParts, $this, $table, $id, $addWhere, $fieldList, $_params);
-			}
-		}
-
-			// Return query:
-		return $queryParts;
-	}
-
-	/**
-	 * Based on input query array (query for selecting count(*) from a table) it will select the number of records and set the value in $this->totalItems
-	 *
-	 * @param	array		Query array
-	 * @return	void
-	 * @see makeQueryArray()
-	 */
-	function setTotalItems($queryParts)	{
-		$this->totalItems = $GLOBALS['TYPO3_DB']->exec_SELECTcountRows(
-			'*',
-			$queryParts['FROM'],
-			$queryParts['WHERE']
-		);
-	}
-
-	
-	
-
-	/**
-	 * Makes the list of fields to select for a table
-	 *
-	 * @param	string		Table name
-	 * @param	boolean		If set, users access to the field (non-exclude-fields) is NOT checked.
-	 * @param	boolean		If set, also adds crdate and tstamp fields (note: they will also be added if user is admin or dontCheckUser is set)
-	 * @return	array		Array, where values are fieldnames to include in query
-	 */
-	function makeFieldList($table,$dontCheckUser=0,$addDateFields=0)	{
-		global $TCA,$BE_USER;
-
-			// Init fieldlist array:
-		$fieldListArr = array();
-
-			// Check table:
-		if (is_array($TCA[$table]))	{
-			t3lib_div::loadTCA($table);
-
-				// Traverse configured columns and add them to field array, if available for user.
-			foreach($TCA[$table]['columns'] as $fN => $fieldValue)	{
-				if ($dontCheckUser ||
-					((!$fieldValue['exclude'] || $BE_USER->check('non_exclude_fields',$table.':'.$fN)) && $fieldValue['config']['type']!='passthrough'))	{
-					$fieldListArr[]=$fN;
-				}
-			}
-
-				// Add special fields:
-			if ($dontCheckUser || $BE_USER->isAdmin())	{
-				$fieldListArr[]='uid';
-				$fieldListArr[]='pid';
-			}
-
-				// Add date fields
-			if ($dontCheckUser || $BE_USER->isAdmin() || $addDateFields)	{
-				if ($TCA[$table]['ctrl']['tstamp'])	$fieldListArr[]=$TCA[$table]['ctrl']['tstamp'];
-				if ($TCA[$table]['ctrl']['crdate'])	$fieldListArr[]=$TCA[$table]['ctrl']['crdate'];
-			}
-
-				// Add more special fields:
-			if ($dontCheckUser || $BE_USER->isAdmin())	{
-				if ($TCA[$table]['ctrl']['cruser_id'])	$fieldListArr[]=$TCA[$table]['ctrl']['cruser_id'];
-				if ($TCA[$table]['ctrl']['sortby'])	$fieldListArr[]=$TCA[$table]['ctrl']['sortby'];
-				if ($TCA[$table]['ctrl']['versioningWS'])	{
-					$fieldListArr[]='t3ver_id';
-					$fieldListArr[]='t3ver_state';
-					$fieldListArr[]='t3ver_wsid';
-					if ($table==='pages')	{
-						$fieldListArr[]='t3ver_swapmode';
-					}
-				}
-			}
-		}
-		return $fieldListArr;
-	}
- 
 
 }

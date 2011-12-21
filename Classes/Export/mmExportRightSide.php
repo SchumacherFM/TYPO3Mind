@@ -264,7 +264,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	)
 */
 				$moduleLoader = t3lib_div::makeInstance('Tx_Typo3mind_Utility_DbList');
-				$modules->setPID(942);
+				$moduleLoader->setPID(942);
 				$modules = $moduleLoader->generateList();
 
 				
