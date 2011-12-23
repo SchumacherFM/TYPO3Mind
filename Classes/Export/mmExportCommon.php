@@ -40,13 +40,6 @@
 class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExportSimpleXML */ {
 
 	/**
-	 * counts the nodes and uses this value as an id in the .mm file
-	 *
-	 * @var int
-	 */
-	protected $nodeIDcounter;
-
-	/**
 	 * pageUid of the current page
 	 *
 	 * @var int
@@ -97,7 +90,6 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 		$this->setmapMode();
 		$this->initSysDomains();
 		$this->setHttpHosts();
-		$this->nodeIDcounter = 1;
 	}
 
 	/**
@@ -169,7 +161,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @param	array $attributes  key is the name and value the value
 	 * @return	string the filename
 	 */
-	protected function finalOutputFile(SimpleXMLElement &$xml) {
+	protected function finalOutputFile(SimpleXMLElement $xml) {
 
 		$fileName = str_replace('[sitename]',
 			preg_replace('~[^a-z0-9]+~i','',$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']),
@@ -255,8 +247,8 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 */
 	public function addNode(SimpleXMLElement $xmlNode,$attributes) {
 		$child = $xmlNode->addChild('node','');
-		$this->checkNodeAttr($attributes);
-		$this->addAttributes($child,$attributes);
+		
+		$this->addAttributes($child, $this->checkNodeAttr($attributes) );
 		return $child;
 	}
 
@@ -411,7 +403,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 		$css = '';
 
 		$node = $xml->addChild('node','');
-		$this->checkNodeAttr($attributes);
+		$attributes = $this->checkNodeAttr($attributes);
 
 		$this->addAttributes($node,$attributes);
 
@@ -440,7 +432,7 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @param	array $additionalAttributes  key is the name and value the value
 	 * @return	SimpleXMLElement
 	 */
-	protected function getAttrFromPage(&$pageRecord,$T3mind = NULL,$additionalAttributes = array() ) {
+	protected function XXXgetAttrFromPage($pageRecord,$T3mind = NULL,$additionalAttributes = array() ) {
 
 		/* now we have here to the the special options from the column tx_typo3mind_data from table pages */
 
@@ -470,14 +462,14 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @param	array $attributes
 	 * @return	nothing
 	 */
-	protected function checkNodeAttr(&$attributes) {
+	protected function checkNodeAttr($attributes) {
 
 		if( !isset($attributes['ID']) ){
-			$attributes['ID'] = 't3m'.mt_rand().'.'.$this->nodeIDcounter;
+			$attributes['ID'] = 't3m'.mt_rand();
 		}
 
 		$attributes['TEXT'] = $this->strip_tags( str_replace('"','',$attributes['TEXT']) );
-		$this->nodeIDcounter++;
+		return $attributes;
 	}
 
 	/**

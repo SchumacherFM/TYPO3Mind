@@ -144,7 +144,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @param	array $t3MindRepositoryFindAll
 	 * @return	nothing
 	 */
-	public function sett3mind(&$t3MindRepositoryFindAll) {
+	public function sett3mind($t3MindRepositoryFindAll) {
 
 		foreach($t3MindRepositoryFindAll as $k=>$v){
 			unset($v['l10n_parent']);
@@ -160,7 +160,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
-	public function getSysLanguages(SimpleXMLElement &$xmlNode) {
+	public function getSysLanguages(SimpleXMLElement $xmlNode) {
 
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'FOLDED'=>'true',
@@ -198,7 +198,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	nothing
 	 */
-	public function getSysDomains(SimpleXMLElement &$xmlNode) {
+	public function getSysDomains(SimpleXMLElement $xmlNode) {
 
 		$pageDomains = array();
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'p.title,p.uid as puid,sd.uid,sd.domainName,sd.hidden',
@@ -244,7 +244,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
-	public function getTree(SimpleXMLElement &$xmlNode) {
+	public function getTree(SimpleXMLElement $xmlNode) {
 
 		/* COLOR TESTER
 		$c1 = '#996600';
@@ -270,7 +270,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @param	array				$t3mind		for recursive mode!
 	 * @return	SimpleXMLElement
 	 */
-	private function getTreeRecursive(SimpleXMLElement &$xmlNode,$subTree,$depth = 0,$t3mind = NULL) {
+	private function getTreeRecursive(SimpleXMLElement $xmlNode,$subTree,$depth = 0,$t3mind = NULL) {
 		$depth++;
 
 		$alternatingColors = array();

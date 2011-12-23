@@ -110,7 +110,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
-	private function getTYPOFilesNode(SimpleXMLElement &$xmlNode) {
+	private function getTYPOFilesNode(SimpleXMLElement $xmlNode) {
 
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'FOLDED'=>'true',
@@ -157,7 +157,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
-	public function getTYPONode(SimpleXMLElement &$xmlNode) {
+	public function getTYPONode(SimpleXMLElement $xmlNode) {
 
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
@@ -257,7 +257,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 
 
-	private function BeUsersHandleRow(SimpleXMLElement &$xmlNode,$row){
+	private function BeUsersHandleRow(SimpleXMLElement $xmlNode,$row){
 
 		$aUserNode = $this->addNode($xmlNode,array(
 				'FOLDED'=>'true',
@@ -281,7 +281,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
-	public function getServerNode(SimpleXMLElement &$xmlNode) {
+	public function getServerNode(SimpleXMLElement $xmlNode) {
 
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
@@ -310,7 +310,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
-	public function getDatabaseNode(SimpleXMLElement &$xmlNode) {
+	public function getDatabaseNode(SimpleXMLElement $xmlNode) {
 
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
@@ -389,7 +389,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
-	public function getExtensionNode(SimpleXMLElement &$xmlNode) {
+	public function getExtensionNode(SimpleXMLElement $xmlNode) {
 		global $TCA;
 
 /*		$ChildFirst_Extensions = $this->addNode($xmlNode,array(
