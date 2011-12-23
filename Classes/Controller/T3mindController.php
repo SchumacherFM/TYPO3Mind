@@ -85,7 +85,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	public function initializeAction() {
 		$this->pageUid = (int)t3lib_div::_GET('id');
 		$this->apikey = md5(t3lib_div::_GET('apikey'));
-		$this->helpers = new Tx_Typo3mind_Utility_Helpers;
+		$this->helpers = new Tx_Typo3mind_Utility_Helpers();
         $this->extConfSettings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['typo3mind']);
 
 		// todo: better error handling
@@ -108,7 +108,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 			$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
 
 			if( $T3mind == NULL ){
-				$T3mind = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Model_T3mind');
+				$T3mind = new Tx_Typo3mind_Domain_Model_T3mind();
 				$T3mind->setpageUid( $this->pageUid );
 				$this->t3MindRepository->add($T3mind);
 				$persistenceManager = Tx_Extbase_Dispatcher::getPersistenceManager();
@@ -212,7 +212,8 @@ die( '</pre>');
 	public function exportAction() {
 
 	
-		$expObj = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExport',$this->settings);
+		// $expObj = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExport',$this->settings);
+		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);
 		$typo3tempFilename = $expObj->getContent();
 
 		$this->view->assign('downloadURL', '/typo3temp/'.$typo3tempFilename);
@@ -221,7 +222,8 @@ die( '</pre>');
 
 	/**
 	 * action export via eID
-	 http://turmhof/index.php?eID=typo3mind&id=6&apikey=tYeAvJ4rgxWSU9C!.mf5k:-dMQq_
+	 http://xxxxxxxxxxxxx/index.php?eID=typo3mind&id=6&apikey=tYeAvJ4rgxWSU9C!.mf5k:-dMQq_
+	 http://stuff.lime-flavour.de/link-typo3-eid-use-with-extbase-and-fluid/
 	 *
 	 * $apikey string the key
 	 * @return void
@@ -244,5 +246,6 @@ echo '</pre>';
 
 
 	}
+	 
 
 }

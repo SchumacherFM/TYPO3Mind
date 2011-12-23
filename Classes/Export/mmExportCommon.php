@@ -40,6 +40,13 @@
 class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExportSimpleXML */ {
 
 	/**
+	 * The root root root node of the xml file
+	 *
+	 * @var SimpleXMLElement
+	 */
+	protected $mapXmlRoot;
+
+	/**
 	 * pageUid of the current page
 	 *
 	 * @var int
@@ -65,6 +72,14 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @var array
 	 */
 	protected $settings;
+	
+	/**
+	 * t3MindRepository
+	 *
+	 * @var Tx_Typo3mind_Domain_Repository_T3mindRepository
+	 */
+	protected $t3MindRepository;
+
 
 	/**
 	 * Lists all valid SysDomains for viewing pages... will overwrite httpHost ...
@@ -81,12 +96,16 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	protected $mapMode;
 
 	/**
-	 * initializeAction
+	 * Constructor
 	 *
+	 * @param array $settings
+	 * @param Tx_Typo3mind_Domain_Repository_T3mindRepository $t3MindRepository
 	 * @return void
 	 */
-	public function __construct($settings) {
+	public function __construct(array $settings,Tx_Typo3mind_Domain_Repository_T3mindRepository $t3MindRepository) {
+	
 		$this->settings = $settings;
+		$this->t3MindRepository = $t3MindRepository;
 		$this->setmapMode();
 		$this->initSysDomains();
 		$this->setHttpHosts();
@@ -149,9 +168,42 @@ class Tx_Typo3mind_Export_mmExportCommon /* extends Tx_Typo3mind_Export_mmExport
 	 * @return	SimpleXMLElement
 	 */
 	protected function getMap() {
-		$mmXML = new SimpleXMLElement('<map></map>');
-		$mmXML->addAttribute('version',$this->mmVersion);
-		return $mmXML;
+		$this->mapXmlRoot = new SimpleXMLElement('<map></map>');
+		$this->mapXmlRoot->addAttribute('version',$this->mmVersion);
+		
+
+		$attributes = array(
+			'COLOR'=>'#993300',
+		);
+// $temp_TTclassName = t3lib_div::makeInstanceClassName(‘t3lib_timeTrack’);
+
+		$html = '<center><img src="'.$this->getBEHttpHost().'typo3/sysext/t3skin/icons/gfx/loginlogo_transp.gif" alt="TYPO3 Logo" />
+		<h2>'.$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'].'</h2>
+		<p style="font-size:10px;">TYPO3: '.TYPO3_version.'</p></center>';
+		$rootNode = $this->addRichContentNode($this->mapXmlRoot,$attributes,$html);
+
+		$ThisFileInfoNode = $this->addImgNode($rootNode,array(
+			'POSITION'=>'left',
+//			'FOLDED'=>'false',
+			'TEXT'=>$this->translate('tree.fileInfo'),
+		), 'typo3/sysext/about/ext_icon.gif' );
+
+
+
+		$this->addNode($ThisFileInfoNode,array(
+			'TEXT'=>'Backend HTTP Address: '.$this->getBEHttpHost(),
+		));
+		$this->addNode($ThisFileInfoNode,array(
+			'TEXT'=>'Created: '.date('Y-m-d H:i:s'),
+		));
+		$this->addNode($ThisFileInfoNode,array(
+			'TEXT'=>'MD5 Hash: ###MD5_FILE_HASH####',
+		));
+		$this->addNode($ThisFileInfoNode,array(
+			'TEXT'=>'Map Mode: '.$this->settings['mapMode'],
+		));
+		
+		return $rootNode;
 	}
 
 	/**
