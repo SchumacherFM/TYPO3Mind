@@ -271,6 +271,9 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 		}
 
 		$attributes['TEXT'] = $this->strip_tags( str_replace('"','',$attributes['TEXT']) );
+		
+		if( isset($attributes['LINK']) && empty($attributes['LINK']) ){ unset($attributes['LINK']); }
+		
 		return $attributes;
 	}
 

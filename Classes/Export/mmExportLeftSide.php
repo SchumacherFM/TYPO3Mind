@@ -205,7 +205,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		/*</LOGS error logs>*/
 
 	}
-	
+
 	/**
 	 * gets all backend users
 	 *
@@ -217,6 +217,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		// backend users groups
 
 		$UsersNode = $this->addImgNode($xmlNode,array(
+			'LINK'=>$this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/mod.php?M=tools_beuser' : '',
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3users'),
 		), 'typo3/sysext/t3skin/icons/gfx/i/be_users__x.gif', 'height="16"' );
@@ -229,7 +230,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		));
 		$this->addIcon($UserAdminNode,'penguin');
 
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'username,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=1', '', 'username', '10' );
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,username,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=1', '', 'username'  );
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$this->BeUsersHandleRow($UserAdminNode,$row);
 		}
@@ -242,7 +243,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		));
 		$this->addIcon($UserUserNode,'male1');
 
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'username,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=0', '', 'username', (int)$this->settings['numberOfLogRows'] );
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,username,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=0', '', 'username' /* , (int)$this->settings['numberOfLogRows'] */ );
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$this->BeUsersHandleRow($UserUserNode,$row);
 		}
@@ -256,9 +257,11 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		));
 		$this->addIcon($UserGroupNode,'group');
 
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'title,hidden,deleted,crdate,tables_select,tables_modify', 'be_groups', '', '', 'title', (int)$this->settings['numberOfLogRows'] );
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,title,hidden,deleted,crdate,tables_select,tables_modify,groupMods', 'be_groups', '', '', 'title' /* , (int)$this->settings['numberOfLogRows'] */ );
+		$i=0;
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
-			$this->BeGroupsHandleRow($UserGroupNode,$row);
+			$this->BeGroupsHandleRow($UserGroupNode,$row,$i);
+			$i++;
 		}
 		/*</show all groups>*/
 
@@ -276,11 +279,14 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		// TODO: test user passwords, IF extension salted passwords is not loaded!
 		// http://www.stottmeister.com/blog/2009/04/14/how-to-crack-md5-passwords/
 		// http://netmd5crack.com/cgi-bin/Crack.py?InputHash=[md5string]
-	
+
 		$aUserNode = $this->addNode($xmlNode,array(
+				// not possible due to the ampersand returnUrl=%2Ftypo3%2Fmod.php%3FM%3Dtools_beuser&
+				'LINK'=>$this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[be_users]['.$row['uid'].']=edit' : '',
 				'FOLDED'=>'true',
 				'TEXT'=>$row['username']
 			));
+
 			if( $row['deleted'] == 1 ) {	$this->addIcon($aUserNode,'button_cancel'); }
 			elseif( $row['disable'] == 1 ) {	$this->addIcon($aUserNode,'encrypted'); }
 			if( ($row['lastlogin']+(3600*24*9)) < time() ) {	$this->addIcon($aUserNode,'hourglass'); }
@@ -298,24 +304,31 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 *
 	 * @param	SimpleXMLElement $xmlNode
 	 * @param	array $row
+	 * @param	integer $rowCounter
 	 * @return	SimpleXMLElement
 	 */
-	private function BeGroupsHandleRow(SimpleXMLElement $xmlNode,$row){
-		
-		$aUserNode = $this->addNode($xmlNode,array(
-			//	'FOLDED'=>'true',
-				'TEXT'=>$row['title']
-			));
-			if( $row['deleted'] == 1 ) {	$this->addIcon($aUserNode,'button_cancel'); }
-			elseif( $row['hidden'] == 1 ) {	$this->addIcon($aUserNode,'closed'); }
-			/* if( ($row['lastlogin']+(3600*24*9)) < time() ) {	$this->addIcon($aUserNode,'hourglass'); } */
+	private function BeGroupsHandleRow(SimpleXMLElement $xmlNode,$row,$rowCounter){
 
-			$this->BeGroupsHandleTableSelMod($aUserNode,$row['tables_select'],'tree.typo3.groups.tables_select');
-			$this->BeGroupsHandleTableSelMod($aUserNode,$row['tables_modify'],'tree.typo3.groups.tables_modify');
+		$aGroupNode = $this->addNode($xmlNode,array(
+			'TEXT'=>$row['title'],
+			'LINK' => $this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[be_groups]['.$row['uid'].']=edit' : ''
+		));
+
+		$this->addCloud($aGroupNode,array('COLOR'=> ($rowCounter%2==0 ? '#ececec' : '#80B3FF') ));
+
+			if( $row['deleted'] == 1 ) {	$this->addIcon($aGroupNode,'button_cancel'); }
+			elseif( $row['hidden'] == 1 ) {	$this->addIcon($aGroupNode,'closed'); }
+			/* if( ($row['lastlogin']+(3600*24*9)) < time() ) {	$this->addIcon($aGroupNode,'hourglass'); } */
+
+
+			$this->BeGroupsHandleTablegroupMods($aGroupNode,$row['groupMods'],'tree.typo3.groups.groupMods');
+
+			$this->BeGroupsHandleTableSelectModify($aGroupNode,$row['tables_select'],'tree.typo3.groups.tables_select');
+			$this->BeGroupsHandleTableSelectModify($aGroupNode,$row['tables_modify'],'tree.typo3.groups.tables_modify');
 
 	} /*</BeGroupsHandleRow>*/
 
-	
+
 	/**
 	 *
 	 * @param	SimpleXMLElement $xmlNode
@@ -323,19 +336,94 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	string $translateKey
 	 * @return	SimpleXMLElement
 	 */
-	private function BeGroupsHandleTableSelMod(SimpleXMLElement $xmlNode,$tables,$translateKey){
+	private function BeGroupsHandleTableSelectModify(SimpleXMLElement $xmlNode,$tables,$translateKey){
 		GLOBAL $TCA;
 
-		if( !empty($tables) ){ 
-			$nodeTables = $this->addNode($xmlNode,array('TEXT'=>$this->translate($translateKey)));	
+		if( !empty($tables) ){
+			$nodeTables = $this->addNode($xmlNode,array('TEXT'=>$this->translate($translateKey)));
 			$exploded = t3lib_div::trimExplode(',', $tables ,1 );
 			foreach($exploded as $k=>$table){
-				$this->addNode($nodeTables,array('TEXT'=>$this->SYSLANG->sL( $TCA[$table]['ctrl']['title'] ) ));	
+				$this->addNode($nodeTables,array('TEXT'=>$this->SYSLANG->sL( $TCA[$table]['ctrl']['title'] ) ));
 			}
-//  echo '<pre>';	var_dump($exploded); exit;
 		}
 
-	} /*</BeGroupsHandleRow>*/
+	} /*</BeGroupsHandleTableSelectModify>*/
+
+	
+	/**
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	string $groupMods
+	 * @param	string $translateKey
+	 * @return	SimpleXMLElement
+	 */
+	private function BeGroupsHandleTablegroupMods(SimpleXMLElement $xmlNode,$groupMods,$translateKey){
+		GLOBAL $TCA;
+
+		if( !empty($groupMods) ){
+			$nodeGroupMods = $this->addNode($xmlNode,array('TEXT'=>$this->translate($translateKey)));
+
+			$exploded = t3lib_div::trimExplode(',', $groupMods ,1 );
+			foreach($exploded as $k=>$table){
+				$this->addNode($nodeGroupMods,array('TEXT'=>$this->SYSLANG->sL( $TCA[$table]['ctrl']['title'] ) ));
+			}
+
+			$this->BeUserGroupsGetModList($nodeGroupMods,'modListGroup',$groupMods);
+
+
+		}/*endif*/
+
+	} /*</BeGroupsHandleTablegroupMods>*/
+
+	
+	/**
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	string $modListType
+	 * @param	string $groupMods
+	 * @return	SimpleXMLElement
+	 */
+	private function BeUserGroupsGetModList(SimpleXMLElement $xmlNode,$modListType,$groupMods){
+
+			$loadModules = t3lib_div::makeInstance('t3lib_loadModules');
+			$loadModules->load($GLOBALS['TBE_MODULES']);
+
+			$modList = $modListType == 'modListUser' ? $loadModules->modListUser : $loadModules->modListGroup;
+			
+			$groupModsExploded = Tx_Typo3mind_Utility_Helpers::trimExplodeVK(',', $groupMods );
+			
+	echo '<pre>'; var_dump($groupModsExploded); exit;
+			
+			if (is_array($modList)) {
+
+				foreach ($modList as $theMod) {
+				if( isset($groupModsExploded[$theMod]) ){
+					/*	// Icon:
+					$icon = $GLOBALS['LANG']->moduleLabels['tabs_images'][$theMod . '_tab'];
+					if ($icon) {
+						$icon = '../' . substr($icon, strlen(PATH_site));
+					} */
+
+						// Add help text
+					$helpText = array(
+						'title' => $GLOBALS['LANG']->moduleLabels['labels'][$theMod . '_tablabel'],
+						'description' => $GLOBALS['LANG']->moduleLabels['labels'][$theMod . '_tabdescr']
+					);
+	echo '<pre>'; var_dump($helpText); exit;
+
+						// Item configuration:
+					$items[] = array(
+						$this->addSelectOptionsToItemArray_makeModuleData($theMod),
+						$theMod,
+						$icon,
+						$helpText
+					);
+				}/*endif isset $groupModsExploded*/
+				}
+			}/*endif is array*/
+	}/*</BeUserGroupsGetModList>*/
+	
+	
 	
 	/**
 	 * shows all TYPO3_CONF_VARS
@@ -350,10 +438,10 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'TEXT'=>'TYPO3_CONF_VARS', // $this->translate('tree.typo3.typo3_conf_vars'),
 		));
 
-		
+
 
 	}/*</getTYPONodeConfVars>*/
-	
+
 	/**
 	 * gets some T3 specific informations
 	 *

@@ -51,7 +51,7 @@ class Tx_Typo3mind_Utility_Helpers {
 	 */
 	public static function trimExplodeVK($d,$s) {
 	
-		return $this->arrayKeysEqualValues ( t3lib_div::trimExplode($d, $s ,1 ) );
+		return self::arrayKeysEqualValues ( t3lib_div::trimExplode($d, $s ,1 ) );
 	}
 
 }
