@@ -231,11 +231,14 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		$this->addIcon($UserAdminNode,'penguin');
 
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,username,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=1', '', 'username'  );
+		$i=0;
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
-			$this->BeUsersHandleRow($UserAdminNode,$row);
+			$this->BeUsersHandleRow($UserAdminNode,$row,$i);
+			$i++;
 		}
 		/*</show all admins>*/
 
+		
 		/*<show all non admins>*/
 		$UserUserNode = $this->addNode($UsersNode,array(
 			'FOLDED'=>'true',
@@ -243,9 +246,11 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		));
 		$this->addIcon($UserUserNode,'male1');
 
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,username,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=0', '', 'username' /* , (int)$this->settings['numberOfLogRows'] */ );
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,username,email,realname,lastlogin,disable,deleted,userMods', 'be_users', 'admin=0', '', 'username' /* , (int)$this->settings['numberOfLogRows'] */ );
+		$i=0;
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
-			$this->BeUsersHandleRow($UserUserNode,$row);
+			$this->BeUsersHandleRow($UserUserNode,$row,$i);
+			$i++;
 		}
 		/*</show all non admins>*/
 
@@ -272,9 +277,10 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 *
 	 * @param	SimpleXMLElement $xmlNode
 	 * @param	array $row
+	 * @param	integer $rowCounter
 	 * @return	SimpleXMLElement
 	 */
-	private function BeUsersHandleRow(SimpleXMLElement $xmlNode,$row){
+	private function BeUsersHandleRow(SimpleXMLElement $xmlNode,$row,$rowCounter){
 
 		// TODO: test user passwords, IF extension salted passwords is not loaded!
 		// http://www.stottmeister.com/blog/2009/04/14/how-to-crack-md5-passwords/
@@ -286,6 +292,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 				'FOLDED'=>'true',
 				'TEXT'=>$row['username']
 			));
+		$this->addCloud($aUserNode,array('COLOR'=> ($rowCounter%2==0 ? '#ececec' : '#CCE0FF') ));
 
 			if( $row['deleted'] == 1 ) {	$this->addIcon($aUserNode,'button_cancel'); }
 			elseif( $row['disable'] == 1 ) {	$this->addIcon($aUserNode,'encrypted'); }
@@ -293,6 +300,10 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 			if( !empty($row['realname']) ){ $this->addNode($aUserNode,array('TEXT'=>$row['realname'])); }
 			if( !empty($row['email']) ){ $this->addNode($aUserNode,array('TEXT'=>$row['email']));	}
+			if( isset($row['userMods']) && !empty($row['userMods']) ){
+				$nodeUserMods = $this->addNode($aUserNode,array('TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
+				$this->BeUserGroupsGetModList($nodeUserMods,'modListUser',$row['userMods']);
+			}/*endif*/			
 
 			$this->addNode($aUserNode,array('TEXT'=>'ToDO: Idea Show SysLog last 10 enries...'));
 
@@ -367,9 +378,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			$modList = $modListType == 'modListUser' ? $loadModules->modListUser : $loadModules->modListGroup;
 			
 			$groupModsExploded = Tx_Typo3mind_Utility_Helpers::trimExplodeVK(',', $groupMods );
-			
-//	echo '<pre>'; var_dump($groupModsExploded); exit;
-			
+						
 			if (is_array($modList)) {
 				foreach ($modList as $theMod) {
 					if( isset($groupModsExploded[$theMod]) ){
