@@ -238,13 +238,15 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		}
 		/*</show all admins>*/
 
-		
+
+
 		/*<show all non admins>*/
 		$UserUserNode = $this->addNode($UsersNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3.users'),
 		));
 		$this->addIcon($UserUserNode,'male1');
+
 
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,username,email,realname,lastlogin,disable,deleted,userMods', 'be_users', 'admin=0', '', 'username' /* , (int)$this->settings['numberOfLogRows'] */ );
 		$i=0;
@@ -303,10 +305,30 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			if( isset($row['userMods']) && !empty($row['userMods']) ){
 				$nodeUserMods = $this->addNode($aUserNode,array('TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
 				$this->BeUserGroupsGetModList($nodeUserMods,'modListUser',$row['userMods']);
-			}/*endif*/			
+			}/*endif*/
 
-			$this->addNode($aUserNode,array('TEXT'=>'ToDO: Idea Show SysLog last 10 enries...'));
 
+			/*<LOGS user logs>*/
+			$DBresult = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,tablename,details,log_data,ip',
+				'sys_log', 'userid='.$row['uid'].' and error=0', '', 'tstamp DESC', (int)$this->settings['numberOfLogRows'] );
+			$nodeHTML = array();
+			while($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($DBresult) ){
+				if( !empty($r['log_data']) ){
+					$data = unserialize($r['log_data']);
+
+					$r['details'] = sprintf($r['details'], htmlspecialchars($data[0]), htmlspecialchars($data[1]), htmlspecialchars($data[2]), htmlspecialchars($data[3]), htmlspecialchars($data[4]));
+				}
+				unset($r['log_data']);
+				if( empty($r['tablename']) ){ unset($r['tablename']); }
+				$nodeHTML[ $r['LoggedDate'] ] = implode(' / ',($r));
+			}
+
+			if( count($nodeHTML) > 0 ){
+				$this->addRichContentNote($aUserNode, array('TEXT'=>$this->translate('tree.typo3.SysLog')),
+					'<h3>'.$this->translate('tree.typo3.SysLog').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
+			}
+			/*</LOGS user logs>*/
+ 
 	} /*</BeUsersHandleRow>*/
 
 	/**
@@ -329,12 +351,11 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 			if( $row['deleted'] == 1 ) {	$this->addIcon($aGroupNode,'button_cancel'); }
 			elseif( $row['hidden'] == 1 ) {	$this->addIcon($aGroupNode,'closed'); }
-			/* if( ($row['lastlogin']+(3600*24*9)) < time() ) {	$this->addIcon($aGroupNode,'hourglass'); } */
- 
+
 			if( !empty($row['groupMods']) ){
 				$nodeGroupMods = $this->addNode($aGroupNode,array('TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
 				$this->BeUserGroupsGetModList($nodeGroupMods,'modListGroup',$row['groupMods']);
-			}/*endif*/			
+			}/*endif*/
 
 			$this->BeGroupsHandleTableSelectModify($aGroupNode,$row['tables_select'],'tree.typo3.groups.tables_select');
 			$this->BeGroupsHandleTableSelectModify($aGroupNode,$row['tables_modify'],'tree.typo3.groups.tables_modify');
@@ -362,7 +383,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 	} /*</BeGroupsHandleTableSelectModify>*/
 
-	
+
 	/**
 	 *
 	 * @param	SimpleXMLElement $xmlNode
@@ -376,9 +397,9 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			$loadModules->load($GLOBALS['TBE_MODULES']);
 
 			$modList = $modListType == 'modListUser' ? $loadModules->modListUser : $loadModules->modListGroup;
-			
+
 			$groupModsExploded = Tx_Typo3mind_Utility_Helpers::trimExplodeVK(',', $groupMods );
-						
+
 			if (is_array($modList)) {
 				foreach ($modList as $theMod) {
 					if( isset($groupModsExploded[$theMod]) ){
@@ -394,9 +415,9 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 				}
 			}/*endif is array*/
 	}/*</BeUserGroupsGetModList>*/
-	
-	
-	
+
+
+
 	/**
 	 * shows all TYPO3_CONF_VARS
 	 *
@@ -409,8 +430,10 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'FOLDED'=>'false',
 			'TEXT'=>'TYPO3_CONF_VARS', // $this->translate('tree.typo3.typo3_conf_vars'),
 		));
+		$tcv = $GLOBALS['TYPO3_CONF_VARS'];
+		unset($tcv['BE']['defaultUserTSconfig']);
 
-
+ echo '<pre>'; var_dump($tcv); exit;
 
 	}/*</getTYPONodeConfVars>*/
 
