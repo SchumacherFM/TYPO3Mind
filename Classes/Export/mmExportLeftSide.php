@@ -431,10 +431,45 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'TEXT'=>'TYPO3_CONF_VARS', // $this->translate('tree.typo3.typo3_conf_vars'),
 		));
 		$tcv = $GLOBALS['TYPO3_CONF_VARS'];
-		unset($tcv['BE']['defaultUserTSconfig']);
-		unset($tcv['BE']['defaultPageTSconfig']);
+ 
+		unset($tcv['SYS']['caching']);
+		unset($tcv['SYS']['encryptionKey']);
+		unset($tcv['SYS']['locallangXMLOverride']);
 
- echo '<pre>'; var_dump($tcv); exit;
+		unset($tcv['EXT']['extList']);
+		unset($tcv['EXT']['extList_FE']);
+	
+		unset($tcv['BE']['AJAX']);
+		unset($tcv['BE']['RTE_reg']);
+		unset($tcv['SC_OPTIONS']);
+		unset($tcv['EXTCONF']);
+		unset($tcv['typo3/backend.php']);
+		unset($tcv['INSTALL']);
+ 
+		
+		foreach($tcv as $section=>$seccfg){
+			foreach($seccfg as $k=>$v){
+				if( stristr($k,'TypoScript')!==false || stristr($k,'TSconfig')!==false ){
+					unset($tcv[$section][$k]);
+				}
+			}
+		}
+		
+		foreach($tcv as $section=>$seccfg){
+			$NodeSection = $this->addNode($t3ConfVarNode,array(
+				'FOLDED'=>'true',
+				'TEXT'=>$section,
+			));
+			foreach($seccfg as $k=>$v){
+				
+					$this->addNode($NodeSection,array(
+						'FOLDED'=>'false',
+						'TEXT'=>$k.': '.$v, // $this->translate('tree.typo3.typo3_conf_vars'),
+					));
+			}
+		}
+
+// echo '<pre>'; var_dump($tcv); exit;
 
 	}/*</getTYPONodeConfVars>*/
 
