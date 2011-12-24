@@ -432,6 +432,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		));
 		$tcv = $GLOBALS['TYPO3_CONF_VARS'];
 		unset($tcv['BE']['defaultUserTSconfig']);
+		unset($tcv['BE']['defaultPageTSconfig']);
 
  echo '<pre>'; var_dump($tcv); exit;
 
