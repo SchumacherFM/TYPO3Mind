@@ -34,7 +34,7 @@ class Tx_Typo3mind_Utility_Helpers {
 	 * @param	array	$array
 	 * @return	array
 	 */
-	public function arrayKeysEqualValues($array) {
+	public static function arrayKeysEqualValues($array) {
 		$a = array();
 		foreach($array as $k=>$v){
 			$a[ $v ] = $v;
@@ -49,7 +49,7 @@ class Tx_Typo3mind_Utility_Helpers {
 	 * @param	string	$s from the TypoScript settings
 	 * @return	array
 	 */
-	public function trimExplodeVK($d,$s) {
+	public static function trimExplodeVK($d,$s) {
 	
 		return $this->arrayKeysEqualValues ( t3lib_div::trimExplode($d, $s ,1 ) );
 	}

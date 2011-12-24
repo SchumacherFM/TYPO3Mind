@@ -224,7 +224,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 		/*<show all admins>*/
 		$UserAdminNode = $this->addNode($UsersNode,array(
-			'FOLDED'=>'false',
+			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3.useradmin'),
 		));
 		$this->addIcon($UserAdminNode,'penguin');
@@ -237,7 +237,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 		/*<show all non admins>*/
 		$UserUserNode = $this->addNode($UsersNode,array(
-			'FOLDED'=>'false',
+			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3.users'),
 		));
 		$this->addIcon($UserUserNode,'male1');
@@ -251,7 +251,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 		/*<show all groups>*/
 		$UserGroupNode = $this->addNode($UsersNode,array(
-			'FOLDED'=>'false',
+			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3.groups'),
 		));
 		$this->addIcon($UserGroupNode,'group');
@@ -273,6 +273,10 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 */
 	private function BeUsersHandleRow(SimpleXMLElement $xmlNode,$row){
 
+		// TODO: test user passwords, IF extension salted passwords is not loaded!
+		// http://www.stottmeister.com/blog/2009/04/14/how-to-crack-md5-passwords/
+		// http://netmd5crack.com/cgi-bin/Crack.py?InputHash=[md5string]
+	
 		$aUserNode = $this->addNode($xmlNode,array(
 				'FOLDED'=>'true',
 				'TEXT'=>$row['username']
@@ -297,20 +301,42 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @return	SimpleXMLElement
 	 */
 	private function BeGroupsHandleRow(SimpleXMLElement $xmlNode,$row){
-
+		
 		$aUserNode = $this->addNode($xmlNode,array(
-				'FOLDED'=>'true',
-				'TEXT'=>$row['username']
+			//	'FOLDED'=>'true',
+				'TEXT'=>$row['title']
 			));
 			if( $row['deleted'] == 1 ) {	$this->addIcon($aUserNode,'button_cancel'); }
 			elseif( $row['hidden'] == 1 ) {	$this->addIcon($aUserNode,'closed'); }
 			/* if( ($row['lastlogin']+(3600*24*9)) < time() ) {	$this->addIcon($aUserNode,'hourglass'); } */
 
-			if( !empty($row['tables_select']) ){ $this->addNode($aUserNode,array('TEXT'=>$row['tables_select'])); }
-			if( !empty($row['tables_modify']) ){ $this->addNode($aUserNode,array('TEXT'=>$row['tables_modify']));	}
+			$this->BeGroupsHandleTableSelMod($aUserNode,$row['tables_select'],'tree.typo3.groups.tables_select');
+			$this->BeGroupsHandleTableSelMod($aUserNode,$row['tables_modify'],'tree.typo3.groups.tables_modify');
 
 	} /*</BeGroupsHandleRow>*/
 
+	
+	/**
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	string $tables
+	 * @param	string $translateKey
+	 * @return	SimpleXMLElement
+	 */
+	private function BeGroupsHandleTableSelMod(SimpleXMLElement $xmlNode,$tables,$translateKey){
+		GLOBAL $TCA;
+
+		if( !empty($tables) ){ 
+			$nodeTables = $this->addNode($xmlNode,array('TEXT'=>$this->translate($translateKey)));	
+			$exploded = t3lib_div::trimExplode(',', $tables ,1 );
+			foreach($exploded as $k=>$table){
+				$this->addNode($nodeTables,array('TEXT'=>$this->SYSLANG->sL( $TCA[$table]['ctrl']['title'] ) ));	
+			}
+//  echo '<pre>';	var_dump($exploded); exit;
+		}
+
+	} /*</BeGroupsHandleRow>*/
+	
 	/**
 	 * shows all TYPO3_CONF_VARS
 	 *
