@@ -110,7 +110,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
-	private function getTYPOFilesNode(SimpleXMLElement $xmlNode) {
+	private function getTYPONodeFiles(SimpleXMLElement $xmlNode) {
 
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'FOLDED'=>'true',
@@ -167,7 +167,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 
 
-		$this->getTYPOFilesNode($MainNode);
+		$this->getTYPONodeFiles($MainNode);
 
 
 		// logs
@@ -175,7 +175,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3logs'),
 		), 'typo3/sysext/t3skin/icons/module_tools_log.gif', 'height="16"' );
-
+		/*<LOGS successfull backend logins>*/
 		$nodeHTML = array();
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,log_data',
 			'sys_log', 'error=0 AND type=255', '', 'tstamp DESC', (int)$this->settings['numberOfLogRows'] );
@@ -185,8 +185,10 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 		$this->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.SuccessfullBackendLogins') ),
 			'<h3>'.$this->translate('tree.typo3.SuccessfullBackendLogins').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
+		/*</LOGS successfull backend logins>*/
 
 
+		/*<LOGS failed backend logins>*/
 		$nodeHTML = array();
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,log_data',
 			'sys_log', 'error=3', '', 'tstamp DESC', (int)$this->settings['numberOfLogRows'] );
@@ -195,18 +197,20 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		}
 		$this->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.FailedBackendLogins')),
 			'<h3>'.$this->translate('tree.typo3.FailedBackendLogins').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
+		/*</LOGS failed backend logins>*/
 
 
+		/*<LOGS error logs>*/
 		$DBresult = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,details',
 			'sys_log', 'error=1', '', 'tstamp DESC', (int)$this->settings['numberOfLogRows'] );
 		$nodeHTML = array();
 		while($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($DBresult) ){
 			$nodeHTML[ $r['LoggedDate'] ] = strip_tags(str_replace('|',' ',$r['details']));
 		}
-//		echo '<pre>';   var_dump( $nodeHTML ); exit;
 
 		$this->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.ErrorLog')),
 			'<h3>'.$this->translate('tree.typo3.ErrorLog').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
+		/*</LOGS error logs>*/
 
 
 
