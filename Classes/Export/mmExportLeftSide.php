@@ -104,6 +104,9 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 	}
 
+
+
+
 	/**
 	 * gets some T3 specific informations about fileadmin and uploads folder ...
 	 *
@@ -149,32 +152,21 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 			}
 		} /*endforeach*/
-
 	}
+
 	/**
-	 * gets some T3 specific informations
+	 * gets some T3 logins and error logs
 	 *
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
-	public function getTYPONode(SimpleXMLElement $xmlNode) {
-
-		$MainNode = $this->addImgNode($xmlNode,array(
-			'POSITION'=>'left',
-	//		'FOLDED'=>'true',
-			'TEXT'=>$this->translate('tree.typo3'),
-		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-root.png', 'height="16"' );
-
-
-
-		$this->getTYPONodeFiles($MainNode);
-
-
+	private function getTYPONodeLogs(SimpleXMLElement $xmlNode) {
 		// logs
-		$LogsNode = $this->addImgNode($MainNode,array(
+		$LogsNode = $this->addImgNode($xmlNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3logs'),
 		), 'typo3/sysext/t3skin/icons/module_tools_log.gif', 'height="16"' );
+
 		/*<LOGS successfull backend logins>*/
 		$nodeHTML = array();
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'from_unixtime(tstamp,\'%Y-%m-%d %H:%i:%s\') as LoggedDate,log_data',
@@ -212,12 +204,19 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'<h3>'.$this->translate('tree.typo3.ErrorLog').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 		/*</LOGS error logs>*/
 
+	}
+	
+	/**
+	 * gets all backend users
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @return	SimpleXMLElement
+	 */
+	private function getTYPONodeBackendUsers(SimpleXMLElement $xmlNode) {
 
+		// backend users groups
 
-
-		// backend users groups and missing FE users ... must be implemented ...
-
-		$UsersNode = $this->addImgNode($MainNode,array(
+		$UsersNode = $this->addImgNode($xmlNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3users'),
 		), 'typo3/sysext/t3skin/icons/gfx/i/be_users__x.gif', 'height="16"' );
@@ -249,18 +248,29 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		}
 		/*</show all non admins>*/
 
-		/*<TYPO3_CONF_VARS>*/
-		$t3ConfVarNode = $this->addNode($UsersNode,array(
+
+		/*<show all groups>*/
+		$UserGroupNode = $this->addNode($UsersNode,array(
 			'FOLDED'=>'false',
-			'TEXT'=>'TYPO3_CONF_VARS', // $this->translate('tree.typo3.typo3_conf_vars'),
+			'TEXT'=>$this->translate('tree.typo3.groups'),
 		));
-		
-		/*</TYPO3_CONF_VARS>*/
+		$this->addIcon($UserGroupNode,'group');
 
-	}/*endmethod*/
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'title,hidden,deleted,crdate,tables_select,tables_modify', 'be_groups', '', '', 'title', (int)$this->settings['numberOfLogRows'] );
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
+			$this->BeGroupsHandleRow($UserGroupNode,$row);
+		}
+		/*</show all groups>*/
 
+	}/*</getTYPONodeBackendUsers>*/
 
-
+	/**
+	 * handles a row returned from mysql with the backend user values
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	array $row
+	 * @return	SimpleXMLElement
+	 */
 	private function BeUsersHandleRow(SimpleXMLElement $xmlNode,$row){
 
 		$aUserNode = $this->addNode($xmlNode,array(
@@ -276,7 +286,74 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 			$this->addNode($aUserNode,array('TEXT'=>'ToDO: Idea Show SysLog last 10 enries...'));
 
-	} /* endfnc */
+	} /*</BeUsersHandleRow>*/
+
+	/**
+	 * handles a row returned from mysql with the backend groups values
+	 * TODO:  list all settings for a group ... it seems complicated ...
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	array $row
+	 * @return	SimpleXMLElement
+	 */
+	private function BeGroupsHandleRow(SimpleXMLElement $xmlNode,$row){
+
+		$aUserNode = $this->addNode($xmlNode,array(
+				'FOLDED'=>'true',
+				'TEXT'=>$row['username']
+			));
+			if( $row['deleted'] == 1 ) {	$this->addIcon($aUserNode,'button_cancel'); }
+			elseif( $row['hidden'] == 1 ) {	$this->addIcon($aUserNode,'closed'); }
+			/* if( ($row['lastlogin']+(3600*24*9)) < time() ) {	$this->addIcon($aUserNode,'hourglass'); } */
+
+			if( !empty($row['tables_select']) ){ $this->addNode($aUserNode,array('TEXT'=>$row['tables_select'])); }
+			if( !empty($row['tables_modify']) ){ $this->addNode($aUserNode,array('TEXT'=>$row['tables_modify']));	}
+
+	} /*</BeGroupsHandleRow>*/
+
+	/**
+	 * shows all TYPO3_CONF_VARS
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @return	SimpleXMLElement
+	 */
+	private function getTYPONodeConfVars(SimpleXMLElement $xmlNode) {
+
+		$t3ConfVarNode = $this->addNode($xmlNode,array(
+			'FOLDED'=>'false',
+			'TEXT'=>'TYPO3_CONF_VARS', // $this->translate('tree.typo3.typo3_conf_vars'),
+		));
+
+		
+
+	}/*</getTYPONodeConfVars>*/
+	
+	/**
+	 * gets some T3 specific informations
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @return	SimpleXMLElement
+	 */
+	public function getTYPONode(SimpleXMLElement $xmlNode) {
+
+		$MainNode = $this->addImgNode($xmlNode,array(
+			'POSITION'=>'left',
+	//		'FOLDED'=>'true',
+			'TEXT'=>$this->translate('tree.typo3'),
+		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-root.png', 'height="16"' );
+
+
+
+		$this->getTYPONodeFiles($MainNode);
+
+		$this->getTYPONodeLogs($MainNode);
+
+
+		$this->getTYPONodeBackendUsers($MainNode);
+
+		$this->getTYPONodeConfVars($MainNode);
+
+	}/*endmethod*/
 
 
 	/**
