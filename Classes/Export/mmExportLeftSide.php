@@ -314,14 +314,16 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'LINK' => $this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[be_groups]['.$row['uid'].']=edit' : ''
 		));
 
-		$this->addCloud($aGroupNode,array('COLOR'=> ($rowCounter%2==0 ? '#ececec' : '#80B3FF') ));
+		$this->addCloud($aGroupNode,array('COLOR'=> ($rowCounter%2==0 ? '#ececec' : '#CCE0FF') ));
 
 			if( $row['deleted'] == 1 ) {	$this->addIcon($aGroupNode,'button_cancel'); }
 			elseif( $row['hidden'] == 1 ) {	$this->addIcon($aGroupNode,'closed'); }
 			/* if( ($row['lastlogin']+(3600*24*9)) < time() ) {	$this->addIcon($aGroupNode,'hourglass'); } */
-
-
-			$this->BeGroupsHandleTablegroupMods($aGroupNode,$row['groupMods'],'tree.typo3.groups.groupMods');
+ 
+			if( !empty($row['groupMods']) ){
+				$nodeGroupMods = $this->addNode($aGroupNode,array('TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
+				$this->BeUserGroupsGetModList($nodeGroupMods,'modListGroup',$row['groupMods']);
+			}/*endif*/			
 
 			$this->BeGroupsHandleTableSelectModify($aGroupNode,$row['tables_select'],'tree.typo3.groups.tables_select');
 			$this->BeGroupsHandleTableSelectModify($aGroupNode,$row['tables_modify'],'tree.typo3.groups.tables_modify');
@@ -353,32 +355,6 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	/**
 	 *
 	 * @param	SimpleXMLElement $xmlNode
-	 * @param	string $groupMods
-	 * @param	string $translateKey
-	 * @return	SimpleXMLElement
-	 */
-	private function BeGroupsHandleTablegroupMods(SimpleXMLElement $xmlNode,$groupMods,$translateKey){
-		GLOBAL $TCA;
-
-		if( !empty($groupMods) ){
-			$nodeGroupMods = $this->addNode($xmlNode,array('TEXT'=>$this->translate($translateKey)));
-
-			$exploded = t3lib_div::trimExplode(',', $groupMods ,1 );
-			foreach($exploded as $k=>$table){
-				$this->addNode($nodeGroupMods,array('TEXT'=>$this->SYSLANG->sL( $TCA[$table]['ctrl']['title'] ) ));
-			}
-
-			$this->BeUserGroupsGetModList($nodeGroupMods,'modListGroup',$groupMods);
-
-
-		}/*endif*/
-
-	} /*</BeGroupsHandleTablegroupMods>*/
-
-	
-	/**
-	 *
-	 * @param	SimpleXMLElement $xmlNode
 	 * @param	string $modListType
 	 * @param	string $groupMods
 	 * @return	SimpleXMLElement
@@ -392,33 +368,20 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			
 			$groupModsExploded = Tx_Typo3mind_Utility_Helpers::trimExplodeVK(',', $groupMods );
 			
-	echo '<pre>'; var_dump($groupModsExploded); exit;
+//	echo '<pre>'; var_dump($groupModsExploded); exit;
 			
 			if (is_array($modList)) {
-
 				foreach ($modList as $theMod) {
-				if( isset($groupModsExploded[$theMod]) ){
-					/*	// Icon:
-					$icon = $GLOBALS['LANG']->moduleLabels['tabs_images'][$theMod . '_tab'];
-					if ($icon) {
-						$icon = '../' . substr($icon, strlen(PATH_site));
-					} */
+					if( isset($groupModsExploded[$theMod]) ){
+						/*	// Icon:	maybe one day ... we'll add an icon
+						$icon = $GLOBALS['LANG']->moduleLabels['tabs_images'][$theMod . '_tab'];
+						if ($icon) {
+							$icon = '../' . substr($icon, strlen(PATH_site));
+						} */
 
-						// Add help text
-					$helpText = array(
-						'title' => $GLOBALS['LANG']->moduleLabels['labels'][$theMod . '_tablabel'],
-						'description' => $GLOBALS['LANG']->moduleLabels['labels'][$theMod . '_tabdescr']
-					);
-	echo '<pre>'; var_dump($helpText); exit;
-
-						// Item configuration:
-					$items[] = array(
-						$this->addSelectOptionsToItemArray_makeModuleData($theMod),
-						$theMod,
-						$icon,
-						$helpText
-					);
-				}/*endif isset $groupModsExploded*/
+						$modLabel = t3lib_TCEforms::addSelectOptionsToItemArray_makeModuleData($theMod);
+						$this->addNode($xmlNode,array('TEXT'=>$modLabel));
+					}/*endif isset $groupModsExploded*/
 				}
 			}/*endif is array*/
 	}/*</BeUserGroupsGetModList>*/

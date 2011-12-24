@@ -375,8 +375,8 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 
 
 		$xml = str_replace(
-			array('|lt|','|gt|','@#'),
-			array('<','>','&#'),
+			array('|lt|',	'|gt|',	'@#',	'&amp;gt;',	'&amp;lt;'),
+			array('<',		'>',	'&#',	'&gt;',		'&lt;'),
 			$xml->asXML()
 		);
 
