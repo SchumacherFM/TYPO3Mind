@@ -457,7 +457,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 		$T3ConfCheck = new Tx_Typo3mind_Utility_T3ConfCheck();
 		$commentArr = $T3ConfCheck->getDefaultConfigArrayComments();
- echo '<pre>'; htmlspecialchars(var_export($commentArr[1],1)); exit;
+// echo '<pre>'; echo htmlspecialchars(var_export($commentArr[1],1)); exit;
 		
 		
 		foreach($tcv as $section=>$seccfg){
@@ -473,7 +473,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 				);
 				$htmlContent = '';
 				if( isset($commentArr[1][$section]) && isset($commentArr[1][$section][$k]) ){
-					$htmlContent = $commentArr[1][$section][$k];
+					$htmlContent = strip_tags($commentArr[1][$section][$k]);
 				}
 				$this->addRichContentNote($NodeSection,$attr,$htmlContent /*,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' */ );
 
