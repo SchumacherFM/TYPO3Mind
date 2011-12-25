@@ -454,10 +454,10 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 				}
 			}
 		}
-		
+
 		$T3ConfCheck = new Tx_Typo3mind_Utility_T3ConfCheck();
-		$commentArr = $T3ConfCheck->getDefaultConfigArrayComments($default_config_content);
-echo '<pre>'; var_dump($commentArr[1]); exit;
+		$commentArr = $T3ConfCheck->getDefaultConfigArrayComments();
+// echo '<pre>'; var_dump($commentArr[1]); exit;
 		
 		
 		foreach($tcv as $section=>$seccfg){
@@ -467,10 +467,16 @@ echo '<pre>'; var_dump($commentArr[1]); exit;
 			));
 			foreach($seccfg as $k=>$v){
 				
-					$this->addNode($NodeSection,array(
-						'FOLDED'=>'false',
-						'TEXT'=>$k.': '.$v, // $this->translate('tree.typo3.typo3_conf_vars'),
-					));
+				$attr = array(
+					// 'FOLDED'=>'false',
+					'TEXT'=>$k.': '.$v, // $this->translate('tree.typo3.typo3_conf_vars'),
+				);
+				$htmlContent = '';
+				if( isset($commentArr[1][$section]) && isset($commentArr[1][$section][$k]) ){
+					$htmlContent = $commentArr[1][$section][$k];
+				}
+				$this->addRichContentNote($NodeSection,$attr,$htmlContent /*,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' */ );
+
 			}
 		}
 
@@ -505,7 +511,7 @@ echo '<pre>'; var_dump($commentArr[1]); exit;
 
 		$this->getTYPONodeConfVars($MainNode);
 
-		$this->addNode($NodeSection,array(
+		$this->addNode($MainNode,array(
 			'FOLDED'=>'false',
 			'TEXT'=>'Directories Check from T3ConfCheck.php::checkDirs()',
 		));
