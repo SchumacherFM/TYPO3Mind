@@ -32,7 +32,7 @@
  *
  */
 
-class Tx_Typo3mind_Utility_DbList /* extends t3lib_recordList */ {
+class Tx_Typo3mind_Utility_DbList {
 
 		// Internal, static:
 	private $id;					// Page id

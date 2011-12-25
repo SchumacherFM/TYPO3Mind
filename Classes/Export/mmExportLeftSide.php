@@ -425,7 +425,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @return	SimpleXMLElement
 	 */
 	private function getTYPONodeConfVars(SimpleXMLElement $xmlNode) {
-
+// install tool default PW: bacb98acf97e0b6112b1d1b650b84971
 		$t3ConfVarNode = $this->addNode($xmlNode,array(
 			'FOLDED'=>'false',
 			'TEXT'=>'TYPO3_CONF_VARS', // $this->translate('tree.typo3.typo3_conf_vars'),
@@ -455,6 +455,11 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			}
 		}
 		
+		$T3ConfCheck = new Tx_Typo3mind_Utility_T3ConfCheck();
+		$commentArr = $T3ConfCheck->getDefaultConfigArrayComments($default_config_content);
+echo '<pre>'; var_dump($commentArr[1]); exit;
+		
+		
 		foreach($tcv as $section=>$seccfg){
 			$NodeSection = $this->addNode($t3ConfVarNode,array(
 				'FOLDED'=>'true',
@@ -473,6 +478,8 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 	}/*</getTYPONodeConfVars>*/
 
+	
+	
 	/**
 	 * gets some T3 specific informations
 	 *
@@ -480,7 +487,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @return	SimpleXMLElement
 	 */
 	public function getTYPONode(SimpleXMLElement $xmlNode) {
-
+		
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
 	//		'FOLDED'=>'true',
@@ -498,6 +505,12 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 		$this->getTYPONodeConfVars($MainNode);
 
+		$this->addNode($NodeSection,array(
+			'FOLDED'=>'false',
+			'TEXT'=>'Directories Check from T3ConfCheck.php::checkDirs()',
+		));
+		
+		
 	}/*endmethod*/
 
 
