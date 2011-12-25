@@ -457,7 +457,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 		$T3ConfCheck = new Tx_Typo3mind_Utility_T3ConfCheck();
 		$commentArr = $T3ConfCheck->getDefaultConfigArrayComments();
-// echo '<pre>'; var_dump($commentArr[1]); exit;
+ echo '<pre>'; htmlspecialchars(var_export($commentArr[1],1)); exit;
 		
 		
 		foreach($tcv as $section=>$seccfg){
