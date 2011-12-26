@@ -507,6 +507,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 					} /*endforeach*/
 					// $v = str_replace(array('<','>'),array('gt','lt'),var_export($v,1));
 				}else{
+					$htmlContent = array();
 					$attr = array(
 						'TEXT'=>$k.' ['.$v.']', 
 					);
@@ -521,22 +522,24 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 				
 							$attr['COLOR'] = '#D60035';
 							$attr['LINK'] = 'http://www.tmto.org/pages/passwordtools/hashcracker/';
-							$this->addFont($NodeSectionValue,array('SIZE'=>14,'BOLD'=>'true'));
+							$htmlContent[] = '<h3>Decrypted your unsecure password: <i>'.$installToolPlainPassword.'</i></h3>';
 						}
 					}
 					/*</check for unsecure installtool password!>*/
 				
-					$htmlContent = '<b>'.$this->translate('tree.typo3.typo3_conf_vars.value').': <i>'.$v.'</i></b><br/>';
+					$htmlContent[] = '<b>'.$this->translate('tree.typo3.typo3_conf_vars.value').': <i>'.$v.'</i></b>';
 					if( isset($commentArr[1][$section]) && isset($commentArr[1][$section][$k]) ){
-						$htmlContent .= strip_tags($commentArr[1][$section][$k],'<a>,<dl>,<dt>,<dd>');
-						/*bug in typo3 default config file, improper closed html @see getDefaultConfigArrayComments */
-						$htmlContent = str_replace('<dd><dt>','</dd><dt>',$htmlContent);
+						$htmlContent[] = strip_tags($commentArr[1][$section][$k],'<a>,<dl>,<dt>,<dd>');
 					}
+					/*bug in typo3 default config file, improper closed html @see getDefaultConfigArrayComments */
+					$htmlContent = str_replace('<dd><dt>','</dd><dt>',implode('<br/>',$htmlContent));
+				
 					$NodeSectionValue = $this->addRichContentNote($NodeSection,$attr,$htmlContent /*,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' */ );
 
-					if( isset($installToolPasswordIsUnsecure) ){
+					if( isset($installToolPlainPassword) ){
 							$this->addFont($NodeSectionValue,array('SIZE'=>14,'BOLD'=>'true','COLOR'=>'#fff'));
 							$this->addIcon($NodeSectionValue,'messagebox_warning');
+							unset($installToolPlainPassword);
 					}
 					
 				
