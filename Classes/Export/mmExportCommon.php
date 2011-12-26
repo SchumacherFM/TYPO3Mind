@@ -285,6 +285,25 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		return $dir_size;
 	}
 
-
-
+	/**
+	 * gets the URL to the detailed ext description on the TER
+	 *
+	 * @param string $extName
+	 * @return integer bytes
+	 */
+	protected function getTerURL($extName){
+		return str_replace('###extname###',$extName,$this->settings['TerURL2Ext']);
+	}
+	
+	/**
+	 * tries to get the plaintext password from an md5 string... returns false on failure
+	 *
+	 * @param string $extName
+	 * @return string
+	 */
+	protected function getPlainTextPasswordFromMD5($md5){
+		
+		return Tx_Typo3mind_Utility_UnsecurePasswords::getPlainPW($md5);
+	
+	}
 }

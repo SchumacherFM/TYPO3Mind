@@ -425,7 +425,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @return	SimpleXMLElement
 	 */
 	private function getTYPONodeConfVars(SimpleXMLElement $xmlNode) {
-// install tool default PW: bacb98acf97e0b6112b1d1b650b84971
+	
 		$t3ConfVarNode = $this->addNode($xmlNode,array(
 			'FOLDED'=>'false',
 			'TEXT'=>$this->translate('tree.typo3.typo3_conf_vars'),
@@ -437,12 +437,13 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		unset($tcv['SYS']['locallangXMLOverride']);
 
 		unset($tcv['EXT']['extList']);
+		unset($tcv['EXT']['extList']);
 		unset($tcv['EXT']['extList_FE']);
 	
 		unset($tcv['BE']['AJAX']);
 		unset($tcv['BE']['RTE_reg']);
 		unset($tcv['SC_OPTIONS']);
-		unset($tcv['EXTCONF']);
+		unset($tcv['EXT']['extConf']['typo3mind']);
 		unset($tcv['typo3/backend.php']);
 		unset($tcv['INSTALL']);
  
@@ -457,9 +458,9 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 		$T3ConfCheck = new Tx_Typo3mind_Utility_T3ConfCheck();
 		$commentArr = $T3ConfCheck->getDefaultConfigArrayComments();
-
+/*
 //echo '<pre>'; echo htmlspecialchars(var_export($commentArr[1],1)); exit;
-// echo '<pre>'; var_dump($tcv); exit;
+// echo '<pre>'; var_dump($tcv); exit; */
 		
 		foreach($tcv as $section=>$seccfg){
 			$NodeSection = $this->addNode($t3ConfVarNode,array(
@@ -479,16 +480,26 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 					$NodeSectionValue = $this->addNode($NodeSection,$attr);
 					
 					foreach($v as $extName=>$extConf){
+					
 						$extConf = unserialize($extConf);
+
 						$htmlContent = array();
 						foreach($extConf as $eck=>$ecv){
 							// don't show apikeys, passwords, etc ...
-							$htmlContent[] = $eck.' = '.htmlspecialchars($ecv);
+							if( is_array($ecv) ){
+								foreach($ecv as $eck2=>$ecv2){
+									/* $htmlContent[] = '<a href="http://www.google.de/search?q=site%3Atypo3.org+'.extName.'+'.$eck2.'">'.$eck2.'</a> = '.htmlspecialchars($ecv2); */
+									$htmlContent[] = $eck2.' = '.htmlspecialchars($ecv2);
+								}
+							}else{
+								$htmlContent[] = $eck.' = '.htmlspecialchars($ecv);
+							}
 						}
 						
 						$NodeExtName = $this->addRichContentNote($NodeSectionValue,array(
 						//	'FOLDED'=>count($seccfg) > 0 ? 'true' : 'false',
 							'TEXT'=>$extName,
+							'LINK'=>$this->getTerURL($extName),
 						),implode("<br/>\n",$htmlContent));
 					//	echo '<pre>'; var_dump($extConf); exit;
 						
@@ -499,10 +510,21 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 					$attr = array(
 						'TEXT'=>$k.' ['.$v.']', 
 					);
-// highlight unsecure install tool pw
 					if( $k=='livesearch' ){
 						$v = var_export($v,1);
 					}
+					
+					/*<check for unsecure installtool password!>*/
+					if( $k=='installToolPassword' ){
+						$installToolPlainPassword = $this->getPlainTextPasswordFromMD5($v);
+						if( $installToolPlainPassword !== false ){
+				
+							$attr['COLOR'] = '#D60035';
+							$attr['LINK'] = 'http://www.tmto.org/pages/passwordtools/hashcracker/';
+							$this->addFont($NodeSectionValue,array('SIZE'=>14,'BOLD'=>'true'));
+						}
+					}
+					/*</check for unsecure installtool password!>*/
 				
 					$htmlContent = '<b>'.$this->translate('tree.typo3.typo3_conf_vars.value').': <i>'.$v.'</i></b><br/>';
 					if( isset($commentArr[1][$section]) && isset($commentArr[1][$section][$k]) ){
@@ -511,6 +533,12 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 						$htmlContent = str_replace('<dd><dt>','</dd><dt>',$htmlContent);
 					}
 					$NodeSectionValue = $this->addRichContentNote($NodeSection,$attr,$htmlContent /*,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' */ );
+
+					if( isset($installToolPasswordIsUnsecure) ){
+							$this->addFont($NodeSectionValue,array('SIZE'=>14,'BOLD'=>'true','COLOR'=>'#fff'));
+							$this->addIcon($NodeSectionValue,'messagebox_warning');
+					}
+					
 				
 				}/*endelse default*/
 
@@ -789,7 +817,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 							$this->addNode($extNode, array(
 								// 'FOLDED'=>'true',
 								'TEXT'=>$this->translate('tree.linkName2TER'),
-								'LINK'=>'http://typo3.org/extensions/repository/view/'.$extKey.'/current/',
+								'LINK'=>$this->getTerURL($extKey),
 							) );
 							// $this->settings['mapMode'] maybe ... if frontend then no TER link ...
 						}
