@@ -428,7 +428,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 // install tool default PW: bacb98acf97e0b6112b1d1b650b84971
 		$t3ConfVarNode = $this->addNode($xmlNode,array(
 			'FOLDED'=>'false',
-			'TEXT'=>'TYPO3_CONF_VARS', // $this->translate('tree.typo3.typo3_conf_vars'),
+			'TEXT'=>$this->translate('tree.typo3.typo3_conf_vars'),
 		));
 		$tcv = $GLOBALS['TYPO3_CONF_VARS'];
  
@@ -457,30 +457,38 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 		$T3ConfCheck = new Tx_Typo3mind_Utility_T3ConfCheck();
 		$commentArr = $T3ConfCheck->getDefaultConfigArrayComments();
-// echo '<pre>'; echo htmlspecialchars(var_export($commentArr[1],1)); exit;
-		
+
+//echo '<pre>'; echo htmlspecialchars(var_export($commentArr[1],1)); exit;
+// echo '<pre>'; var_dump($tcv); exit;
 		
 		foreach($tcv as $section=>$seccfg){
 			$NodeSection = $this->addNode($t3ConfVarNode,array(
-				'FOLDED'=>'true',
+				'FOLDED'=>count($seccfg) > 0 ? 'true' : 'false',
 				'TEXT'=>$section,
 			));
+			ksort($seccfg);
 			foreach($seccfg as $k=>$v){
 				
+				
 				$attr = array(
-					// 'FOLDED'=>'false',
-					'TEXT'=>$k.': '.$v, // $this->translate('tree.typo3.typo3_conf_vars'),
+					'TEXT'=>$k.' ['.$v.']', 
 				);
-				$htmlContent = '';
+				
+				if( $k=='livesearch' || $k=='extConf' ){
+					$v = var_export($v,1);
+				}
+				
+				
+				$htmlContent = '<b>'.$this->translate('tree.typo3.typo3_conf_vars.value').': <i>'.$v.'</i></b><br/>';
 				if( isset($commentArr[1][$section]) && isset($commentArr[1][$section][$k]) ){
-					$htmlContent = strip_tags($commentArr[1][$section][$k]);
+					$htmlContent .= strip_tags($commentArr[1][$section][$k],'<a>,<dl>,<dt>,<dd>');
+					/*bug in typo3 default config file, improper closed html @see getDefaultConfigArrayComments */
+					$htmlContent = str_replace('<dd><dt>','</dd><dt>',$htmlContent);
 				}
 				$this->addRichContentNote($NodeSection,$attr,$htmlContent /*,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' */ );
 
 			}
 		}
-
-// echo '<pre>'; var_dump($tcv); exit;
 
 	}/*</getTYPONodeConfVars>*/
 

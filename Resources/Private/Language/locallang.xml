@@ -62,6 +62,9 @@
 			<label index="tree.typo3.FailedBackendLogins">Failed Backend Logins</label>
 			<label index="tree.typo3.ErrorLog">Error Log</label>
 			<label index="tree.typo3.SysLog">System Log</label>
+			<label index="tree.typo3.typo3_conf_vars">TYPO3_CONF_VARS</label>
+			<label index="tree.typo3.typo3_conf_vars.value">Value</label>
+			
 			
 			
 			<label index="tree.typo3.SuccessfullBackendLogins">Successfull Backend Logins</label>
