@@ -59,7 +59,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @var array
 	 */
 	protected $settings;
-	
+
 	/**
 	 * t3MindRepository
 	 *
@@ -90,7 +90,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @return void
 	 */
 	public function __construct(array $settings,Tx_Typo3mind_Domain_Repository_T3mindRepository $t3MindRepository) {
-	
+
 		$this->settings = $settings;
 		$this->t3MindRepository = $t3MindRepository;
 		$this->setmapMode();
@@ -215,6 +215,14 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 *
 	 * @return string
 	 */
+	protected function xxxarray2Html2ColTable($array,$width=300  ){
+	
+	}
+	/**
+	 * returns an array as an html table
+	 *
+	 * @return string
+	 */
 	protected function array2Html2ColTable($array,$width=300  ){
 		$nodeHTML = array('<table width="'.$width.'" border="0" cellpadding="3" cellspacing="0">');
 		$i=0;
@@ -294,7 +302,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	protected function getTerURL($extName){
 		return str_replace('###extname###',$extName,$this->settings['TerURL2Ext']);
 	}
-	
+
 	/**
 	 * tries to get the plaintext password from an md5 string... returns false on failure
 	 *
@@ -303,6 +311,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 */
 	protected function getPlainTextPasswordFromMD5($md5){
 		return Tx_Typo3mind_Utility_UnsecurePasswords::getPlainPW($md5);
-	
 	}
+	
+	
 }

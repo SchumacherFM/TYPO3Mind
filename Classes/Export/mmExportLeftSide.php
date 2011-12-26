@@ -471,7 +471,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'fileExtensions'=>1,
 			'loginNews'=>1,
 		);
-
+		$installToolPlainPassword = false;
 		foreach($tcv as $section=>$seccfg){
 			$NodeSection = $this->addNode($t3ConfVarNode,array(
 				'FOLDED'=>count($seccfg) > 0 ? 'true' : 'false',
@@ -500,6 +500,8 @@ if( $confName=='fileExtensionss' ){
 }	
 						$htmlContent = array();
 						if( is_array($extConf) ){
+							$htmlContent[] = '<pre>'.htmlspecialchars(var_export($extConf,1)).'</pre>';
+							/*
 							foreach($extConf as $eck=>$ecv){
 
 								if( is_array($ecv) ){
@@ -510,7 +512,7 @@ if( $confName=='fileExtensionss' ){
 								}else{
 									$htmlContent[] = $eck.' = '.htmlspecialchars($ecv);
 								}
-							}/*endforeach*/
+							}*endforeach*/
 						}else{
 							$htmlContent[] = htmlspecialchars($extConf);
 						}
@@ -527,7 +529,7 @@ if( $confName=='fileExtensionss' ){
 				}else{
 					$htmlContent = array();
 					$attr = array(
-						'TEXT'=>$confName.' ['.$v.']',
+						'TEXT'=>'['.$confName.'] = '.htmlspecialchars($v),
 					);
 
 					/*<check for unsecure installtool password!>*/
@@ -551,10 +553,10 @@ if( $confName=='fileExtensionss' ){
 
 					$NodeSectionValue = $this->addRichContentNote($NodeSection,$attr,$htmlContent /*,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' */ );
 
-					if( isset($installToolPlainPassword) ){
+					if( $installToolPlainPassword !== false ){
 							$this->addFont($NodeSectionValue,array('SIZE'=>14,'BOLD'=>'true','COLOR'=>'#fff'));
 							$this->addIcon($NodeSectionValue,'messagebox_warning');
-							unset($installToolPlainPassword);
+							$installToolPlainPassword = false;
 					}
 
 
