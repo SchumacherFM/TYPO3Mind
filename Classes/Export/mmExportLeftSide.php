@@ -468,24 +468,51 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			));
 			ksort($seccfg);
 			foreach($seccfg as $k=>$v){
+								
 				
+
+				if( $k=='extConf' ){
+					$attr = array(
+						'TEXT'=>$k,
+						'FOLDED'=>'true',
+					);
+					$NodeSectionValue = $this->addNode($NodeSection,$attr);
+					
+					foreach($v as $extName=>$extConf){
+						$extConf = unserialize($extConf);
+						$htmlContent = array();
+						foreach($extConf as $eck=>$ecv){
+							// don't show apikeys, passwords, etc ...
+							$htmlContent[] = $eck.' = '.htmlspecialchars($ecv);
+						}
+						
+						$NodeExtName = $this->addRichContentNote($NodeSectionValue,array(
+						//	'FOLDED'=>count($seccfg) > 0 ? 'true' : 'false',
+							'TEXT'=>$extName,
+						),implode("<br/>\n",$htmlContent));
+					//	echo '<pre>'; var_dump($extConf); exit;
+						
+						
+					} /*endforeach*/
+					// $v = str_replace(array('<','>'),array('gt','lt'),var_export($v,1));
+				}else{
+					$attr = array(
+						'TEXT'=>$k.' ['.$v.']', 
+					);
+// highlight unsecure install tool pw
+					if( $k=='livesearch' ){
+						$v = var_export($v,1);
+					}
 				
-				$attr = array(
-					'TEXT'=>$k.' ['.$v.']', 
-				);
+					$htmlContent = '<b>'.$this->translate('tree.typo3.typo3_conf_vars.value').': <i>'.$v.'</i></b><br/>';
+					if( isset($commentArr[1][$section]) && isset($commentArr[1][$section][$k]) ){
+						$htmlContent .= strip_tags($commentArr[1][$section][$k],'<a>,<dl>,<dt>,<dd>');
+						/*bug in typo3 default config file, improper closed html @see getDefaultConfigArrayComments */
+						$htmlContent = str_replace('<dd><dt>','</dd><dt>',$htmlContent);
+					}
+					$NodeSectionValue = $this->addRichContentNote($NodeSection,$attr,$htmlContent /*,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' */ );
 				
-				if( $k=='livesearch' || $k=='extConf' ){
-					$v = var_export($v,1);
-				}
-				
-				
-				$htmlContent = '<b>'.$this->translate('tree.typo3.typo3_conf_vars.value').': <i>'.$v.'</i></b><br/>';
-				if( isset($commentArr[1][$section]) && isset($commentArr[1][$section][$k]) ){
-					$htmlContent .= strip_tags($commentArr[1][$section][$k],'<a>,<dl>,<dt>,<dd>');
-					/*bug in typo3 default config file, improper closed html @see getDefaultConfigArrayComments */
-					$htmlContent = str_replace('<dd><dt>','</dd><dt>',$htmlContent);
-				}
-				$this->addRichContentNote($NodeSection,$attr,$htmlContent /*,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' */ );
+				}/*endelse default*/
 
 			}
 		}
