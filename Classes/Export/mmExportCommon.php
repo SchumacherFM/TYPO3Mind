@@ -215,14 +215,6 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 *
 	 * @return string
 	 */
-	protected function xxxarray2Html2ColTable($array,$width=300  ){
-	
-	}
-	/**
-	 * returns an array as an html table
-	 *
-	 * @return string
-	 */
 	protected function array2Html2ColTable($array,$width=300  ){
 		$nodeHTML = array('<table width="'.$width.'" border="0" cellpadding="3" cellspacing="0">');
 		$i=0;

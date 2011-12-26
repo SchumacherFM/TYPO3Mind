@@ -230,7 +230,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		));
 		$this->addIcon($UserAdminNode,'penguin');
 
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,username,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=1', '', 'username'  );
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,username,password,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=1', '', 'username'  );
 		$i=0;
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$this->BeUsersHandleRow($UserAdminNode,$row,$i);
@@ -248,7 +248,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		$this->addIcon($UserUserNode,'male1');
 
 
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,username,email,realname,lastlogin,disable,deleted,userMods', 'be_users', 'admin=0', '', 'username' /* , (int)$this->settings['numberOfLogRows'] */ );
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,username,password,email,realname,lastlogin,disable,deleted,userMods', 'be_users', 'admin=0', '', 'username' /* , (int)$this->settings['numberOfLogRows'] */ );
 		$i=0;
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$this->BeUsersHandleRow($UserUserNode,$row,$i);
@@ -291,17 +291,43 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		$aUserNode = $this->addNode($xmlNode,array(
 				// not possible due to the ampersand returnUrl=%2Ftypo3%2Fmod.php%3FM%3Dtools_beuser&
 				'LINK'=>$this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[be_users]['.$row['uid'].']=edit' : '',
-				'FOLDED'=>'true',
-				'TEXT'=>$row['username']
+				// 'FOLDED'=>'true',
+				'TEXT'=>$row['username'],
+				'BACKGROUND_COLOR'=> ($rowCounter%2==0 ? '#ececec' : '#CCE0FF'),
 			));
+	hier weiter
+/*			
+all edges and subchilds
+	adding a changing BG color ... makes 		
 		$this->addCloud($aUserNode,array('COLOR'=> ($rowCounter%2==0 ? '#ececec' : '#CCE0FF') ));
-
+*/
 			if( $row['deleted'] == 1 ) {	$this->addIcon($aUserNode,'button_cancel'); }
 			elseif( $row['disable'] == 1 ) {	$this->addIcon($aUserNode,'encrypted'); }
 			if( ($row['lastlogin']+(3600*24*9)) < time() ) {	$this->addIcon($aUserNode,'hourglass'); }
 
-			if( !empty($row['realname']) ){ $this->addNode($aUserNode,array('TEXT'=>$row['realname'])); }
-			if( !empty($row['email']) ){ $this->addNode($aUserNode,array('TEXT'=>$row['email']));	}
+			if( !empty($row['realname']) ){ 
+				$this->addNode($aUserNode,array('TEXT'=>$row['realname'])); 
+			}
+			if( !empty($row['email']) ){ 
+				$this->addNode($aUserNode,array('TEXT'=>$row['email']));	
+			}
+			if( !empty($row['password']) ){ 
+					/*<check for unsecure installtool password!>*/
+					$plainPassword = $this->getPlainTextPasswordFromMD5($row['password']);
+
+					if( $plainPassword !== false ){
+						$attrPW = array(
+							'TEXT'=>'Decrypted your unsecure password: '.$plainPassword,
+						);
+						$attrPW['COLOR'] = '#D60035';
+						$attrPW['LINK'] = 'http://www.tmto.org/pages/passwordtools/hashcracker/';
+						$nodePW = $this->addNode($aUserNode,$attrPW);	
+						$this->addIcon($nodePW,'messagebox_warning');
+						
+					}
+					
+					/*</check for unsecure installtool password!>*/			
+			}
 			if( isset($row['userMods']) && !empty($row['userMods']) ){
 				$nodeUserMods = $this->addNode($aUserNode,array('TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
 				$this->BeUserGroupsGetModList($nodeUserMods,'modListUser',$row['userMods']);
@@ -458,9 +484,6 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 		$T3ConfCheck = new Tx_Typo3mind_Utility_T3ConfCheck();
 		$commentArr = $T3ConfCheck->getDefaultConfigArrayComments();
-/*
-//echo '<pre>'; echo htmlspecialchars(var_export($commentArr[1],1)); exit;
-// echo '<pre>'; var_dump($tcv); exit; */
 
 		$seccfglistDetails = array(
 			'extConf'=>1,
