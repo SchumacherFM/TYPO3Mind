@@ -33,6 +33,8 @@
  */
 class Tx_Typo3mind_Utility_UnsecurePasswords { 
 
+	/* maybe one day we'll use an online service ... */
+
 	public static function getPlainPW($md5){
 		if( isset( self::$PWDB[$md5] ) ){ 
 			return self::$PWDB[$md5]; 

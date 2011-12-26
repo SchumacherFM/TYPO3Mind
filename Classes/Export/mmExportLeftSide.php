@@ -328,7 +328,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 					'<h3>'.$this->translate('tree.typo3.SysLog').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 			}
 			/*</LOGS user logs>*/
- 
+
 	} /*</BeUsersHandleRow>*/
 
 	/**
@@ -425,13 +425,13 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @return	SimpleXMLElement
 	 */
 	private function getTYPONodeConfVars(SimpleXMLElement $xmlNode) {
-	
+
 		$t3ConfVarNode = $this->addNode($xmlNode,array(
 			'FOLDED'=>'false',
 			'TEXT'=>$this->translate('tree.typo3.typo3_conf_vars'),
 		));
 		$tcv = $GLOBALS['TYPO3_CONF_VARS'];
- 
+
 		unset($tcv['SYS']['caching']);
 		unset($tcv['SYS']['encryptionKey']);
 		unset($tcv['SYS']['locallangXMLOverride']);
@@ -439,15 +439,15 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		unset($tcv['EXT']['extList']);
 		unset($tcv['EXT']['extList']);
 		unset($tcv['EXT']['extList_FE']);
-	
+
 		unset($tcv['BE']['AJAX']);
 		unset($tcv['BE']['RTE_reg']);
 		unset($tcv['SC_OPTIONS']);
 		unset($tcv['EXT']['extConf']['typo3mind']);
 		unset($tcv['typo3/backend.php']);
 		unset($tcv['INSTALL']);
- 
-		
+
+
 		foreach($tcv as $section=>$seccfg){
 			foreach($seccfg as $k=>$v){
 				if( stristr($k,'TypoScript')!==false || stristr($k,'TSconfig')!==false ){
@@ -461,79 +461,94 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 /*
 //echo '<pre>'; echo htmlspecialchars(var_export($commentArr[1],1)); exit;
 // echo '<pre>'; var_dump($tcv); exit; */
-		
+
+		$seccfglistDetails = array(
+			'extConf'=>1,
+			'XCLASS'=>1,
+			'XLLfile'=>1,
+			'defaultPermissions'=>1,
+			'defaultUC'=>1,
+			'fileExtensions'=>1,
+			'loginNews'=>1,
+		);
+
 		foreach($tcv as $section=>$seccfg){
 			$NodeSection = $this->addNode($t3ConfVarNode,array(
 				'FOLDED'=>count($seccfg) > 0 ? 'true' : 'false',
 				'TEXT'=>$section,
 			));
 			ksort($seccfg);
-			foreach($seccfg as $k=>$v){
-								
-				
-
-				if( $k=='extConf' ){
+			foreach($seccfg as $confName=>$v){
+ 
+				if( is_array($v) && count($v)>0 ){
 					$attr = array(
-						'TEXT'=>$k,
+						'TEXT'=>$confName,
 						'FOLDED'=>'true',
 					);
 					$NodeSectionValue = $this->addNode($NodeSection,$attr);
+
+					if( $confName == 'eID_include' ){
+						$this->addIcon($NodeSectionValue,'messagebox_warning');
+					}
 					
 					foreach($v as $extName=>$extConf){
-					
-						$extConf = unserialize($extConf);
 
+						$extConf = (is_array($extConf) || stristr($extConf,'}') === false) ? $extConf : unserialize($extConf);
+				
+if( $confName=='fileExtensionss' ){
+	echo '<pre>'; var_dump($extName); var_dump($extConf); exit;
+}	
 						$htmlContent = array();
-						foreach($extConf as $eck=>$ecv){
-							// don't show apikeys, passwords, etc ...
-							if( is_array($ecv) ){
-								foreach($ecv as $eck2=>$ecv2){
-									/* $htmlContent[] = '<a href="http://www.google.de/search?q=site%3Atypo3.org+'.extName.'+'.$eck2.'">'.$eck2.'</a> = '.htmlspecialchars($ecv2); */
-									$htmlContent[] = $eck2.' = '.htmlspecialchars($ecv2);
+						if( is_array($extConf) ){
+							foreach($extConf as $eck=>$ecv){
+
+								if( is_array($ecv) ){
+									foreach($ecv as $eck2=>$ecv2){
+										
+										$htmlContent[] = $eck2.' = '.htmlspecialchars($ecv2);
 								}
-							}else{
-								$htmlContent[] = $eck.' = '.htmlspecialchars($ecv);
-							}
+								}else{
+									$htmlContent[] = $eck.' = '.htmlspecialchars($ecv);
+								}
+							}/*endforeach*/
+						}else{
+							$htmlContent[] = htmlspecialchars($extConf);
 						}
-						
 						$NodeExtName = $this->addRichContentNote($NodeSectionValue,array(
 						//	'FOLDED'=>count($seccfg) > 0 ? 'true' : 'false',
 							'TEXT'=>$extName,
-							'LINK'=>$this->getTerURL($extName),
+							'LINK'=> $confName=='extConf' ? $this->getTerURL($extName) : '',
 						),implode("<br/>\n",$htmlContent));
-					//	echo '<pre>'; var_dump($extConf); exit;
-						
-						
+
+
+
 					} /*endforeach*/
 					// $v = str_replace(array('<','>'),array('gt','lt'),var_export($v,1));
 				}else{
 					$htmlContent = array();
 					$attr = array(
-						'TEXT'=>$k.' ['.$v.']', 
+						'TEXT'=>$confName.' ['.$v.']',
 					);
-					if( $k=='livesearch' ){
-						$v = var_export($v,1);
-					}
-					
+
 					/*<check for unsecure installtool password!>*/
-					if( $k=='installToolPassword' ){
+					if( $confName=='installToolPassword' ){
 						$installToolPlainPassword = $this->getPlainTextPasswordFromMD5($v);
 						if( $installToolPlainPassword !== false ){
-				
+
 							$attr['COLOR'] = '#D60035';
 							$attr['LINK'] = 'http://www.tmto.org/pages/passwordtools/hashcracker/';
 							$htmlContent[] = '<h3>Decrypted your unsecure password: <i>'.$installToolPlainPassword.'</i></h3>';
 						}
 					}
 					/*</check for unsecure installtool password!>*/
-				
+
 					$htmlContent[] = '<b>'.$this->translate('tree.typo3.typo3_conf_vars.value').': <i>'.$v.'</i></b>';
-					if( isset($commentArr[1][$section]) && isset($commentArr[1][$section][$k]) ){
-						$htmlContent[] = strip_tags($commentArr[1][$section][$k],'<a>,<dl>,<dt>,<dd>');
+					if( isset($commentArr[1][$section]) && isset($commentArr[1][$section][$confName]) ){
+						$htmlContent[] = strip_tags($commentArr[1][$section][$confName],'<a>,<dl>,<dt>,<dd>');
 					}
 					/*bug in typo3 default config file, improper closed html @see getDefaultConfigArrayComments */
 					$htmlContent = str_replace('<dd><dt>','</dd><dt>',implode('<br/>',$htmlContent));
-				
+
 					$NodeSectionValue = $this->addRichContentNote($NodeSection,$attr,$htmlContent /*,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' */ );
 
 					if( isset($installToolPlainPassword) ){
@@ -541,17 +556,17 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 							$this->addIcon($NodeSectionValue,'messagebox_warning');
 							unset($installToolPlainPassword);
 					}
-					
-				
+
+
 				}/*endelse default*/
 
-			}
-		}
+			}/*endforeach*/
+		}/*endforeach*/
 
 	}/*</getTYPONodeConfVars>*/
 
-	
-	
+
+
 	/**
 	 * gets some T3 specific informations
 	 *
@@ -559,7 +574,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @return	SimpleXMLElement
 	 */
 	public function getTYPONode(SimpleXMLElement $xmlNode) {
-		
+
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
 	//		'FOLDED'=>'true',
@@ -581,8 +596,8 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'FOLDED'=>'false',
 			'TEXT'=>'Directories Check from T3ConfCheck.php::checkDirs()',
 		));
-		
-		
+
+
 	}/*endmethod*/
 
 
@@ -653,7 +668,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		}
 		unset($agt);
 		ksort($groupedTables);
-//	echo '<pre>';   var_dump( $groupedTables ); exit;
+
 
 		foreach ($groupedTables as $group => $tables){
 
