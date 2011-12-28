@@ -122,15 +122,15 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 		$nodeFileadmin = $this->addNode($MainNode,array(
 			'TEXT'=>'fileadmin',
-			'FOLDED'=>'true',			
+			'FOLDED'=>'true',
 		));
 		$this->getTYPONodeFilesScandir($nodeFileadmin,PATH_site.'fileadmin/');
-		
-		
-		
+
+
+
 		$nodeUpload = $this->addNode($MainNode,array(
 			'TEXT'=>'uploads',
-			'FOLDED'=>'true',			
+			'FOLDED'=>'true',
 		));
 		$this->getTYPONodeFilesScandir($nodeUpload,PATH_site.'uploads/');
 
@@ -145,17 +145,17 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @return	SimpleXMLElement
 	 */
 	private function getTYPONodeFilesScandir(SimpleXMLElement $xmlNode,$fullPath) {
-		
+
 		$dirLevel1 = scandir($fullPath);
 		foreach($dirLevel1 as $k=>$vL1){
 
 			$BACKGROUND_COLOR = $this->getDesignAlternatingColor('getTYPONodeFiles',$k);
-		
+
 			/* is dir and avoid .svn or .git or ... folders file starting with a . */
 			if( is_dir($fullPath.$vL1) && preg_match('~^\..*~',$vL1)==false ){
 
 				$size = $this->formatBytes( $this->getDirSize($fullPath.$vL1) );
-			
+
 				$faLevel1 = $this->addNode($xmlNode,array(
 					'TEXT'=>$vL1.' '.$size,
 					'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
@@ -181,7 +181,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			}/*endif*/
 		} /*endforeach*/
 	}/*</getTYPONodeFilesScandir>*/
-	
+
 	/**
 	 * gets some T3 logins and error logs
 	 *
@@ -619,7 +619,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 		$T3ConfCheck = new Tx_Typo3mind_Utility_T3ConfCheck();
 		$T3ConfCheck->checkDirs();
- 
+
 		foreach($T3ConfCheck->messages as $k=>$message){
 
 			$attr = array(
@@ -711,6 +711,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
+			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.database'),
 		), 'typo3/sysext/t3skin/icons/module_tools_dbint.gif', 'height="16"' );
 
@@ -740,40 +741,46 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		unset($agt);
 		ksort($groupedTables);
 
-
+		$i=0;
 		foreach ($groupedTables as $group => $tables){
 
 			$tGroup = $this->translate('tree.database.'.$group);
+			$BACKGROUND_COLOR = $this->getDesignAlternatingColor('getDatabaseNode',$i);
 
 			$GroupTableNode = $this->addNode($MainNode,array(
 				'FOLDED'=>'true',
+				'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
 				'TEXT'=> $tGroup == '' ? $group : $tGroup,
 			));
+			$this->addEdge($GroupTableNode,array('WIDTH'=>$this->getDesignEdgeWidth('getDatabaseNode'),'COLOR'=>$BACKGROUND_COLOR));
 
 			foreach ($tables as $tkey => $tinfo){
 
-				if( !empty($tinfo['Rows']) ){
-					$ATableNode = $this->addNode($GroupTableNode,array(
-						'FOLDED'=>'true',
-						'TEXT'=>$tkey,
-					));
+				$size = sprintf('%.2f',($tinfo['Data_length']+$tinfo['Index_length'])/1024);
+				
+				$ATableNode = $this->addNode($GroupTableNode,array(
+				//	'FOLDED'=>'true',
+					'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
+					'TEXT'=>$tkey.' ('.$tinfo['Rows'].') '.$size.' KB',
+				));
 
-					$nodeHTML = array('<table border="0" cellpadding="3" cellspacing="0">');
-					// $nodeHTML[] = '<tr><th colspan="2">'.$tkey.'</th></tr>';
-					$nodeHTML[] = '<tr><td>Rows</td><td style="text-align: right">'.$tinfo['Rows'].'</td></tr>';
-					$nodeHTML[] = '<tr><td>Data</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Data_length']/1024).'KiB</td></tr>';
-					$nodeHTML[] = '<tr><td>Index</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Index_length']/1024).'KiB</td></tr>';
-					if( $tinfo['Data_free']>0 ){ $nodeHTML[] = '<tr><td>Overhead</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Data_free']/1024).'KiB</td></tr>'; }
-					$nodeHTML[] = '</table>';
-					$tinfoNode = $this->addRichContentNode($ATableNode, array(),implode('',$nodeHTML) );
-				}else{
-					$ATableNode = $this->addNode($GroupTableNode,array(
-						'TEXT'=>$tkey,
-					));
-
-				}
+				/*
+				$ATableNode = $this->addNode($GroupTableNode,array(
+					'FOLDED'=>'true',
+					'TEXT'=>$tkey,
+				));
+				
+				$nodeHTML = array('<table border="0" cellpadding="3" cellspacing="0">');
+				// $nodeHTML[] = '<tr><th colspan="2">'.$tkey.'</th></tr>';
+				$nodeHTML[] = '<tr><td>Rows</td><td style="text-align: right">'.$tinfo['Rows'].'</td></tr>';
+				$nodeHTML[] = '<tr><td>Data</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Data_length']/1024).'KiB</td></tr>';
+				$nodeHTML[] = '<tr><td>Index</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Index_length']/1024).'KiB</td></tr>';
+				if( $tinfo['Data_free']>0 ){ $nodeHTML[] = '<tr><td>Overhead</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Data_free']/1024).'KiB</td></tr>'; }
+				$nodeHTML[] = '</table>';
+				$tinfoNode = $this->addRichContentNode($ATableNode, array(),implode('',$nodeHTML) );
+				*/
 			}
-
+		$i++;
 		}/*endforeach*/
 
 
@@ -885,7 +892,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 							'TEXT'=> $extArray['EM_CONF']['title'],
 						), $extIcon );
 
-						$color = $extI%2==0 ? '#ececec' : '#ffffff';
+						$color = $this->getDesignAlternatingColor('getExtensionNode',$extI,'CLOUD_COLOR');
 						$this->addCloud($extNode,array('COLOR'=>$color ));
 
 
@@ -946,16 +953,14 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		return $ChildFirst_Extensions;
 	}
 
-/* **************************************************************
-*  Copyright notice
-*
-*  (c) webservices.nl
-*  (c) 2006-2010 Karsten Dambekalns <karsten@typo3.org>
-*  All rights reserved
-*
-* **************************************************************/
-
-
+	/* **************************************************************
+	*  Copyright notice
+	*
+	*  (c) webservices.nl
+	*  (c) 2006-2010 Karsten Dambekalns <karsten@typo3.org>
+	*  All rights reserved
+	*
+	* **************************************************************/
 	/**
 	 * Returns the list of available (installed) extensions
 	 *
@@ -990,7 +995,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @return	void		'Returns' content by reference
 	 * @see getInstalledExtensions()
 	 */
-	function getInstExtList($path, &$list, &$cat, $type) {
+	private function getInstExtList($path, &$list, &$cat, $type) {
 
 		if (@is_dir($path)) {
 			$extList = t3lib_div::get_dirs($path);
@@ -1024,7 +1029,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param  array $constraints
 	 * @return array
 	 */
-	public function humanizeConstraints($constraints) {
+	private function humanizeConstraints($constraints) {
 		$depends = $conflicts = $suggests = array();
 		$result = array(
 			'depends' => '',

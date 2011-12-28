@@ -311,21 +311,22 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 *
 	 * @param string $methodName
 	 * @param integer $rowCounter incremental
+	 * @param string $type what kind of color ...
 	 * @return string
 	 */
-	protected function getDesignAlternatingColor($methodName,$rowCounter){
+	protected function getDesignAlternatingColor($methodName,$rowCounter,$type='BACKGROUND_COLOR'){
 		if( !isset($this->settings['design'][$methodName]) ){ 
-			$this->settings['design'][$methodName] = array('BACKGROUND_COLOR'=>array() ); 
+			$this->settings['design'][$methodName] = array($type=>array() ); 
 		}
-		elseif( !isset($this->settings['design'][$methodName]['BACKGROUND_COLOR']) ){ 
-			$this->settings['design'][$methodName]['BACKGROUND_COLOR'] = array(); 
+		elseif( !isset($this->settings['design'][$methodName][$type]) ){ 
+			$this->settings['design'][$methodName][$type] = array(); 
 		}
 		
-		$count = count($this->settings['design'][$methodName]['BACKGROUND_COLOR']);
+		$count = count($this->settings['design'][$methodName][$type]);
 		$count = $count == 0 ? 1 : $count;
 		
 		$mod = $rowCounter % $count;
-		return isset($this->settings['design'][$methodName]['BACKGROUND_COLOR'][$mod]) ? $this->settings['design'][$methodName]['BACKGROUND_COLOR'][$mod] : '';
+		return isset($this->settings['design'][$methodName][$type][$mod]) ? $this->settings['design'][$methodName][$type][$mod] : '';
 		
 	}/*</getDesignAlternatingColor>*/
 	

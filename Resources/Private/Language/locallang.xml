@@ -28,7 +28,7 @@
 
 			
 			<label index="tree.fileInfo">About this file</label>
-			<label index="tree.extensions">Installed Extensions</label>
+			<label index="tree.extensions">Extensions</label>
 			<label index="tree.extensions.selectable">Selectable active FE plugins</label>
 			<label index="tree.extensions.byState">Extensions by State</label>
 			<label index="tree.version">Version</label>
