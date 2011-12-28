@@ -285,7 +285,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	private function BeUsersHandleRow(SimpleXMLElement $xmlNode,$row,$rowCounter){
 
 
-		$BACKGROUND_COLOR = $this->getAlternatingColor('BeUsersHandleRow',$rowCounter);
+		$BACKGROUND_COLOR = $this->getDesignAlternatingColor('BeUsersHandleRow',$rowCounter);
 		$aUserNode = $this->addNode($xmlNode,array(
 				// not possible due to the ampersand returnUrl=%2Ftypo3%2Fmod.php%3FM%3Dtools_beuser&
 				'LINK'=>$this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[be_users]['.$row['uid'].']=edit' : '',
@@ -293,7 +293,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 				'TEXT'=>$row['username'],
 				'BACKGROUND_COLOR'=> $BACKGROUND_COLOR,
 			));
-			$this->addEdge($aUserNode,array('COLOR'=>$BACKGROUND_COLOR));
+			$this->addEdge($aUserNode,array('WIDTH'=>$this->getDesignEdgeWidth('BeUsersHandleRow'),'COLOR'=>$BACKGROUND_COLOR));
 
 			if( $row['deleted'] == 1 ) {	$this->addIcon($aUserNode,'button_cancel'); }
 			elseif( $row['disable'] == 1 ) {	$this->addIcon($aUserNode,'encrypted'); }
@@ -364,14 +364,14 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 */
 	private function BeGroupsHandleRow(SimpleXMLElement $xmlNode,$row,$rowCounter){
 
-		$BACKGROUND_COLOR = $this->getAlternatingColor('BeGroupsHandleRow',$rowCounter);
+		$BACKGROUND_COLOR = $this->getDesignAlternatingColor('BeGroupsHandleRow',$rowCounter);
 		$aGroupNode = $this->addNode($xmlNode,array(
 			'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
 			'TEXT'=>$row['title'],
 			'LINK' => $this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[be_groups]['.$row['uid'].']=edit' : ''
 		));
 
-		$this->addEdge($aGroupNode,array('COLOR'=> $BACKGROUND_COLOR ));
+		$this->addEdge($aGroupNode,array('WIDTH'=>$this->getDesignEdgeWidth('BeGroupsHandleRow'),'COLOR'=> $BACKGROUND_COLOR ));
 
 			if( $row['deleted'] == 1 ) {	$this->addIcon($aGroupNode,'button_cancel'); }
 			elseif( $row['hidden'] == 1 ) {	$this->addIcon($aGroupNode,'closed'); }
@@ -596,7 +596,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 			$attr = array(
 					'TEXT'=>htmlspecialchars($message['short']),
-					'BACKGROUND_COLOR'=>$this->getAlternatingColor('getTYPONodeCheckDirs',$k),
+					'BACKGROUND_COLOR'=>$this->getDesignAlternatingColor('getTYPONodeCheckDirs',$k),
 				);
 
 			if( !empty($message['long']) ){

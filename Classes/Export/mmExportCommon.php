@@ -312,13 +312,38 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @param integer $rowCounter incremental
 	 * @return string
 	 */
-	protected function getAlternatingColor($methodName,$rowCounter){
-		if( !isset($this->settings['colors'][$methodName]) ){ $this->settings['colors'][$methodName] = array(); }
-		$count = count($this->settings['colors'][$methodName]);
+	protected function getDesignAlternatingColor($methodName,$rowCounter){
+		if( !isset($this->settings['design'][$methodName]) ){ 
+			$this->settings['design'][$methodName] = array('BACKGROUND_COLOR'=>array() ); 
+		}
+		elseif( !isset($this->settings['design'][$methodName]['BACKGROUND_COLOR']) ){ 
+			$this->settings['design'][$methodName]['BACKGROUND_COLOR'] = array(); 
+		}
+		
+		$count = count($this->settings['design'][$methodName]['BACKGROUND_COLOR']);
 		$count = $count == 0 ? 1 : $count;
 		
 		$mod = $rowCounter % $count;
-		return isset($this->settings['colors'][$methodName][$mod]) ? $this->settings['colors'][$methodName][$mod] : '';
+		return isset($this->settings['design'][$methodName]['BACKGROUND_COLOR'][$mod]) ? $this->settings['design'][$methodName]['BACKGROUND_COLOR'][$mod] : '';
 		
-	}
+	}/*</getDesignAlternatingColor>*/
+	
+	/**
+	 * if defined in the settings TS it returned the edge width
+	 *
+	 * @param string $methodName
+	 * @return string
+	 */
+	protected function getDesignEdgeWidth($methodName){
+		if( !isset($this->settings['design'][$methodName]) ){ 
+			$this->settings['design'][$methodName] = array('EDGE_WIDTH'=>0 ); /*no edge width*/
+		}
+		elseif( !isset($this->settings['design'][$methodName]['EDGE_WIDTH']) ){ 
+			$this->settings['design'][$methodName]['EDGE_WIDTH'] = 0; 
+		}
+		
+		return (int)$this->settings['design'][$methodName]['EDGE_WIDTH'];
+		
+	}/*</getDesignAlternatingColor>*/
+	
 }
