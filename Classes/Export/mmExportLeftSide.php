@@ -686,12 +686,14 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			// 'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.security'),
 		), 'typo3conf/ext/typo3mind/Resources/Public/Icons/System-Security-Warning-icon.png', 'height="16"' );
-	
+
+		$this->addNode($secMainNode,array('TEXT'=>'TYPO3 Security Guide ','LINK'=>'http://typo3.org/documentation/document-library/extension-manuals/doc_guide_security/current/'));
+
+		
 		$rss = 'http://news.typo3.org/news/teams/security/rss.xml';
 		// caching and a global add rss feed class
 		$rssContent = simplexml_load_string(t3lib_div::getURL($rss));
 	
-		// maybe add richcontent node ...
 		$rssHeadNode = $this->addNode($secMainNode,array('TEXT'=>$rssContent->channel->title,'LINK'=>$rssContent->channel->link));
 		
 // echo '<pre>';  var_dump($rssContent->channel->item); exit;
@@ -706,6 +708,10 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			$rssItemNode = $this->addRichContentNote($rssHeadNode,array('TEXT'=>$item->title,'LINK'=>$item->link),implode('',$htmlContent));
 		
 		}/*endforeach*/
+	
+	
+	
+		$this->addNode($secMainNode,array('TEXT'=>'more to follow','LINK'=>'https://github.com/SchumacherFM/TYPO3Mind/issues/12'));
 	
 	}/*</getSecurityNode>*/
 	
