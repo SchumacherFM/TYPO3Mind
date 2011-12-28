@@ -83,7 +83,6 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @return void
 	 */
 	public function __construct(array $settings,Tx_Typo3mind_Domain_Repository_T3mindRepository $t3MindRepository) {
-
 		$this->settings = $settings;
 		$this->t3MindRepository = $t3MindRepository;
 		$this->setmapMode();

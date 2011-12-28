@@ -52,14 +52,15 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 
 		$rootNode = $this->getMap();
 
-		$mmExportLeftSide = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExportLeftSide',$this->settings);
+
+		$mmExportLeftSide = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExportLeftSide',$this->settings,$this->t3MindRepository);
 		$mmExportLeftSide->getSecurityNode($rootNode);
 		$mmExportLeftSide->getTYPONode($rootNode);
 		$mmExportLeftSide->getExtensionNode($rootNode); 
 		$mmExportLeftSide->getDatabaseNode($rootNode);
 		$mmExportLeftSide->getServerNode($rootNode); 
 
-		$mmExportRightSide = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExportRightSide',$this->settings);
+		$mmExportRightSide = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExportRightSide',$this->settings,$this->t3MindRepository);
 		$mmExportRightSide->getSysLanguages($rootNode);
 		$mmExportRightSide->getSysDomains($rootNode);
 

@@ -75,14 +75,15 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	protected $RGBinterpolate;
 
 
-
 	/**
-	 * initializeAction
+	 * __constructor
 	 *
+	 * @param array $settings
+	 * @param Tx_Typo3mind_Domain_Repository_T3mindRepository $t3MindRepository
 	 * @return void
 	 */
-	public function __construct($settings) {
-		parent::__construct($settings);
+	public function __construct(array $settings,Tx_Typo3mind_Domain_Repository_T3mindRepository $t3MindRepository) {
+		parent::__construct($settings,$t3MindRepository);
 
 		$this->RGBinterpolate = t3lib_div::makeInstance('Tx_Typo3mind_Utility_RGBinterpolate');
 
