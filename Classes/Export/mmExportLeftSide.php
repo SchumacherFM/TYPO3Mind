@@ -757,7 +757,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			foreach ($tables as $tkey => $tinfo){
 
 				$size = sprintf('%.2f',($tinfo['Data_length']+$tinfo['Index_length'])/1024);
-				
+
 				$ATableNode = $this->addNode($GroupTableNode,array(
 				//	'FOLDED'=>'true',
 					'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
@@ -769,7 +769,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 					'FOLDED'=>'true',
 					'TEXT'=>$tkey,
 				));
-				
+
 				$nodeHTML = array('<table border="0" cellpadding="3" cellspacing="0">');
 				// $nodeHTML[] = '<tr><th colspan="2">'.$tkey.'</th></tr>';
 				$nodeHTML[] = '<tr><td>Rows</td><td style="text-align: right">'.$tinfo['Rows'].'</td></tr>';
@@ -796,10 +796,8 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	public function getExtensionNode(SimpleXMLElement $xmlNode) {
 		global $TCA;
 
-/*		$ChildFirst_Extensions = $this->addNode($xmlNode,array(
-			'POSITION'=>'left',
-			'TEXT'=>$this->translate('tree.extensions'),
-		)); */
+		$extensionManager = new Tx_Typo3mind_Utility_ExtensionManager();
+		
 
 		$ChildFirst_Extensions = $this->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
@@ -807,7 +805,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		), 'typo3/sysext/t3skin/icons/module_tools_em.png' );
 
 
-		/* frontend plugins which you can choose in the backend */
+		/*<frontend plugins which you can choose in the backend>*/
 		$selectableExtensions = $this->addNode($ChildFirst_Extensions,array(
 			'TEXT'=>$this->translate('tree.extensions.selectable'),
 			'FOLDED'=>'true',
@@ -821,11 +819,39 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 				),$extA[2] );
 			}
 		}/*endforeach*/
+		/*</frontend plugins which you can choose in the backend>*/
 
 
 
 
-		$installedExt = $this->getInstalledExtensions();
+		/*<check for extension updates!>*/
+		$updateExtensions = $this->addNode($ChildFirst_Extensions,array(
+			'TEXT'=>$this->translate('tree.extensions.updates'),
+			// 'FOLDED'=>'true',
+		));
+				if (is_file(PATH_site . 'typo3temp/extensions.xml.gz')) {
+					$dateFormat = $GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy'];
+					$timeFormat = $GLOBALS['TYPO3_CONF_VARS']['SYS']['hhmm'];
+					$content = $this->translate('tree.extensions.updates.last').
+						date(
+							$dateFormat . ', ' . $timeFormat,
+							filemtime(PATH_site . 'typo3temp/extensions.xml.gz')
+						).'<br/>'.$this->translate('tree.extensions.updates.number').
+						tx_em_Database::getExtensionCountFromRepository();
+					$this->addRichContentNode($updateExtensions,array(), $content );
+				}
+//			$showExtensionsToUpdate = $extensionManager->showExtensionsToUpdate();
+/*		echo '<pre>';
+var_dump($dateFormat);
+var_dump($timeFormat);
+var_dump($content);
+exit; */
+		/*</check for extension updates!>*/
+
+
+
+
+		$installedExt = $extensionManager->getInstalledExtensions();
 		/* extension by modul state */
 
 		/* rebuilding the array by cat->state->name */
@@ -918,7 +944,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 
 						// displaying the rest of the config
-						$constraints = $this->humanizeConstraints($extArray['EM_CONF']['constraints']);
+						$constraints = $extensionManager->humanizeConstraints($extArray['EM_CONF']['constraints']);
 						$extArray['EM_CONF']['depends'] = $constraints['depends'];
 						$extArray['EM_CONF']['conflicts'] = $constraints['conflicts'];
 						$extArray['EM_CONF']['suggests'] = $constraints['suggests'];
@@ -952,144 +978,6 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		}/*endforeach $installedExt[1]['cat']*/
 		return $ChildFirst_Extensions;
 	}
-
-	/* **************************************************************
-	*  Copyright notice
-	*
-	*  (c) webservices.nl
-	*  (c) 2006-2010 Karsten Dambekalns <karsten@typo3.org>
-	*  All rights reserved
-	*
-	* **************************************************************/
-	/**
-	 * Returns the list of available (installed) extensions
-	 *
-	 * @param	boolean		if set, function will return a flat list only
-	 * @return	array		Array with two arrays, list array (all extensions with info) and category index
-	 * @see getInstExtList()
-	 */
-	function getInstalledExtensions( ) {
-		$list = array();
-
-		$cat = tx_em_Tools::getDefaultCategory();
-
-		$path = PATH_typo3 . 'sysext/';
-		$this->getInstExtList($path, $list, $cat, 'S');
-
-		$path = PATH_typo3 . 'ext/';
-		$this->getInstExtList($path, $list, $cat, 'G');
-
-		$path = PATH_typo3conf . 'ext/';
-		$this->getInstExtList($path, $list, $cat, 'L');
-
-		return array($list, $cat);
-	}
-
-	/**
-	 * Gathers all extensions in $path
-	 *
-	 * @param	string		Absolute path to local, global or system extensions
-	 * @param	array		Array with information for each extension key found. Notice: passed by reference
-	 * @param	array		Categories index: Contains extension titles grouped by various criteria.
-	 * @param	string		Path-type: L, G or S
-	 * @return	void		'Returns' content by reference
-	 * @see getInstalledExtensions()
-	 */
-	private function getInstExtList($path, &$list, &$cat, $type) {
-
-		if (@is_dir($path)) {
-			$extList = t3lib_div::get_dirs($path);
-			if (is_array($extList)) {
-				foreach ($extList as $extKey) {
-					if (@is_file($path . $extKey . '/ext_emconf.php')) {
-						$emConf = tx_em_Tools::includeEMCONF($path . $extKey . '/ext_emconf.php', $extKey);
-						if (is_array($emConf)) {
-							if (is_array($list[$extKey])) {
-								$list[$extKey] = array('doubleInstall' => $list[$extKey]['doubleInstall']);
-							}
-							$list[$extKey]['extkey'] = $extKey;
-							$list[$extKey]['doubleInstall'] .= $type;
-							$list[$extKey]['type'] = $type;
-							$list[$extKey]['installed'] = t3lib_extMgm::isLoaded($extKey);
-							$list[$extKey]['EM_CONF'] = $emConf;
-							$list[$extKey]['files'] = t3lib_div::getFilesInDir($path . $extKey, '', 0, '', $this->excludeForPackaging);
-
-							tx_em_Tools::setCat($cat, $list[$extKey], $extKey);
-						}
-					}
-				}
-			}
-		}
-	}
-
-
-	/**
-	 * Make constraints readable
-	 *
-	 * @param  array $constraints
-	 * @return array
-	 */
-	private function humanizeConstraints($constraints) {
-		$depends = $conflicts = $suggests = array();
-		$result = array(
-			'depends' => '',
-			'conflicts' => '',
-			'suggests' => ''
-		);
-
-		if (is_array($constraints) && count($constraints)) {
-			if (is_array($constraints['depends']) && count($constraints['depends'])) {
-				foreach ($constraints['depends'] as $key => $value) {
-					if ($value) {
-						$tmp = t3lib_div::trimExplode('-', $value, TRUE);
-						if (trim($tmp[1]) && trim($tmp[1]) !== '0.0.0') {
-							$value = $tmp[0] . ' - ' . $tmp[1];
-						} else {
-							$value = $tmp[0];
-						}
-					}
-					$depends[] = $key . ($value ? ' (' . $value . ')' : '');
-				}
-			}
-			if (is_array($constraints['conflicts']) && count($constraints['conflicts'])) {
-				foreach ($constraints['conflicts'] as $key => $value) {
-					if ($value) {
-						$tmp = t3lib_div::trimExplode('-', $value, TRUE);
-						if (trim($tmp[1]) && trim($tmp[1]) !== '0.0.0') {
-							$value = $tmp[0] . ' - ' . $tmp[1];
-						} else {
-							$value = $tmp[0];
-						}
-					}
-					$conflicts[] = $key . ($value ? ' (' . $value . ')' : '');
-				}
-			}
-			if (is_array($constraints['suggests']) && count($constraints['suggests'])) {
-				foreach ($constraints['suggests'] as $key => $value) {
-					if ($value) {
-						$tmp = t3lib_div::trimExplode('-', $value, TRUE);
-						if (trim($tmp[1]) && trim($tmp[1]) !== '0.0.0') {
-							$value = $tmp[0] . ' - ' . $tmp[1];
-						} else {
-							$value = $tmp[0];
-						}
-					}
-					$suggests[] = $key . ($value ? ' (' . $value . ')' : '');
-				}
-			}
-			if (count($depends)) {
-				$result['depends'] = htmlspecialchars(implode(', ', $depends));
-			}
-			if (count($conflicts)) {
-				$result['conflicts'] = htmlspecialchars(implode(', ', $conflicts));
-			}
-			if (count($suggests)) {
-				$result['suggests'] = htmlspecialchars(implode(', ', $suggests));
-			}
-		}
-		return $result;
-	}
-
 
 
 

@@ -30,6 +30,10 @@
 			<label index="tree.fileInfo">About this file</label>
 			<label index="tree.extensions">Extensions</label>
 			<label index="tree.extensions.selectable">Selectable active FE plugins</label>
+			<label index="tree.extensions.updates">Available Extension updates</label>
+			<label index="tree.extensions.updates.last">Last updated: </label>
+			<label index="tree.extensions.updates.number">Number of Extensions: </label>
+			
 			<label index="tree.extensions.byState">Extensions by State</label>
 			<label index="tree.version">Version</label>
 			<label index="tree.linkName2TER">T3 Ext. Repository</label>
