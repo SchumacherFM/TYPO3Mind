@@ -270,7 +270,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 			$attributes['ID'] = 't3m'.mt_rand();
 		}
 
-		$attributes['TEXT'] = $this->strip_tags( str_replace('"','',$attributes['TEXT']) );
+		$attributes['TEXT'] = htmlspecialchars($this->strip_tags( str_replace('"','',$attributes['TEXT']) ));
 		
 		if( isset($attributes['LINK']) && empty($attributes['LINK']) ){ unset($attributes['LINK']); }
 		
