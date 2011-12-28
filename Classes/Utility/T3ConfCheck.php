@@ -30,9 +30,10 @@
  *
  * @author	Kasper Skårhøj <kasperYYYY@typo3.com>
  * @author	Ingmar Schlecht <ingmar@typo3.org>
+ * @cocoauthor Cyrill Schumacher <Cyrill@Schumacher.fm>
 
- * 1367:     function getDefaultConfigArrayComments($string,$mainArray=array(),$commentArray=array())
- * 1673:     function checkDirs()
+ * 0:     function getDefaultConfigArrayComments($string,$mainArray=array(),$commentArray=array())
+ * 0:     function checkDirs()
 
  */
  

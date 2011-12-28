@@ -90,7 +90,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 
 		// todo: better error handling
 		if( !isset($this->extConfSettings['apikey']) || trim($this->extConfSettings['apikey'])=='' ){
-			die('Please set an API Key in the Extension Manager');
+			die('<h1>Please set an API Key in the Extension Manager</h1>');
 		}
 
 	}
@@ -141,6 +141,9 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 */
 	public function editPagesAction(Tx_Typo3mind_Domain_Model_T3mind $T3mind = NULL) {
 
+		die('<h1>Use a TYPO3 Sysfolder and edit there they data for a page!</h1>');
+	
+		/*TODO: */
 		if ($T3mind == NULL) {
 
 			$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
@@ -152,19 +155,11 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 			}
 		}
 
-/*
-echo '<pre>';
-var_dump($T3mind);
-die( '</pre>');
-
-*/
-
 
 		$this->view->assign('T3mind', $T3mind );
 		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'uid,title' ) );
 		$this->view->assign('icons', $this->t3MindRepository->getIcons( $this->settings ) );
 		$this->view->assign('userIcons', $this->t3MindRepository->getUserIcons( $this->settings ) );
-		$this->view->assign('nodePositions', $this->helpers->trimExplodeVK(',', $this->settings['nodePositions'] ) );
 		$this->view->assign('nodeStyles', $this->helpers->trimExplodeVK(',', $this->settings['nodeStyles'] ) );
 		$this->view->assign('edgeStyles', $this->helpers->trimExplodeVK(',', $this->settings['edgeStyles'] ) );
 		$this->view->assign('edgeWidths', $this->helpers->trimExplodeVK(',', $this->settings['edgeWidths'] ) );
@@ -179,6 +174,10 @@ die( '</pre>');
 	 * @return void
 	 */
 	public function editPagesSaveAction(Tx_Typo3mind_Domain_Model_T3mind $T3mind, $options ) {
+	
+		die('<h1>Use a TYPO3 Sysfolder and edit there they data for a page!</h1>');
+	
+		/*TODO: */
 
 		foreach($options as $k=>$v){
 			$options[$k] = (int)$v;
@@ -211,7 +210,7 @@ die( '</pre>');
 	 */
 	public function exportAction() {
 
-	
+		/*TODO export via ajax ...*/
 		// $expObj = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExport',$this->settings);
 		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);
 		$typo3tempFilename = $expObj->getContent();

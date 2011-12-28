@@ -40,7 +40,6 @@ module.tx_typo3mind {
 		edgeWidths = ,thin, parent, 1 , 2 ,  4 , 8
 		edgeStyles = ,bezier, linear, sharp_bezier, sharp_linear
 
-		nodePositions = right,left
 		nodeStyles = default,bubble,fork
 		# 1 for intelligent folding and 0 for folding from your config; if you have a huge T3 page tree and you set
 		# AutoFold to zero then it takes some time until the tree is rendered in FreeMind...
@@ -90,6 +89,10 @@ module.tx_typo3mind {
 					2 = #ececec
 				}
 				EDGE_WIDTH = 4
+
+				# maybe one day ....
+				# nodePositions = right,left
+
 			}
 			
 			

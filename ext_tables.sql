@@ -18,7 +18,6 @@ CREATE TABLE tx_typo3mind_domain_model_t3mind (
 	cloud_color varchar(7) DEFAULT '' NOT NULL,
 	node_color varchar(7) DEFAULT '' NOT NULL,
 	node_folded tinyint(1) unsigned DEFAULT '0' NOT NULL,
-	node_position varchar(25) DEFAULT '' NOT NULL,
 	node_style varchar(25) DEFAULT '' NOT NULL,
 	node_icon text NOT NULL,
 	node_user_icon text NOT NULL,

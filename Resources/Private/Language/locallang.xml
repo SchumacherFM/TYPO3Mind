@@ -17,7 +17,6 @@
 			<label index="tx_typo3mind_domain_model_t3mind.cloud_color">Cloud Color</label>
 			<label index="tx_typo3mind_domain_model_t3mind.node_color">Node color</label>
 			<label index="tx_typo3mind_domain_model_t3mind.node_folded">Is the node folded?</label>
-			<label index="tx_typo3mind_domain_model_t3mind.node_position">Node position, left or right?</label>
 			<label index="tx_typo3mind_domain_model_t3mind.node_style">Node style</label>
 			<label index="tx_typo3mind_domain_model_t3mind.node_icon">Node icon (build in into FreeMind)</label>
 			<label index="tx_typo3mind_domain_model_t3mind.node_user_icon">User node icon</label>

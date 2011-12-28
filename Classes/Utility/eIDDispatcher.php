@@ -31,7 +31,14 @@
 * @author Daniel Lienert <daniel@lienert.cc>
 * @author Cyrill Schumacher <cyrill@schumacher.fm>
 */
-		
+
+/**
+ *
+ *
+ * @package typo3mind
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ *
+ */
 class Tx_Typo3mind_Utility_eIDDispatcher {
 	
 	

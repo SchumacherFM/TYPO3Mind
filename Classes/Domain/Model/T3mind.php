@@ -118,13 +118,6 @@ class Tx_Typo3mind_Domain_Model_T3mind extends Tx_Extbase_DomainObject_AbstractE
 	protected $nodeFolded;
 
 	/**
-	 * Node position, left or right? aendern auf varchar
-	 *
-	 * @var string
-	 */
-	protected $nodePosition;
-
-	/**
 	 * Node style
 	 *
 	 * @var string
@@ -438,25 +431,6 @@ class Tx_Typo3mind_Domain_Model_T3mind extends Tx_Extbase_DomainObject_AbstractE
 	 */
 	public function isNodeFolded() {
 		return $this->getNodeFolded();
-	}
-
-	/**
-	 * Returns the nodePosition
-	 *
-	 * @return string $nodePosition
-	 */
-	public function getNodePosition() {
-		return $this->nodePosition;
-	}
-
-	/**
-	 * Sets the nodePosition
-	 *
-	 * @param string $nodePosition
-	 * @return void
-	 */
-	public function setNodePosition($nodePosition) {
-		$this->nodePosition = $nodePosition;
 	}
 
 	/**

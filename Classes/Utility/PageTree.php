@@ -27,12 +27,9 @@
 /**
  * Contains base class for creating a browsable array/page/folder tree in HTML
  *
- * $Id$
- * Revised for TYPO3 3.6 November/2003 by Kasper Skårhøj
- *
  * @author	Kasper Skårhøj <kasperYYYY@typo3.com>
  * @coauthor	René Fritz <r.fritz@colorcube.de>
- * @author	Cyrill Schumacher <cyrill@schumacher.fm>
+ * @cocoauthor	Cyrill Schumacher <cyrill@schumacher.fm>
  *
  * based on t3lib_treeView but modified for the FreeMind ext
  */

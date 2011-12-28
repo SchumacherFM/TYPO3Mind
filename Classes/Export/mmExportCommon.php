@@ -1,5 +1,4 @@
 <?php
-
 /***************************************************************
  *  Copyright notice
  *
@@ -23,12 +22,6 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
-	/*	some hints ..
-	http://freemind.sourceforge.net/wiki/index.php/Asked_questions
-	how to insert new lines
-	Insert &#xa; instead of plain newline. Example of a map with three newlines:
-	*/
 
 /**
  *
