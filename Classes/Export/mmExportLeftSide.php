@@ -121,9 +121,18 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-folder-default.png', 'height="16"' );
 
 		$nodeFileadmin = $this->addNode($MainNode,array(
-			'TEXT'=>'fileadmin'
+			'TEXT'=>'fileadmin',
+			'FOLDED'=>'true',			
 		));
 		$this->getTYPONodeFilesScandir($nodeFileadmin,PATH_site.'fileadmin/');
+		
+		
+		
+		$nodeUpload = $this->addNode($MainNode,array(
+			'TEXT'=>'uploads',
+			'FOLDED'=>'true',			
+		));
+		$this->getTYPONodeFilesScandir($nodeUpload,PATH_site.'uploads/');
 
 	}/*</getTYPONodeFiles>*/
 
@@ -137,23 +146,25 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 */
 	private function getTYPONodeFilesScandir(SimpleXMLElement $xmlNode,$fullPath) {
 		
-		$dirLevel1 = scandir($scandirLevel1);
+		$dirLevel1 = scandir($fullPath);
 		foreach($dirLevel1 as $k=>$vL1){
 
 			$BACKGROUND_COLOR = $this->getDesignAlternatingColor('getTYPONodeFiles',$k);
 		
 			/* is dir and avoid .svn or .git or ... folders file starting with a . */
-			if( is_dir($scandirLevel1.$vL1) && preg_match('~^\..*~',$vL1)==false ){
+			if( is_dir($fullPath.$vL1) && preg_match('~^\..*~',$vL1)==false ){
 
+				$size = $this->formatBytes( $this->getDirSize($fullPath.$vL1) );
+			
 				$faLevel1 = $this->addNode($xmlNode,array(
-					'TEXT'=>$vL1,
+					'TEXT'=>$vL1.' '.$size,
 					'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
 				));
 				$this->addEdge($faLevel1,array('WIDTH'=>$this->getDesignEdgeWidth('getTYPONodeFiles'),'COLOR'=>$BACKGROUND_COLOR));
 
-				$dirLevel2 = scandir($scandirLevel1.$vL1);
+				$dirLevel2 = scandir($fullPath.$vL1);
 				foreach($dirLevel2 as $k2=>$vL2){
-					$Level2Dir = $scandirLevel1.$vL1.'/'.$vL2;
+					$Level2Dir = $fullPath.$vL1.'/'.$vL2;
 					/* is dir and avoid .svn or .git or ... folders file starting with a . */
 					if( is_dir($Level2Dir) && preg_match('~^\..*~',$vL2)==false ){
 
