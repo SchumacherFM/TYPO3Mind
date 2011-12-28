@@ -123,17 +123,33 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		$nodeFileadmin = $this->addNode($MainNode,array(
 			'TEXT'=>'fileadmin'
 		));
+		$this->getTYPONodeFilesScandir($nodeFileadmin,PATH_site.'fileadmin/');
 
-		$scandirLevel1 = PATH_site.'fileadmin/';
+	}/*</getTYPONodeFiles>*/
+
+
+	/**
+	 * scans the dir ;-)
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	string $fullPath
+	 * @return	SimpleXMLElement
+	 */
+	private function getTYPONodeFilesScandir(SimpleXMLElement $xmlNode,$fullPath) {
+		
 		$dirLevel1 = scandir($scandirLevel1);
 		foreach($dirLevel1 as $k=>$vL1){
 
+			$BACKGROUND_COLOR = $this->getDesignAlternatingColor('getTYPONodeFiles',$k);
+		
 			/* is dir and avoid .svn or .git or ... folders file starting with a . */
 			if( is_dir($scandirLevel1.$vL1) && preg_match('~^\..*~',$vL1)==false ){
 
-				$faLevel1 = $this->addNode($nodeFileadmin,array(
-					'TEXT'=>$vL1
+				$faLevel1 = $this->addNode($xmlNode,array(
+					'TEXT'=>$vL1,
+					'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
 				));
+				$this->addEdge($faLevel1,array('WIDTH'=>$this->getDesignEdgeWidth('getTYPONodeFiles'),'COLOR'=>$BACKGROUND_COLOR));
 
 				$dirLevel2 = scandir($scandirLevel1.$vL1);
 				foreach($dirLevel2 as $k2=>$vL2){
@@ -144,16 +160,17 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 						$size = $this->formatBytes( $this->getDirSize($Level2Dir) );
 
 						$faLevel2 = $this->addNode($faLevel1,array(
-							'TEXT'=>xmlentities($vL2.' '.$size)
+							'TEXT'=>xmlentities($vL2.' '.$size),
+							'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
 						));
 					}
 				}/*endforeach*/
 
 
-			}
+			}/*endif*/
 		} /*endforeach*/
-	}
-
+	}/*</getTYPONodeFilesScandir>*/
+	
 	/**
 	 * gets some T3 logins and error logs
 	 *

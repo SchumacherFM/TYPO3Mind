@@ -252,10 +252,11 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 */
 	protected function formatBytes($bytes){
 		$return = '';
-		if( $bytes < 1024 ){ $return = sprintf('%.2f',$bytes).' B'; }
-		elseif( $bytes < 1024*1000 ){ $return = sprintf('%.2f',$bytes/1024).'KB'; }
-		elseif( $bytes < 1024*1000*1000 ){ $return = sprintf('%.2f',$bytes/1024/1024).'MB'; }
-		elseif( $bytes < 1024*1000*1000*1000 ){ $return = sprintf('%.2f',$bytes/1024/1024/1024).'GB'; }
+		if( $bytes < 1024 ){ $return = sprintf('%.2f',$bytes).'  B'; }
+		elseif( $bytes < 1024*1000 ){ $return = sprintf('%.2f',$bytes/1024).' KB'; }
+		elseif( $bytes < 1024*1000*1000 ){ $return = sprintf('%.2f',$bytes/1024/1024).' MB'; }
+		elseif( $bytes < 1024*1000*1000*1000 ){ $return = sprintf('%.2f',$bytes/1024/1024/1024).' GB'; }
+		elseif( $bytes < 1024*1000*1000*1000*1000 ){ $return = sprintf('%.2f',$bytes/1024/1024/1024/1024).' TB'; }
 
 		return str_pad($return,15,' ', STR_PAD_LEFT);
 	}
@@ -344,6 +345,6 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		
 		return (int)$this->settings['design'][$methodName]['EDGE_WIDTH'];
 		
-	}/*</getDesignAlternatingColor>*/
+	}/*</getDesignEdgeWidth>*/
 	
 }
