@@ -8,18 +8,18 @@ module.tx_typo3mind {
 		partialRootPath = {$module.tx_typo3mind.view.partialRootPath}
 		layoutRootPath = {$module.tx_typo3mind.view.layoutRootPath}
 	}
-	
+
 	settings {
-	
+
 		# Possible values: frontend, backend_list or backend_tv. This only changes the types of Links. Frontend just for viewing
 		# backend opens the templavoila editing section of a page or content element
-		# for backend mode you have to be logged in the backend in your default browser. 
+		# for backend mode you have to be logged in the backend in your default browser.
 		mapMode = backend_tv
-		
+
 		# only sitename variable is supported, the second variable will be used with the date() function
 		# outputFileName = TYPO3Mind_[sitename]_[Y-m-d_H-i-s].mm
 		outputFileName = TYPO3Mind_[sitename]_[Y-m-d].mm
-	
+
 		# set this to a convinient path, recursive searching of files
 		# todo find bug why in template in DB not values are taken ...
 		userIconsPath = typo3/sysext/t3skin/images/icons/actions/
@@ -28,14 +28,14 @@ module.tx_typo3mind {
 		# official buildin icons change only the filename if you know what to do
 		# path below Resources/Public/ Supports only png files
 		iconsPath = typo3conf/ext/typo3mind/Resources/Public/freemind_icons/
-				
+
 		# first option is always default
 		# use keyword default for no entry in the DB/XML
 		fontSize = default,10, 12, 14, 16, 18
-		
+
 		# any ttf font installed on the system
 		fontFace = default, SansSerif, Arial, Verdana, Tahoma, Times New Roman, Courier New
-		
+
 		# if comma is first, then first value is blank
 		edgeWidths = ,thin, parent, 1 , 2 ,  4 , 8
 		edgeStyles = ,bezier, linear, sharp_bezier, sharp_linear
@@ -44,15 +44,15 @@ module.tx_typo3mind {
 		# 1 for intelligent folding and 0 for folding from your config; if you have a huge T3 page tree and you set
 		# AutoFold to zero then it takes some time until the tree is rendered in FreeMind...
 		nodeAutoFold = 1
-		
+
 		# left side of the tree for showing the logs.
 		numberOfLogRows = 10
-		
+
 		# maybe one day a config for no recursive mode for columns ....
-		
+
 		# TER = TYPO3 Extension Repository URL
 		TerURL2Ext = http://typo3.org/extensions/repository/view/###extname###/current/
-		
+
 		design {
 			# function name, color index for % count(settings->BeUsersHandleRow), as many colors as you like
 			# if not defined then there will be no color
@@ -63,7 +63,7 @@ module.tx_typo3mind {
 					2 = #ececec
 				}
 				EDGE_WIDTH = 4
-			}			
+			}
 			BeGroupsHandleRow {
 				BACKGROUND_COLOR {
 					0 = #ffcc99
@@ -72,7 +72,7 @@ module.tx_typo3mind {
 				}
 				EDGE_WIDTH = 4
 			}
-			
+
 			getTYPONodeFiles {
 				BACKGROUND_COLOR {
 					0 = #ffcc99
@@ -81,7 +81,7 @@ module.tx_typo3mind {
 				}
 				EDGE_WIDTH = 4
 			}
-			
+
 			getDatabaseNode {
 				BACKGROUND_COLOR {
 					0 = #ffcc99
@@ -94,8 +94,7 @@ module.tx_typo3mind {
 				# nodePositions = right,left
 
 			}
-			
-			
+
 			getTYPONodeCheckDirs {
 				BACKGROUND_COLOR {
 		#			0 = #ffcc99
@@ -111,8 +110,8 @@ module.tx_typo3mind {
 				}
 
 			}
-			
+
 		}
-		
+
 	}
 }
