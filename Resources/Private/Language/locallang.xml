@@ -26,6 +26,7 @@
 			<label index="tx_typo3mind_domain_model_t3mind.edge_width">Edge width</label>
 
 
+			<label index="tree.security">Security</label>
 			
 			<label index="tree.fileInfo">About this file</label>
 			<label index="tree.extensions">Extensions</label>

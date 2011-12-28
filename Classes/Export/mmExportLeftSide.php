@@ -671,7 +671,45 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 	}/*endmethod*/
 
+	
+	/**
+	 * gets secutiry node
+	 * http://www.iconarchive.com/show/refresh-cl-icons-by-tpdkdesign.net/System-Security-Warning-icon.html
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @return	SimpleXMLElement
+	 */
+	public function getSecurityNode(SimpleXMLElement $xmlNode) {
+	
+		$secMainNode = $this->addImgNode($xmlNode,array(
+			'POSITION'=>'left',
+			// 'FOLDED'=>'true',
+			'TEXT'=>$this->translate('tree.security'),
+		), 'typo3conf/ext/typo3mind/Resources/Public/Icons/System-Security-Warning-icon.png', 'height="16"' );
+	
+		$rss = 'http://news.typo3.org/news/teams/security/rss.xml';
+		// caching and a global add rss feed class
+		$rssContent = simplexml_load_string(t3lib_div::getURL($rss));
+	
+		// maybe add richcontent node ...
+		$rssHeadNode = $this->addNode($secMainNode,array('TEXT'=>$rssContent->channel->title,'LINK'=>$rssContent->channel->link));
+		
+// echo '<pre>';  var_dump($rssContent->channel->item); exit;
+		
+		foreach($rssContent->channel->item as $index=>$item){
+		
+			$htmlContent = array();
+			$htmlContent[] = '<p>'.$item->author.'</p>';
+			$htmlContent[] = '<p>'.$item->pubDate.'</p>';
+			$htmlContent[] = '<p>'.$item->description.'</p>';
 
+			$rssItemNode = $this->addRichContentNote($rssHeadNode,array('TEXT'=>$item->title,'LINK'=>$item->link),implode('',$htmlContent));
+		
+		}/*endforeach*/
+	
+	}/*</getSecurityNode>*/
+	
+	
 	/**
 	 * gets some server informations
 	 *
