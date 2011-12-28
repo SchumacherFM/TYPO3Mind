@@ -284,8 +284,8 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 */
 	private function BeUsersHandleRow(SimpleXMLElement $xmlNode,$row,$rowCounter){
 
-		$colorCount = count($this->settings['colors']['BeUsersHandleRow']);
-		$BACKGROUND_COLOR = $this->settings['colors']['BeUsersHandleRow'][ $rowCounter % $colorCount ];
+
+		$BACKGROUND_COLOR = $this->getAlternatingColor('BeUsersHandleRow',$rowCounter);
 		$aUserNode = $this->addNode($xmlNode,array(
 				// not possible due to the ampersand returnUrl=%2Ftypo3%2Fmod.php%3FM%3Dtools_beuser&
 				'LINK'=>$this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[be_users]['.$row['uid'].']=edit' : '',
@@ -299,13 +299,13 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			elseif( $row['disable'] == 1 ) {	$this->addIcon($aUserNode,'encrypted'); }
 			if( ($row['lastlogin']+(3600*24*9)) < time() ) {	$this->addIcon($aUserNode,'hourglass'); }
 
-			if( !empty($row['realname']) ){ 
-				$this->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$row['realname'])); 
+			if( !empty($row['realname']) ){
+				$this->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$row['realname']));
 			}
-			if( !empty($row['email']) ){ 
-				$this->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$row['email']));	
+			if( !empty($row['email']) ){
+				$this->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$row['email']));
 			}
-			if( !empty($row['password']) ){ 
+			if( !empty($row['password']) ){
 					/*<check for unsecure installtool password!>*/
 					// http://www.stottmeister.com/blog/2009/04/14/how-to-crack-md5-passwords/
 					// http://netmd5crack.com/cgi-bin/Crack.py?InputHash=[md5string]
@@ -317,12 +317,12 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 						);
 						$attrPW['COLOR'] = '#D60035';
 						$attrPW['LINK'] = 'http://www.tmto.org/pages/passwordtools/hashcracker/';
-						$nodePW = $this->addNode($aUserNode,$attrPW);	
+						$nodePW = $this->addNode($aUserNode,$attrPW);
 						$this->addIcon($nodePW,'messagebox_warning');
-						
+
 					}
-					
-					/*</check for unsecure installtool password!>*/			
+
+					/*</check for unsecure installtool password!>*/
 			}
 			if( isset($row['userMods']) && !empty($row['userMods']) ){
 				$nodeUserMods = $this->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
@@ -364,23 +364,25 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 */
 	private function BeGroupsHandleRow(SimpleXMLElement $xmlNode,$row,$rowCounter){
 
+		$BACKGROUND_COLOR = $this->getAlternatingColor('BeGroupsHandleRow',$rowCounter);
 		$aGroupNode = $this->addNode($xmlNode,array(
+			'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
 			'TEXT'=>$row['title'],
 			'LINK' => $this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[be_groups]['.$row['uid'].']=edit' : ''
 		));
 
-		$this->addCloud($aGroupNode,array('COLOR'=> ($rowCounter%2==0 ? '#ececec' : '#CCE0FF') ));
+		$this->addEdge($aGroupNode,array('COLOR'=> $BACKGROUND_COLOR ));
 
 			if( $row['deleted'] == 1 ) {	$this->addIcon($aGroupNode,'button_cancel'); }
 			elseif( $row['hidden'] == 1 ) {	$this->addIcon($aGroupNode,'closed'); }
 
 			if( !empty($row['groupMods']) ){
-				$nodeGroupMods = $this->addNode($aGroupNode,array('TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
-				$this->BeUserGroupsGetModList($nodeGroupMods,'modListGroup',$row['groupMods']);
+				$nodeGroupMods = $this->addNode($aGroupNode,array('BACKGROUND_COLOR'=>$BACKGROUND_COLOR,'TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
+				$this->BeUserGroupsGetModList($nodeGroupMods,'modListGroup',$row['groupMods'],array('BACKGROUND_COLOR'=>$BACKGROUND_COLOR));
 			}/*endif*/
 
-			$this->BeGroupsHandleTableSelectModify($aGroupNode,$row['tables_select'],'tree.typo3.groups.tables_select');
-			$this->BeGroupsHandleTableSelectModify($aGroupNode,$row['tables_modify'],'tree.typo3.groups.tables_modify');
+			$this->BeGroupsHandleTableSelectModify($aGroupNode,$row['tables_select'],'tree.typo3.groups.tables_select',array('BACKGROUND_COLOR'=>$BACKGROUND_COLOR));
+			$this->BeGroupsHandleTableSelectModify($aGroupNode,$row['tables_modify'],'tree.typo3.groups.tables_modify',array('BACKGROUND_COLOR'=>$BACKGROUND_COLOR));
 
 	} /*</BeGroupsHandleRow>*/
 
@@ -390,16 +392,17 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	SimpleXMLElement $xmlNode
 	 * @param	string $tables
 	 * @param	string $translateKey
+	 * @param	array $attr
 	 * @return	SimpleXMLElement
 	 */
-	private function BeGroupsHandleTableSelectModify(SimpleXMLElement $xmlNode,$tables,$translateKey){
+	private function BeGroupsHandleTableSelectModify(SimpleXMLElement $xmlNode,$tables,$translateKey,$attr){
 		GLOBAL $TCA;
 
 		if( !empty($tables) ){
-			$nodeTables = $this->addNode($xmlNode,array('TEXT'=>$this->translate($translateKey)));
+			$nodeTables = $this->addNode($xmlNode,array_merge($attr,array('TEXT'=>$this->translate($translateKey))));
 			$exploded = t3lib_div::trimExplode(',', $tables ,1 );
 			foreach($exploded as $k=>$table){
-				$this->addNode($nodeTables,array('TEXT'=>$this->SYSLANG->sL( $TCA[$table]['ctrl']['title'] ) ));
+				$this->addNode($nodeTables,array_merge($attr,array('TEXT'=>$this->SYSLANG->sL( $TCA[$table]['ctrl']['title'] )) ));
 			}
 		}
 
@@ -500,7 +503,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			));
 			ksort($seccfg);
 			foreach($seccfg as $confName=>$v){
- 
+
 				if( is_array($v) && count($v)>0 ){
 					$attr = array(
 						'TEXT'=>$confName,
@@ -511,7 +514,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 					if( $confName == 'eID_include' ){
 						$this->addIcon($NodeSectionValue,'messagebox_warning');
 					}
-					
+
 					foreach($v as $extName=>$extConf){
 
 						$extConf = (is_array($extConf) || stristr($extConf,'}') === false) ? $extConf : unserialize($extConf);
@@ -531,7 +534,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 
 					} /*endforeach*/
-					
+
 				}else{
 					$htmlContent = array();
 					$attr = array(
@@ -582,11 +585,30 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	private function getTYPONodeCheckDirs(SimpleXMLElement $xmlNode) {
 
 		$checkDirNode = $this->addNode($xmlNode,array(
-			// 'FOLDED'=>'true',
+			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3.checkDirs'),
 		));
+
+		$T3ConfCheck = new Tx_Typo3mind_Utility_T3ConfCheck();
+		$T3ConfCheck->checkDirs();
  
-		
+		foreach($T3ConfCheck->messages as $k=>$message){
+
+			$attr = array(
+					'TEXT'=>htmlspecialchars($message['short']),
+					'BACKGROUND_COLOR'=>$this->getAlternatingColor('getTYPONodeCheckDirs',$k),
+				);
+
+			if( !empty($message['long']) ){
+				$htmlContent = $message['long'];
+				$messageNode = $this->addRichContentNote($checkDirNode,$attr,$htmlContent /*,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' */ );
+
+			}else{
+				$messageNode = $this->addNode($checkDirNode,$attr);
+			}
+			$this->addIcon($messageNode,$message['icon']);
+		}/*endforeach*/
+
 	}/*</getTYPONodeCheckDirs>*/
 
 	/**
@@ -615,7 +637,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		$this->getTYPONodeConfVars($MainNode);
 
 		$this->getTYPONodeCheckDirs($MainNode);
-		
+
 
 
 
@@ -786,8 +808,6 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		}
 		$installedExt = $installExt2;
 
-
-		// echo '<pre>';   var_dump( $installedExt ); exit;
 
 		/* extension by category = normal view */
 		foreach( $installedExt as $catName => $catArray ){

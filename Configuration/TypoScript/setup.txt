@@ -56,11 +56,23 @@ module.tx_typo3mind {
 		
 		colors {
 			# function name, color index for % count(settings->BeUsersHandleRow), as many colors as you like
+			# if not defined then there will be no color
 			BeUsersHandleRow {
 				0 = #ffcc99
 				1 = #ccccff
 				2 = #ececec
+			}			
+			getTYPONodeCheckDirs {
+	#			0 = #ffcc99
+				1 = #ccccff
+				2 = #ececec
 			}
+			BeGroupsHandleRow {
+				0 = #ffcc99
+				1 = #ccccff
+				2 = #ececec
+			}
+			
 		}
 		
 	}

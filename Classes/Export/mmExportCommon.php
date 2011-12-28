@@ -305,5 +305,20 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		return Tx_Typo3mind_Utility_UnsecurePasswords::getPlainPW($md5);
 	}
 	
-	
+	/**
+	 * if defined in the settings TS it returned the color count for alternating colors
+	 *
+	 * @param string $methodName
+	 * @param integer $rowCounter incremental
+	 * @return string
+	 */
+	protected function getAlternatingColor($methodName,$rowCounter){
+		if( !isset($this->settings['colors'][$methodName]) ){ $this->settings['colors'][$methodName] = array(); }
+		$count = count($this->settings['colors'][$methodName]);
+		$count = $count == 0 ? 1 : $count;
+		
+		$mod = $rowCounter % $count;
+		return isset($this->settings['colors'][$methodName][$mod]) ? $this->settings['colors'][$methodName][$mod] : '';
+		
+	}
 }

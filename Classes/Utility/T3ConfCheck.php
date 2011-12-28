@@ -87,7 +87,6 @@ class Tx_Typo3mind_Utility_T3ConfCheck {
 	public function checkDirs() {
 		// Check typo3/temp/
 		$ext='Directories';
-		$this->message($ext);
 
 		$uniqueName = md5(uniqid(microtime()));
 
@@ -129,7 +128,7 @@ class Tx_Typo3mind_Utility_T3ConfCheck {
 
 			if (!@is_dir(PATH_site.$relpath)) {
 				if ($descr[1]) {	// required...
-					$this->message($ext, $relpath.' directory does not exist and could not be created', '
+					$this->message('smily_bad', $relpath.' directory does not exist and could not be created', '
 						<p>
 							<em>Full path: ' . PATH_site . $relpath . '</em>
 							<br />
@@ -146,7 +145,7 @@ class Tx_Typo3mind_Utility_T3ConfCheck {
 					} else {
 						$msg = 'This directory does not necessarily have to exist and if it does it can be writable or not.';
 					}
-					$this->message($ext, $relpath.' directory does not exist', '
+					$this->message('smiley-neutral', $relpath.' directory does not exist', '
 						<p>
 							<em>Full path: ' . PATH_site . $relpath . '</em>
 							<br />
@@ -163,7 +162,7 @@ class Tx_Typo3mind_Utility_T3ConfCheck {
 				if (@is_file($file)) {
 					unlink($file);
 					if ($descr[2]) { $this->config_array[$descr[2]]=1; }
-					$this->message($ext, $relpath.' writable','',-1);
+					$this->message('ksmiletris', $relpath.' writable','',-1);
 				} else {
 					$severity = ($descr[1]==2 || $descr[1]==0) ? 3 : 2;
 					if ($descr[1] == 0 || $descr[1] == 2) {
@@ -171,7 +170,7 @@ class Tx_Typo3mind_Utility_T3ConfCheck {
 					} elseif ($descr[1] == -1 || $descr[1] == 1) {
 						$msg = 'The directory '.$relpath.' does not neccesarily have to be writable.';
 					}
-					$this->message($ext, $relpath .' directory not writable', '
+					$this->message('smily_bad', $relpath .' directory not writable', '
 						<p>
 							<em>Full path: ' . $file . '</em>
 							<br />
@@ -192,17 +191,17 @@ class Tx_Typo3mind_Utility_T3ConfCheck {
 	 * Setting a message in the message-log and sets the fatalError flag if error type is 3.
 	 * Modified by SchumacherFM
 	 *
-	 * @param string $head Section header
+	 * @param string $icon freemind icon
 	 * @param string $short_string A short description
 	 * @param string $long_string A long (more detailed) description
 	 * @param integer $type -1=OK sign, 0=message, 1=notification, 2=warning, 3=error
 	 * @param boolean $force Print message also in "Advanced" mode (not only in 1-2-3 mode)
 	 * @return void
 	 */
-	private function message($head, $short_string='', $long_string='', $type=0, $force=0) {
+	private function message($icon, $short_string='', $long_string='', $type=0, $force=0) {
 	
 		$this->messages[] = array(
-			'head'=>$head, 'short'=>$short_string, 'long'=>$long_string
+			'icon'=>$icon, 'short'=>$short_string, 'long'=>$long_string
 		);
 	}
 

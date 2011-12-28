@@ -65,6 +65,7 @@
 			<label index="tree.typo3.typo3_conf_vars">TYPO3_CONF_VARS</label>
 			<label index="tree.typo3.typo3_conf_vars.value">Value</label>
 			
+			<label index="tree.typo3.checkDirs">Directory Check</label>
 			
 			
 			<label index="tree.typo3.SuccessfullBackendLogins">Successfull Backend Logins</label>
