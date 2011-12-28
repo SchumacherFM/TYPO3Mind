@@ -797,7 +797,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		global $TCA;
 
 		$extensionManager = new Tx_Typo3mind_Utility_ExtensionManager();
-		
+
 
 		$ChildFirst_Extensions = $this->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
@@ -827,7 +827,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		/*<check for extension updates!>*/
 		$updateExtensions = $this->addNode($ChildFirst_Extensions,array(
 			'TEXT'=>$this->translate('tree.extensions.updates'),
-			// 'FOLDED'=>'true',
+			'FOLDED'=>'true',
 		));
 				if (is_file(PATH_site . 'typo3temp/extensions.xml.gz')) {
 					$dateFormat = $GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy'];
@@ -840,12 +840,21 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 						tx_em_Database::getExtensionCountFromRepository();
 					$this->addRichContentNode($updateExtensions,array(), $content );
 				}
-//			$showExtensionsToUpdate = $extensionManager->showExtensionsToUpdate();
-/*		echo '<pre>';
-var_dump($dateFormat);
-var_dump($timeFormat);
-var_dump($content);
-exit; */
+			$showExtensionsToUpdate = $extensionManager->showExtensionsToUpdate();
+
+			foreach($showExtensionsToUpdate as $extName=>$extData){
+						// ext icon
+						$extIcon = $this->getBEHttpHost().str_replace('../','',$extData['icon']);
+
+						$htmlContent = array(
+							'NODE' => '<img src="'.$extIcon.'"/>@#160;@#160;'.$extData['nicename'],
+							'NOTE'=> '<p>Version local: '.$extData['version_local'].'</p>'.
+								'<p>Version remote: '.$extData['version_remote'].'</p>'.
+								'<p>'.htmlspecialchars($extData['comment']).'</p>',
+						);
+						$extRCNode = $this->addRichContentNote($updateExtensions,array(), $htmlContent,array(),array(), 'BOTH' );
+
+			}/*endforeach*/
 		/*</check for extension updates!>*/
 
 

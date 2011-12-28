@@ -53,7 +53,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	protected function getMap() {
 		$this->mapXmlRoot = new SimpleXMLElement('<map></map>');
 		$this->mapXmlRoot->addAttribute('version',$this->mmVersion);
-		
+
 
 		$attributes = array(
 			'COLOR'=>'#993300',
@@ -85,7 +85,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 		$this->addNode($ThisFileInfoNode,array(
 			'TEXT'=>'Map Mode: '.$this->settings['mapMode'],
 		));
-		
+
 		return $rootNode;
 	}
 
@@ -99,7 +99,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	public function xmlentities($value = ''){
 		return trim( str_replace(array('&', '"', "'", '<', '>'), array('&amp;', '&quot;', '&apos;', '&lt;', '&gt;'), (string)$value) );
 	}
-	
+
 	/**
 	 * adds attributs to a Child
 	 *
@@ -123,7 +123,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	 * @return	nothing
 	 */
 	public function addIcon(SimpleXMLElement $xmlNode,$iconName) {
-	
+
 		$iconName = preg_replace('~\.[a-z]{3,4}~i','',$iconName);
 		if( stristr($iconName,',') !== false ){
 			$icons = t3lib_div::trimExplode(',',$iconName,1);
@@ -146,7 +146,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	 */
 	public function addNode(SimpleXMLElement $xmlNode,$attributes) {
 		$child = $xmlNode->addChild('node','');
-		
+
 		$this->addAttributes($child, $this->checkNodeAttr($attributes) );
 		return $child;
 	}
@@ -228,7 +228,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	 * @param	string $htmlContent
 	 * @param	array $addEdgeAttr
 	 * @param	array $addFontAttr
-	 * @param	string $type defined how this rich content will look... like a node or a note!
+	 * @param	string $type defined how this rich content will look... like a node or a note or both!
 	 * @return	SimpleXMLElement
 	 */
 	public function addRichContentNote(SimpleXMLElement $xml,$attributes,$htmlContent,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' ) {
@@ -242,11 +242,26 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 
 		$this->addAttributes($node,$attributes);
 
+		$realType = $type;
+		if( $type == 'BOTH' ){
+
+			$rc = $node->addChild('richcontent','');
+			$rc->addAttribute('TYPE','NOTE');
+			$html = $rc->addChild('html','');
+					$html->addChild('head',$css);
+			$body = $html->addChild('body',$htmlContent['NOTE']);
+
+			$htmlContent = $htmlContent['NODE'];
+			$realType = 'NODE';
+		}
+
 		$rc = $node->addChild('richcontent','');
-		$rc->addAttribute('TYPE',$type);
+		$rc->addAttribute('TYPE',$realType);
 		$html = $rc->addChild('html','');
 				$html->addChild('head',$css);
 		$body = $html->addChild('body',$htmlContent);
+
+
 
 		if( count($addEdgeAttr)>0 ){
 			$this->addEdge($node, $addEdgeAttr );
@@ -271,9 +286,9 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 		}
 
 		$attributes['TEXT'] = ($this->strip_tags( str_replace('"','',$attributes['TEXT']) ));
-		
+
 		if( isset($attributes['LINK']) && empty($attributes['LINK']) ){ unset($attributes['LINK']); }
-		
+
 		return $attributes;
 	}
 
