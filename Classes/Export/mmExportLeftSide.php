@@ -284,40 +284,36 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 */
 	private function BeUsersHandleRow(SimpleXMLElement $xmlNode,$row,$rowCounter){
 
-		// TODO: test user passwords, IF extension salted passwords is not loaded!
-		// http://www.stottmeister.com/blog/2009/04/14/how-to-crack-md5-passwords/
-		// http://netmd5crack.com/cgi-bin/Crack.py?InputHash=[md5string]
-
+		$colorCount = count($this->settings['colors']['BeUsersHandleRow']);
+		$BACKGROUND_COLOR = $this->settings['colors']['BeUsersHandleRow'][ $rowCounter % $colorCount ];
 		$aUserNode = $this->addNode($xmlNode,array(
 				// not possible due to the ampersand returnUrl=%2Ftypo3%2Fmod.php%3FM%3Dtools_beuser&
 				'LINK'=>$this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[be_users]['.$row['uid'].']=edit' : '',
 				// 'FOLDED'=>'true',
 				'TEXT'=>$row['username'],
-				'BACKGROUND_COLOR'=> ($rowCounter%2==0 ? '#ececec' : '#CCE0FF'),
+				'BACKGROUND_COLOR'=> $BACKGROUND_COLOR,
 			));
-	hier weiter
-/*			
-all edges and subchilds
-	adding a changing BG color ... makes 		
-		$this->addCloud($aUserNode,array('COLOR'=> ($rowCounter%2==0 ? '#ececec' : '#CCE0FF') ));
-*/
+			$this->addEdge($aUserNode,array('COLOR'=>$BACKGROUND_COLOR));
+
 			if( $row['deleted'] == 1 ) {	$this->addIcon($aUserNode,'button_cancel'); }
 			elseif( $row['disable'] == 1 ) {	$this->addIcon($aUserNode,'encrypted'); }
 			if( ($row['lastlogin']+(3600*24*9)) < time() ) {	$this->addIcon($aUserNode,'hourglass'); }
 
 			if( !empty($row['realname']) ){ 
-				$this->addNode($aUserNode,array('TEXT'=>$row['realname'])); 
+				$this->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$row['realname'])); 
 			}
 			if( !empty($row['email']) ){ 
-				$this->addNode($aUserNode,array('TEXT'=>$row['email']));	
+				$this->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$row['email']));	
 			}
 			if( !empty($row['password']) ){ 
 					/*<check for unsecure installtool password!>*/
+					// http://www.stottmeister.com/blog/2009/04/14/how-to-crack-md5-passwords/
+					// http://netmd5crack.com/cgi-bin/Crack.py?InputHash=[md5string]
 					$plainPassword = $this->getPlainTextPasswordFromMD5($row['password']);
 
 					if( $plainPassword !== false ){
 						$attrPW = array(
-							'TEXT'=>'Decrypted your unsecure password: '.$plainPassword,
+							'BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>'Decrypted your unsecure password: '.$plainPassword,
 						);
 						$attrPW['COLOR'] = '#D60035';
 						$attrPW['LINK'] = 'http://www.tmto.org/pages/passwordtools/hashcracker/';
@@ -329,8 +325,8 @@ all edges and subchilds
 					/*</check for unsecure installtool password!>*/			
 			}
 			if( isset($row['userMods']) && !empty($row['userMods']) ){
-				$nodeUserMods = $this->addNode($aUserNode,array('TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
-				$this->BeUserGroupsGetModList($nodeUserMods,'modListUser',$row['userMods']);
+				$nodeUserMods = $this->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
+				$this->BeUserGroupsGetModList($nodeUserMods,'modListUser',$row['userMods'],array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR));
 			}/*endif*/
 
 
@@ -350,7 +346,7 @@ all edges and subchilds
 			}
 
 			if( count($nodeHTML) > 0 ){
-				$this->addRichContentNote($aUserNode, array('TEXT'=>$this->translate('tree.typo3.SysLog')),
+				$this->addRichContentNote($aUserNode, array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$this->translate('tree.typo3.SysLog')),
 					'<h3>'.$this->translate('tree.typo3.SysLog').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 			}
 			/*</LOGS user logs>*/
@@ -415,9 +411,10 @@ all edges and subchilds
 	 * @param	SimpleXMLElement $xmlNode
 	 * @param	string $modListType
 	 * @param	string $groupMods
+	 * @param	array $attr
 	 * @return	SimpleXMLElement
 	 */
-	private function BeUserGroupsGetModList(SimpleXMLElement $xmlNode,$modListType,$groupMods){
+	private function BeUserGroupsGetModList(SimpleXMLElement $xmlNode,$modListType,$groupMods,$attr = array()){
 
 			$loadModules = t3lib_div::makeInstance('t3lib_loadModules');
 			$loadModules->load($GLOBALS['TBE_MODULES']);
@@ -436,7 +433,8 @@ all edges and subchilds
 						} */
 
 						$modLabel = t3lib_TCEforms::addSelectOptionsToItemArray_makeModuleData($theMod);
-						$this->addNode($xmlNode,array('TEXT'=>$modLabel));
+						$attri = array_merge(array('TEXT'=>$modLabel),$attr);
+						$this->addNode($xmlNode,$attri);
 					}/*endif isset $groupModsExploded*/
 				}
 			}/*endif is array*/
@@ -453,7 +451,7 @@ all edges and subchilds
 	private function getTYPONodeConfVars(SimpleXMLElement $xmlNode) {
 
 		$t3ConfVarNode = $this->addNode($xmlNode,array(
-			'FOLDED'=>'false',
+			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3.typo3_conf_vars'),
 		));
 		$tcv = $GLOBALS['TYPO3_CONF_VARS'];
@@ -517,25 +515,10 @@ all edges and subchilds
 					foreach($v as $extName=>$extConf){
 
 						$extConf = (is_array($extConf) || stristr($extConf,'}') === false) ? $extConf : unserialize($extConf);
-				
-if( $confName=='fileExtensionss' ){
-	echo '<pre>'; var_dump($extName); var_dump($extConf); exit;
-}	
+
 						$htmlContent = array();
 						if( is_array($extConf) ){
 							$htmlContent[] = '<pre>'.htmlspecialchars(var_export($extConf,1)).'</pre>';
-							/*
-							foreach($extConf as $eck=>$ecv){
-
-								if( is_array($ecv) ){
-									foreach($ecv as $eck2=>$ecv2){
-										
-										$htmlContent[] = $eck2.' = '.htmlspecialchars($ecv2);
-								}
-								}else{
-									$htmlContent[] = $eck.' = '.htmlspecialchars($ecv);
-								}
-							}*endforeach*/
 						}else{
 							$htmlContent[] = htmlspecialchars($extConf);
 						}
@@ -548,7 +531,7 @@ if( $confName=='fileExtensionss' ){
 
 
 					} /*endforeach*/
-					// $v = str_replace(array('<','>'),array('gt','lt'),var_export($v,1));
+					
 				}else{
 					$htmlContent = array();
 					$attr = array(
@@ -590,7 +573,21 @@ if( $confName=='fileExtensionss' ){
 
 	}/*</getTYPONodeConfVars>*/
 
+	/**
+	 * checks the directories
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @return	SimpleXMLElement
+	 */
+	private function getTYPONodeCheckDirs(SimpleXMLElement $xmlNode) {
 
+		$checkDirNode = $this->addNode($xmlNode,array(
+			// 'FOLDED'=>'true',
+			'TEXT'=>$this->translate('tree.typo3.checkDirs'),
+		));
+ 
+		
+	}/*</getTYPONodeCheckDirs>*/
 
 	/**
 	 * gets some T3 specific informations
@@ -617,10 +614,9 @@ if( $confName=='fileExtensionss' ){
 
 		$this->getTYPONodeConfVars($MainNode);
 
-		$this->addNode($MainNode,array(
-			'FOLDED'=>'false',
-			'TEXT'=>'Directories Check from T3ConfCheck.php::checkDirs()',
-		));
+		$this->getTYPONodeCheckDirs($MainNode);
+		
+
 
 
 	}/*endmethod*/

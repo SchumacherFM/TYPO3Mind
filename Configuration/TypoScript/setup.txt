@@ -54,5 +54,14 @@ module.tx_typo3mind {
 		# TER = TYPO3 Extension Repository URL
 		TerURL2Ext = http://typo3.org/extensions/repository/view/###extname###/current/
 		
+		colors {
+			# function name, color index for % count(settings->BeUsersHandleRow), as many colors as you like
+			BeUsersHandleRow {
+				0 = #ffcc99
+				1 = #ccccff
+				2 = #ececec
+			}
+		}
+		
 	}
 }
