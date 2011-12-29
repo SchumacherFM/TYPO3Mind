@@ -55,6 +55,13 @@ module.tx_typo3mind {
 
 		TYPO3SecurityGuideURL = http://typo3.org/documentation/document-library/extension-manuals/doc_guide_security/current/
 		
+		# as many as you like! if none is defined, then no rss feed will be added to the mind map.
+		# must be RSS 2.0
+		TYPO3SecurityRssFeeds {
+			0 = http://news.typo3.org/news/teams/security/rss.xml
+			1 = http://news.typo3.org/rss.xml
+		}
+		
 		design {
 			# function name, color index for % count(settings->BeUsersHandleRow), as many colors as you like
 			# if not defined then there will be no color

@@ -340,4 +340,73 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		
 	}/*</getDesignEdgeWidth>*/
 	
+	/**
+	 * if defined in the settings TS it returned the edge width
+	 *
+	 * @param SimpleXMLElement $xmlNode
+	 * @return string
+	 */
+	protected function RssFeeds2Node(SimpleXMLElement $xmlNode){
+		
+		if( count($this->settings['TYPO3SecurityRssFeeds'])==0 ){
+			return false;
+		}
+		
+		foreach($this->settings['TYPO3SecurityRssFeeds'] as $index=>$feedURL){
+		
+			$rssContent = simplexml_load_string($this->getURLcache($feedURL));
+			if( $rssContent ){
+			
+				$rssHeadNode = $this->addNode($xmlNode,array('FOLDED'=>'true','TEXT'=>$rssContent->channel->title,'LINK'=>$rssContent->channel->link));
+				foreach($rssContent->channel->item as $index=>$item){
+				
+					$htmlContent = array();
+					$htmlContent[] = '<p>'.$item->author.'</p>';
+					$htmlContent[] = '<p>'.$item->pubDate.'</p>';
+					$htmlContent[] = '<p>'.$item->description.'</p>';
+
+					$rssItemNode = $this->addRichContentNote($rssHeadNode,array('TEXT'=>$item->title,'LINK'=>$item->link),implode('',$htmlContent));
+				
+				}/*endforeach*/
+			}/*endif $rssContent*/
+		}/*endforeach*/
+		return true;
+	}/*</RssFeeds2Node>*/
+	
+	/**
+	 * gets the enc key with a specific length
+	 *
+	 * @param integer $length
+	 * @return string
+	 */
+	protected function getencryptionKey($length){
+		$encK = str_repeat('X3Pk{2b#+eG5d}vi\?47RJ'.$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'],$length);
+		return substr($encK,0,$length);
+	}
+	/**
+	 * fetches a URL and saves it in a cache for a lifetime of 3 days
+	 *
+	 * @param string $url
+	 * @return string
+	 */
+	protected function getURLcache($url){
+	
+		$urlContent = false;
+		$cacheFile = PATH_site.'typo3temp/t3m_'.md5($_SERVER['HTTP_HOST'] . $url);
+		if( !file_exists($cacheFile) || filemtime($cacheFile) < (time()-(3600*24*3)) ){
+			$urlContent = trim(t3lib_div::getURL($url));
+			if( !empty($urlContent) ){
+				$encK = $this->getencryptionKey(strlen($urlContent));
+				/* echo "Wrote Cache $cacheFile<br>\n"; */
+				t3lib_div::writeFile($cacheFile,($urlContent ^ $encK) ); /* hihihi ;-) */
+				
+			}else{ return false; }
+		}else{
+			/* echo "Read Cache $cacheFile<br>\n"; */
+			$urlContent = implode('',file($cacheFile));
+			$encK = $this->getencryptionKey(strlen($urlContent));
+			$urlContent = ($urlContent ^ $encK);
+		}
+		return $urlContent;
+	}
 }

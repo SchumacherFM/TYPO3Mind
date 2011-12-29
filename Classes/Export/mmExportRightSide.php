@@ -451,7 +451,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				$subT3mindCurrent = NULL;
 				if( is_array($t3mindCurrent) && $t3mindCurrent['recursive']==1 ){ // is always recursive!
 					$subT3mindCurrent = $t3mindCurrent;
-					/* todo: implement here that the persistant manager will NOT save set temp settet cloud color */
+
 					if( is_array($t3mind) /*from the recursion*/ ){
 		$subT3mindCurrent['cloud_color'] = empty($alternatingColors['cloud']) ? $subT3mindCurrent['cloud_color'] : $alternatingColors['cloud'];
 		$subT3mindCurrent['edge_color'] = empty($alternatingColors['edge']) ? $subT3mindCurrent['edge_color'] : $alternatingColors['edge'];
@@ -463,7 +463,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 			}
 			/* IF we have a sysfolder .. then list it's content */
-			elseif( $record['doktype'] == 254 ){
+			if( $record['doktype'] == 254 ){
 				$this->dbList->getTRsysFolderContent($pageParent,$uid,$depth,$t3mindCurrent);
 			}
 		} /*endforeach*/

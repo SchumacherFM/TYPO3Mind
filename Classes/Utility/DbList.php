@@ -126,10 +126,16 @@ class Tx_Typo3mind_Utility_DbList {
 		GLOBAL $TCA;
 		$this->setPID($uid);
 		$this->generateList();
-//		$this->tablesInSysFolder
-
-
-// todo hier geht es weiter ... LINKS einbauen, icons, etc TCA hide table auswerten ...
+/*
+		if( $uid == 141 ){
+			echo '<pre>'; 
+			var_dump($t3mind); 
+			var_dump($depth); 
+			var_dump($uid); 
+			exit;
+		}
+*/
+		// todo hier geht es weiter ... LINKS einbauen, icons, etc TCA hide table auswerten ...
 		foreach($this->tablesInSysFolder as $tableName=>$values){
 	
 			$attr = array();
