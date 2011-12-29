@@ -687,7 +687,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'TEXT'=>$this->translate('tree.security'),
 		), 'typo3conf/ext/typo3mind/Resources/Public/Icons/System-Security-Warning-icon.png', 'height="16"' );
 
-		$this->addNode($secMainNode,array('TEXT'=>'TYPO3 Security Guide ','LINK'=>'http://typo3.org/documentation/document-library/extension-manuals/doc_guide_security/current/'));
+		$this->addNode($secMainNode,array('TEXT'=>'TYPO3 Security Guide ','LINK'=>$this->settings['TYPO3SecurityGuideURL']));
 
 		
 		$rss = 'http://news.typo3.org/news/teams/security/rss.xml';
