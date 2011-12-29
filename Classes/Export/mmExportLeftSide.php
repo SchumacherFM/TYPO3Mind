@@ -242,7 +242,6 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 */
 	private function getTYPONodeBackendUsers(SimpleXMLElement $xmlNode) {
 
-		// backend users groups
 
 		$UsersNode = $this->addImgNode($xmlNode,array(
 			'LINK'=>$this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/mod.php?M=tools_beuser' : '',
@@ -267,7 +266,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		/*</show all admins>*/
 
 
-
+		// TODO: to which group belongs a user?
 		/*<show all non admins>*/
 		$UserUserNode = $this->addNode($UsersNode,array(
 			'FOLDED'=>'true',
@@ -429,6 +428,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		if( !empty($tables) ){
 			$nodeTables = $this->addNode($xmlNode,array_merge($attr,array('TEXT'=>$this->translate($translateKey))));
 			$exploded = t3lib_div::trimExplode(',', $tables ,1 );
+			sort($exploded);
 			foreach($exploded as $k=>$table){
 				$this->addNode($nodeTables,array_merge($attr,array('TEXT'=>$this->SYSLANG->sL( $TCA[$table]['ctrl']['title'] )) ));
 			}
@@ -455,6 +455,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			$groupModsExploded = Tx_Typo3mind_Utility_Helpers::trimExplodeVK(',', $groupMods );
 
 			if (is_array($modList)) {
+				sort($modList);
 				foreach ($modList as $theMod) {
 					if( isset($groupModsExploded[$theMod]) ){
 						/*	// Icon:	maybe one day ... we'll add an icon
