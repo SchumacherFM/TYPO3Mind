@@ -66,7 +66,7 @@ module.tx_typo3mind {
 		# tableName = columns as csv
 		# only column names [a-z0-9_]i are supported, no other crap
 		SysFolderContentListAdditionalColumns {
-			tt_news = datetime,short,category
+			tt_news = datetime,short,bodytext
 			tt_products = subtitle,itemnumber
 		}
 		
