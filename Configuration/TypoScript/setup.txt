@@ -111,7 +111,7 @@ module.tx_typo3mind {
 				# nodePositions = right,left
 
 			}
-
+ 
 			getTYPONodeCheckDirs {
 				BACKGROUND_COLOR {
 		#			0 = #ffcc99

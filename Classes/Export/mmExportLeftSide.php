@@ -73,7 +73,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 */
 	public function __construct(array $settings,Tx_Typo3mind_Domain_Repository_T3mindRepository $t3MindRepository) {
 		parent::__construct($settings,$t3MindRepository);
-
+ 
 		$this->SYSLANG = t3lib_div::makeInstance('language');
 		$this->SYSLANG->init('default');	// initalize language-object with actual language
 		$this->categories = array(

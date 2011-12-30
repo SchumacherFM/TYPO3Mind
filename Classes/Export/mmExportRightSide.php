@@ -55,7 +55,6 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	protected $dbList;
 
 
-
 	/**
 	 * icons by doktype
 	 * @var array

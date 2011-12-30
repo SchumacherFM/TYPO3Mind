@@ -206,7 +206,7 @@ class Tx_Typo3mind_Utility_DbList {
 			t3lib_div::loadTCA($tableName);
 
 			// for later ... Don't show table if hidden by TCA ctrl section
-			//		$hideTable = $GLOBALS['TCA'][$tableName]['ctrl']['hideTable'] ? TRUE : FALSE;
+			// $hideTable = $GLOBALS['TCA'][$tableName]['ctrl']['hideTable'] ? TRUE : FALSE;
 
 			/* Setting fields to select: */
 			$fields = $this->makeFieldList($value,$tableName);

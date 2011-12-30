@@ -457,8 +457,6 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 		$fileName = preg_replace('~\[([a-z_\-]+)\]~ie','date(\'\\1\')',$fileName);
 		$fileName = empty($fileName) ? 'TYPO3Mind_'.mt_rand().'.mm' : $fileName;
 
-
-
 		$xml = str_replace(
 			array('|lt|',	'|gt|',	'@#',	'&amp;gt;',	'&amp;lt;',	'&amp;amp;'),
 			array('<',		'>',	'&#',	'&gt;',		'&lt;',		'&amp;'),
