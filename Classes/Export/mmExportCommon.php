@@ -510,23 +510,24 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 			$bodyLength = isset($this->settings['SysFolderContentListTextMaxLength']) ? (int)$this->settings['SysFolderContentListTextMaxLength'] : 250;
 
 			foreach($row as $colName=>$colVal){
-
-			$label = $this->getNoteTableRowLabel($tableName,$colName,$colName);
-			$tcaEval = isset($TCA[$tableName]['columns'][$colName]) ? $TCA[$tableName]['columns'][$colName]['config']['eval'] : '';
-			$tcaType = isset($TCA[$tableName]['columns'][$colName]) ? strtolower($TCA[$tableName]['columns'][$colName]['config']['type']) : 'text';
+				if( $colVal <> '' ){
+					$label = $this->getNoteTableRowLabel($tableName,$colName,$colName);
+					$tcaEval = isset($TCA[$tableName]['columns'][$colName]) ? $TCA[$tableName]['columns'][$colName]['config']['eval'] : '';
+					$tcaType = isset($TCA[$tableName]['columns'][$colName]) ? strtolower($TCA[$tableName]['columns'][$colName]['config']['type']) : 'text';
+					
 				
-			
-				if( stristr($tcaEval,'date')!==false ){ $colVal = $this->getDateTime($colVal); }
-				elseif( $tcaType == 'text' || $tcaType == 'input' ){
-					/* we can't relay on the user, that all HTML is XML valid ... */
-					$colVal = strip_tags($colVal);
-					if( strlen($colVal) > $bodyLength ){ $colVal = preg_replace('/^(.{'.$bodyLength.'}\S*).*$/s','\\1 ...',$colVal); }
-					$colVal = nl2br($colVal);
-				}
-				 
-				$htmlContent[] = $this->getNoteTableRow($label,$colVal );
-
-			}
+					if( stristr($tcaEval,'date')!==false ){ $colVal = $this->getDateTime($colVal); }
+					elseif( $tcaType == 'text' || $tcaType == 'input' ){
+						/* we can't relay on the user, that all HTML is XML valid ... */
+						$colVal = strip_tags($colVal);
+						if( strlen($colVal) > $bodyLength ){ $colVal = preg_replace('/^(.{'.$bodyLength.'}\S*).*$/s','\\1 ...',$colVal); }
+						$colVal = preg_replace('~[\r\n]+~',"\n",$colVal);
+						$colVal = nl2br($colVal);
+					}
+					 
+					$htmlContent[] = $this->getNoteTableRow($label,$colVal );
+				}/*endif*/
+			}/*endforeach*/
 
 		}/*endif $tableName*/
 
