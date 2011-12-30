@@ -334,7 +334,6 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			if( $record['hidden'] == 1 && $this->mapMode['befe'] == 'frontend' ){
 				unset($attr['LINK']);
 			}
-			
 			// isRecursive, the color of the node name, not the bg color.
 			$attr = $this->setAttr($t3mindCurrent,'font_color',$attr,'COLOR');
 
@@ -384,7 +383,11 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			} else {
 				$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
 			}
-
+if($uid==22111){
+echo '<pre>';
+var_dump($attr);
+exit;
+}
 			if( is_array($t3mindCurrent) ){
 
 				/*<add cloud>*/
