@@ -417,6 +417,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @return string
 	 */
 	public function getDateTime($unixTimeStamp){
+		$unixTimeStamp = (int)$unixTimeStamp;
 		$dateFormat = $GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy'];
 		$timeFormat = $GLOBALS['TYPO3_CONF_VARS']['SYS']['hhmm'];
 		return date($dateFormat . ', ' . $timeFormat,$unixTimeStamp);
@@ -426,18 +427,43 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * gets the note content from a DB row
 	 *
 	 * @param array $row from the database table
+	 * @param string $tableName if defined then ALL rows specified in the TCA will be printed...
 	 * @return	void
 	 */
-	public function getNoteContentFromRow($row){
+	public function getNoteContentFromRow($row,$tableName=''){
+		global $TCA;
 	
-		$htmlContent = array();
-		$htmlContent[] = '<p>UID: '.$row['uid'].'</p>';
-		$htmlContent[] = '<p>Created: '.$this->getDateTime($row['crdate']).'</p>';
-		$htmlContent[] = '<p>Created by: '.$this->getUserById($row['cruser_id']).'</p>';
-		$htmlContent[] = '<p>Last update: '.$this->getDateTime($row['tstamp']).'</p>';
-		$htmlContent[] = '<p>Language ID: '.$row['sys_language_uid'].'</p>';
-		if( isset($row['starttime']) ){ $htmlContent[] = '<p>Starttime: '.$this->getDateTime($row['starttime']).'</p>'; }
-		if( isset($row['endtime']) ){ $htmlContent[] = '<p>Endtime: '.$this->getDateTime($row['endtime']).'</p>'; }
+		$htmlContent = array('<table>');
+		$htmlContent[] = '<tr><td>UID</td><td>'.$row['uid'].'</td></tr>'; unset($row['uid']);
+		$htmlContent[] = '<tr><td>Created</td><td>'.$this->getDateTime($row['crdate']).'</td></tr>'; unset($row['crdate']);
+		$htmlContent[] = '<tr><td>Created by</td><td>'.$this->getUserById($row['cruser_id']).'</td></tr>'; unset($row['cruser_id']);
+		$htmlContent[] = '<tr><td>Last update</td><td>'.$this->getDateTime($row['tstamp']).'</td></tr>'; unset($row['tstamp']);
+		
+		if( isset($row['sys_language_uid']) ){ 
+			$htmlContent[] = '<tr><td>Language ID</td><td>'.$row['sys_language_uid'].'</td></tr>';  unset($row['sys_language_uid']); 
+		}
+		
+		if( isset($row['starttime']) && $row['starttime'] > 0 ){ 
+			$htmlContent[] = '<tr><td>Starttime</td><td>'.$this->getDateTime($row['starttime']).'</td></tr>';  unset($row['starttime']);
+		}
+		if( isset($row['endtime']) && $row['endtime'] > 0 ){ 
+			$htmlContent[] = '<tr><td>Endtime</td><td>'.$this->getDateTime($row['endtime']).'</td></tr>';  unset($row['endtime']);
+		}
+		
+		/* maybe not needed .. we have to defined via TS if you want to list more ... */
+		if( $tableName <> '' && count($row)>0 ){
+			foreach($row as $colName=>$colVal){
+			
+echo '<pre>';
+var_dump($TCA[$tableName]['columns'][$colName]['label']);
+die('</pre>');
+			
+		//		$col = $this->SYSLANG->sL( $TCA[$tableName]['columns'][$colName]['label'] )
+			}
+		
+		}/*endif $tableName*/
+		
+		$htmlContent[] = '</table>';
 		return implode('',$htmlContent);
 	}
 	

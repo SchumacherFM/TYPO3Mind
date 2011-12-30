@@ -160,7 +160,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 * @return	nothing
 	 */
 	public function getUserById($uid) {
-		return isset($this->cruser_id[$uid]) ? $this->cruser_id[$uid]['user'] : $this->translate('UserNotFound');
+		return isset($this->cruser_id[$uid]) ? $this->cruser_id[$uid]['user'] : $this->translate('UserNotFound').' ('.$uid.')';
 	}
 	/**
 	 * sets the t3mind array, keys are the pageUid, for performance reasons

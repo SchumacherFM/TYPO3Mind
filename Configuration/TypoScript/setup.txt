@@ -62,6 +62,13 @@ module.tx_typo3mind {
 			1 = http://news.typo3.org/rss.xml
 		}
 		
+		# for each record in a SysFolder you can define here which additional columsn can be listet.
+		# tableName = columns as csv
+		SysFolderContentListColumns {
+			tt_news = datetime,short,category
+			tt_products = subtitle,itemnumber
+		}
+		
 		design {
 			# function name, color index for % count(settings->BeUsersHandleRow), as many colors as you like
 			# if not defined then there will be no color

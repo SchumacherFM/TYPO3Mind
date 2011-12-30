@@ -152,11 +152,7 @@ class Tx_Typo3mind_Utility_DbList {
 			/*<add font>*/
 			$this->parentObject->setNodeFont($tableNode,$t3mind);
 			/*</add font>*/
-if( $uid==4 ){
-echo '<pre>';
-var_dump($values);
-die('</pre>');			
-}			
+	
 			/*<list the entries in a sysfolder node>*/
 			foreach($values as $k=>$row){
 				
@@ -167,9 +163,6 @@ die('</pre>');
 				if( $this->parentObject->mapMode['isbe'] ) {
 					$attr['LINK'] = $this->parentObject->getBEHttpHost().'typo3/alt_doc.php?edit['.$tableName.']['.$row['uid'].']=edit';
 				}
-
-				
-			//	$rowNode = $this->parentObject->addNode($tableNode,$attr);
 
 				$htmlContent = $this->parentObject->getNoteContentFromRow($row);
 				$rowNode = $this->parentObject->addRichContentNote($tableNode,$attr,$htmlContent);
