@@ -129,7 +129,7 @@ class Tx_Typo3mind_Utility_DbList {
 
 		// todo hier geht es weiter ... LINKS einbauen, icons, etc TCA hide table auswerten ...
 		foreach($this->tablesInSysFolder as $tableName=>$values){
-	
+		
 			$attr = array();
 			$llangTitle = $GLOBALS['LANG']->sL( $TCA[$tableName]['ctrl']['title'] );
 			$attr['TEXT'] = ( !empty($llangTitle) ? $llangTitle : $tableName ) . ' (C:'.$values['TotalItems'].')';
@@ -149,20 +149,18 @@ class Tx_Typo3mind_Utility_DbList {
 			$icon = $TCA[$tableName]['ctrl']['iconfile'];
 			$tableNode = $this->parentObject->addImgNode($xmlNode,$attr,$icon);
 			
-/*
-addImgNote(SimpleXMLElement $xmlNode, $attributes, $imgRelPath, $imgHTML='', 
-		$noteHTML,	$addEdgeAttr = array(),	$addFontAttr = array())
-*/			
-			
-			
 			/*<add font>*/
 			$this->parentObject->setNodeFont($tableNode,$t3mind);
 			/*</add font>*/
-			
+if( $uid==4 ){
+echo '<pre>';
+var_dump($values);
+die('</pre>');			
+}			
 			/*<list the entries in a sysfolder node>*/
 			foreach($values as $k=>$row){
 				
-				$attr = array('TEXT'=>$row['titInt0'].' (ID:'.$row['uid'].')');
+				$attr = array('TEXT'=>$row['titInt0'] /* we'll have it in the note: .' (ID:'.$row['uid'].')' */ );
 				$attr = $this->parentObject->setAttr($t3mind,'font_color',$attr,'COLOR');
 				$attr = $this->parentObject->setAttr($t3mind,'node_color',$attr,'BACKGROUND_COLOR');
 				
@@ -171,8 +169,12 @@ addImgNote(SimpleXMLElement $xmlNode, $attributes, $imgRelPath, $imgHTML='',
 				}
 
 				
-				$rowNode = $this->parentObject->addNode($tableNode,$attr);
+			//	$rowNode = $this->parentObject->addNode($tableNode,$attr);
+
+				$htmlContent = $this->parentObject->getNoteContentFromRow($row);
+				$rowNode = $this->parentObject->addRichContentNote($tableNode,$attr,$htmlContent);
 				
+
 				if( isset($row['deleted']) && $row['deleted'] == 1 ){
 					$this->parentObject->addIcon($rowNode,'button_cancel');
 				}
@@ -186,7 +188,6 @@ addImgNote(SimpleXMLElement $xmlNode, $attributes, $imgRelPath, $imgHTML='',
 			/*</list the entries in a sysfolder node>*/
 
 		}/*endforeach*/
-
 
 	}/*</getTRsysFolderContent>*/
 
@@ -216,15 +217,9 @@ addImgNote(SimpleXMLElement $xmlNode, $attributes, $imgRelPath, $imgHTML='',
 
 			// Setting fields to select:
 			$fields = $this->makeFieldList($value,$tableName);
-/*
- echo '<pre>';
- var_dump( $value['ctrl']['enablecolumns'] );
- //var_dump($this->setFields);
- exit; */
 
 				$orderBy = ($value['ctrl']['sortby']) ? 'ORDER BY '.$value['ctrl']['sortby'] : ( isset($value['ctrl']['default_sortby']) ? $value['ctrl']['default_sortby'] : 'ORDER BY uid desc' );
 
-//				$sql = 'select '..' from '.$tableName.' where '.$this->pidSelect.' '.$orderBy.' limit ';
 				$queryParts = array(
 					'SELECT' => implode(',',$fields),
 					'FROM' => $tableName,

@@ -74,7 +74,13 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	protected $RGBinterpolate;
 
-
+	/**
+	 * assoc array containing the ID and the name of the user
+	 * @var array
+	*/
+	public $cruser_id;
+	
+	
 	/**
 	 * __constructor
 	 *
@@ -132,11 +138,30 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 		$this->dokTypeIcon[255] = 'typo3/sysext/t3skin/images/icons/apps/pagetree-page-recycler.png';
 
-
+		$this->setCruserId();
 
 	} /* endconstruct */
 
 
+	/**
+	 * sets the CruserId
+	 *
+	 * @param	none
+	 * @return	nothing
+	 */
+	private function setCruserId() {
+		$this->cruser_id = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('uid,concat(realName,\'(\',username,\')\') as user','be_users','','','','','uid');
+	}
+	
+	/**
+	 * gets the User by Id
+	 *
+	 * @param	integer $uid
+	 * @return	nothing
+	 */
+	public function getUserById($uid) {
+		return isset($this->cruser_id[$uid]) ? $this->cruser_id[$uid]['user'] : $this->translate('UserNotFound');
+	}
 	/**
 	 * sets the t3mind array, keys are the pageUid, for performance reasons
 	 *

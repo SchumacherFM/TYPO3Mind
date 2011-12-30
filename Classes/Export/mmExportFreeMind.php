@@ -238,7 +238,6 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 
 		$node = $xml->addChild('node','');
 		$attributes = $this->checkNodeAttr($attributes);
-		if( isset($attributes['TEXT']) ){ unset($attributes['TEXT']); }
 		$this->addAttributes($node,$attributes);
 
 		$realType = $type;
@@ -390,18 +389,18 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 
 		$iconLocal = str_replace('../','',$imgRelPath);
 
+		$img = '';
 		if( is_file(PATH_site.$iconLocal)  ){
-
-			$htmlContent = array(
-				'NODE'=>'<img '.$imgHTML.' src="'.$this->getBEHttpHost().$iconLocal.'"/>'.
-						'@#160;@#160;'.htmlspecialchars( $attributes['TEXT']),
-				'NOTE'=>$noteHTML,
-			);
-			$childNode = $this->addRichContentNote($xmlNode, $attributes ,$htmlContent,$addEdgeAttr,$addFontAttr,'BOTH');
-
-		}else {
-			$childNode = $this->addNode($xmlNode,$attributes);
+			$img = '<img '.$imgHTML.' src="'.$this->getBEHttpHost().$iconLocal.'"/>@#160;@#160;';
 		}
+		
+		$htmlContent = array(
+			'NODE' => $img . htmlspecialchars( $attributes['TEXT']),
+			'NOTE' => $noteHTML,
+		);
+		
+		$childNode = $this->addRichContentNote($xmlNode, $attributes ,$htmlContent,$addEdgeAttr,$addFontAttr,'BOTH');
+
 
 		return $childNode;
 	}

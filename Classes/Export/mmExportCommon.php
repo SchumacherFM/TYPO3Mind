@@ -409,4 +409,36 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		}
 		return $urlContent;
 	}
+	
+	/**
+	 * returns formated date, used the global T3 config
+	 *
+	 * @param integer $unixTimeStamp
+	 * @return string
+	 */
+	public function getDateTime($unixTimeStamp){
+		$dateFormat = $GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy'];
+		$timeFormat = $GLOBALS['TYPO3_CONF_VARS']['SYS']['hhmm'];
+		return date($dateFormat . ', ' . $timeFormat,$unixTimeStamp);
+	}
+	
+	/**
+	 * gets the note content from a DB row
+	 *
+	 * @param array $row from the database table
+	 * @return	void
+	 */
+	public function getNoteContentFromRow($row){
+	
+		$htmlContent = array();
+		$htmlContent[] = '<p>UID: '.$row['uid'].'</p>';
+		$htmlContent[] = '<p>Created: '.$this->getDateTime($row['crdate']).'</p>';
+		$htmlContent[] = '<p>Created by: '.$this->getUserById($row['cruser_id']).'</p>';
+		$htmlContent[] = '<p>Last update: '.$this->getDateTime($row['tstamp']).'</p>';
+		$htmlContent[] = '<p>Language ID: '.$row['sys_language_uid'].'</p>';
+		if( isset($row['starttime']) ){ $htmlContent[] = '<p>Starttime: '.$this->getDateTime($row['starttime']).'</p>'; }
+		if( isset($row['endtime']) ){ $htmlContent[] = '<p>Endtime: '.$this->getDateTime($row['endtime']).'</p>'; }
+		return implode('',$htmlContent);
+	}
+	
 }
