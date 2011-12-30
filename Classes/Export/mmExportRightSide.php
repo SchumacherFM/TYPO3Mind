@@ -149,6 +149,8 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			unset($v['l10n_parent']);
 			unset($v['l10n_diffsource']);
 			$v['node_folded'] = ($v['node_folded']==1 ? 'true' : 'false'); /*must be a string*/
+			$v['font_bold'] = ($v['font_bold']==1 ? 'true' : 'false'); /*must be a string*/
+			$v['font_italic'] = ($v['font_italic']==1 ? 'true' : 'false'); /*must be a string*/
 			$this->t3mind[ $v['page_uid'] ] = $v;
 		}
 		unset($t3MindRepositoryFindAll);
@@ -332,7 +334,8 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			if( $record['hidden'] == 1 && $this->mapMode['befe'] == 'frontend' ){
 				unset($attr['LINK']);
 			}
-			// isRecursive
+			
+			// isRecursive, the color of the node name, not the bg color.
 			$attr = $this->setAttr($t3mindCurrent,'font_color',$attr,'COLOR');
 
 			/*
@@ -359,10 +362,12 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			if( isset($childUids['subrow']) ){ 
 				$attr = $this->setAttr($t3mindCurrent,'node_folded',$attr,'FOLDED');
 			}
-			if( isset($t3mindCurrent['node_style']) && $t3mindCurrent['node_style'] <> '' ){ $attr['STYLE'] = $t3mindCurrent['node_style']; }
+			$attr = $this->setAttr($t3mindCurrent,'node_style',$attr,'STYLE');
 
 			/*first 3 levels are folded */
-			if( $this->settings['nodeAutoFold'] == 1 && $depth < 3 && isset($childUids['subrow']) ){ $attr['FOLDED'] = 'true'; }
+			if( $this->settings['nodeAutoFold'] == 1 && $depth < 3 && isset($childUids['subrow']) ){ 
+				$attr['FOLDED'] = 'true'; 
+			}
 
 
 			// if user assigns multiple images then use: addImagesNode
@@ -400,9 +405,9 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				/*<add Edge>*/
 				$subNodeAttr = array();
 				// array('#FFFF00','STYLE'=>'sharp_bezier', 'WIDTH'=>'thin')
-				if( $t3mindCurrent['edge_color'] <> '' ){ $subNodeAttr['COLOR'] = $t3mindCurrent['edge_color']; }
-				if( $t3mindCurrent['edge_style'] <> '' ){ $subNodeAttr['STYLE'] = $t3mindCurrent['edge_style']; }
-				if( $t3mindCurrent['edge_width'] <> '' ){ $subNodeAttr['WIDTH'] = $t3mindCurrent['edge_width']; }
+				$subNodeAttr = $this->setAttr($t3mindCurrent,'edge_color',$subNodeAttr,'COLOR');
+				$subNodeAttr = $this->setAttr($t3mindCurrent,'edge_style',$subNodeAttr,'STYLE');
+				$subNodeAttr = $this->setAttr($t3mindCurrent,'edge_width',$subNodeAttr,'WIDTH');
 
 				if($isRecursive &&  !empty($subNodeAttr['COLOR']) && !empty($alternatingColors['edge']) ){
 					$subNodeAttr['COLOR'] = $alternatingColors['edge'] = $this->RGBinterpolate->interpolate( $alternatingColors['edge'], '#ffffff', 0.075 );
@@ -417,10 +422,10 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 				/*<add font>*/
 				$subNodeAttr = array();
-				if( $t3mindCurrent['font_face'] <> '' ){ $subNodeAttr['NAME'] = $t3mindCurrent['font_face']; }
-				if( $t3mindCurrent['font_size'] > 0 ){ $subNodeAttr['SIZE'] = $t3mindCurrent['font_size']; }
-				if( $t3mindCurrent['font_bold'] == 1 ){ $subNodeAttr['BOLD'] = 'true'; }
-				if( $t3mindCurrent['font_italic'] == 1 ){ $subNodeAttr['ITALIC'] = 'true'; }
+				$subNodeAttr = $this->setAttr($t3mindCurrent,'font_face',$subNodeAttr,'NAME');
+				$subNodeAttr = $this->setAttr($t3mindCurrent,'font_size',$subNodeAttr,'SIZE');
+				$subNodeAttr = $this->setAttr($t3mindCurrent,'font_bold',$subNodeAttr,'BOLD');
+				$subNodeAttr = $this->setAttr($t3mindCurrent,'font_italic',$subNodeAttr,'ITALIC');
 
 				if($isRecursive &&  !empty($subNodeAttr['COLOR']) && !empty($alternatingColors['font']) ){
 					$subNodeAttr['COLOR'] = $alternatingColors['font'] = $this->RGBinterpolate->interpolate( $alternatingColors['font'], '#ffffff', 0.075 );
