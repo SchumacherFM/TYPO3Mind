@@ -426,37 +426,53 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	/**
 	 * gets the note content from a DB row
 	 *
-	 * @param array $row from the database table
 	 * @param string $tableName if defined then ALL rows specified in the TCA will be printed...
+	 * @param array $row from the database table
 	 * @return	void
 	 */
-	public function getNoteContentFromRow($row,$tableName=''){
+	public function getNoteContentFromRow($tableName,$row){
 		global $TCA;
-	
+/* echo '<pre>';
+var_dump($TCA['tt_news']['columns'] );
+die('</pre>');	*/
 		$htmlContent = array('<table>');
-		$htmlContent[] = '<tr><td>UID</td><td>'.$row['uid'].'</td></tr>'; unset($row['uid']);
-		$htmlContent[] = '<tr><td>Created</td><td>'.$this->getDateTime($row['crdate']).'</td></tr>'; unset($row['crdate']);
-		$htmlContent[] = '<tr><td>Created by</td><td>'.$this->getUserById($row['cruser_id']).'</td></tr>'; unset($row['cruser_id']);
-		$htmlContent[] = '<tr><td>Last update</td><td>'.$this->getDateTime($row['tstamp']).'</td></tr>'; unset($row['tstamp']);
+		$htmlContent[] = $this->getNoteTableRow('UID',$row['uid']); unset($row['uid']);
+		
+		$col = 'crdate';
+		$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : 'Created';
+		$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
+		
+		$col = 'cruser_id';
+		$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : 'Created by';
+		$htmlContent[] = $this->getNoteTableRow($label,$this->getUserById($row[$col]) ); unset($row[$col]);
+
+		$col = 'tstamp';
+		$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : 'Last update';
+		$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
+ 
 		
 		if( isset($row['sys_language_uid']) ){ 
-			$htmlContent[] = '<tr><td>Language ID</td><td>'.$row['sys_language_uid'].'</td></tr>';  unset($row['sys_language_uid']); 
+			$col = 'sys_language_uid';
+			$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : 'Language ID';
+			$htmlContent[] = $this->getNoteTableRow($label,$row[$col] ); unset($row[$col]);
 		}
 		
 		if( isset($row['starttime']) && $row['starttime'] > 0 ){ 
-			$htmlContent[] = '<tr><td>Starttime</td><td>'.$this->getDateTime($row['starttime']).'</td></tr>';  unset($row['starttime']);
+			$col = 'starttime';
+			$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : 'Starttime';
+			$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
 		}
 		if( isset($row['endtime']) && $row['endtime'] > 0 ){ 
-			$htmlContent[] = '<tr><td>Endtime</td><td>'.$this->getDateTime($row['endtime']).'</td></tr>';  unset($row['endtime']);
+			$col = 'endtime';
+			$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : 'Endtime';
+			$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
 		}
 		
 		/* maybe not needed .. we have to defined via TS if you want to list more ... */
 		if( $tableName <> '' && count($row)>0 ){
 			foreach($row as $colName=>$colVal){
 			
-echo '<pre>';
-var_dump($TCA[$tableName]['columns'][$colName]['label']);
-die('</pre>');
+
 			
 		//		$col = $this->SYSLANG->sL( $TCA[$tableName]['columns'][$colName]['label'] )
 			}
@@ -467,4 +483,9 @@ die('</pre>');
 		return implode('',$htmlContent);
 	}
 	
+	private function getNoteTableRow($label,$value){
+		
+		return '<tr><td>'.$label.'</td><td>'.$value.'</td></tr>'; 
+	
+	}
 }

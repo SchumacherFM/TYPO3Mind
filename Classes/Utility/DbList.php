@@ -164,7 +164,7 @@ class Tx_Typo3mind_Utility_DbList {
 					$attr['LINK'] = $this->parentObject->getBEHttpHost().'typo3/alt_doc.php?edit['.$tableName.']['.$row['uid'].']=edit';
 				}
 
-				$htmlContent = $this->parentObject->getNoteContentFromRow($row);
+				$htmlContent = $this->parentObject->getNoteContentFromRow($tableName,$row);
 				$rowNode = $this->parentObject->addRichContentNote($tableNode,$attr,$htmlContent);
 				
 
