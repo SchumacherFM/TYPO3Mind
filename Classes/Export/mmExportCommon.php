@@ -475,24 +475,19 @@ die('</pre>');	*/
 		unset($row['deleted']);
 		unset($row['hidden']);
 		unset($row['disable']);
-		
-		/* maybe not needed .. we have to defined via TS if you want to list more ... */
+
+		/* list user defined columsn for a table listet in a sysfolder */
 		if( $tableName <> '' && count($row)>0 ){
-/* echo '<pre>';
-var_dump($tableName);
-var_dump($row);
-die('</pre>'); */
+
 			foreach($row as $colName=>$colVal){
 			 
 				$label = $this->getNoteTableRowLabel($tableName,$colName,$colName);
 				
 				$colVal = (string)$colVal;
-				if( preg_match('^[0-9]{13}$',$colVal) ){ $colVal = $this->getDateTime($colVal); }
+				if( preg_match('^[0-9]{10}$',$colVal) ){ $colVal = $this->getDateTime($colVal); }
 				
 				$htmlContent[] = $this->getNoteTableRow($label,$colVal ); 
 
-			
-		//		$col = $this->SYSLANG->sL( $TCA[$tableName]['columns'][$colName]['label'] )
 			}
 		
 		}/*endif $tableName*/
@@ -502,7 +497,7 @@ die('</pre>'); */
 	}/*</getNoteContentFromRow>*/
 	
 		private function getNoteTableRow($label,$value){
-			return '<tr><td>'.$label.'</td><td>'.htmlspecialchars($value).'</td></tr>'; 
+			return '<tr valign="top"><td>'.htmlspecialchars($label).'</td><td>'.htmlspecialchars($value).'</td></tr>'; 
 		}
 		private function getNoteTableRowLabel($tableName,$col,$alt){
 			global $TCA;
