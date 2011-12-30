@@ -283,7 +283,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	 */
 	protected function setAttr($t3mind,$t3mindName,$attributes,$attributeName) {
 	
-		if( isset($t3mind[$t3mindName]) && ($t3mind[$t3mindName] <> '' || ((int)$t3mind[$t3mindName]) > 0 ) ){ 
+		if( isset($t3mind[$t3mindName]) && !empty($t3mind[$t3mindName]) && $t3mind[$t3mindName] !== 'false' ){ 
 			$attributes[$attributeName] = $t3mind[$t3mindName]; 
 		}
 		return $attributes;
