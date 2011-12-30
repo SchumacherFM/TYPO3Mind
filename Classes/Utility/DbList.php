@@ -146,13 +146,30 @@ class Tx_Typo3mind_Utility_DbList {
 			if( count($values) > 1 ){
 				$attr['FOLDED'] = 'true';
 			}
+			if( $this->parentObject->mapMode['isbe'] ) {
+				$attr['LINK'] = $this->parentObject->getBEHttpHost().'typo3/mod.php?M=web_list&id='.$uid.'&table='.$tableName;
+			}
 			
+			$attr = $this->parentObject->setAttr($t3mind,'font_color',$attr,'COLOR');
+			$attr = $this->parentObject->setAttr($t3mind,'node_color',$attr,'BACKGROUND_COLOR');
+			
+			// table icon?
 			$tableNode = $this->parentObject->addNode($xmlNode,$attr);
 			
+			/*<add font>*/
+			$this->parentObject->setNodeFont($tableNode,$t3mind);
+			/*</add font>*/
 			
+			/*<list the entries in a sysfolder node>*/
 			foreach($values as $k=>$row){
-				$text = $row['titInt0'].' (ID:'.$row['uid'].')';
-				$rowNode = $this->parentObject->addNode($tableNode,array('TEXT'=>$text));
+				
+				$attr = array('TEXT'=>$row['titInt0'].' (ID:'.$row['uid'].')');
+				$attr = $this->parentObject->setAttr($t3mind,'font_color',$attr,'COLOR');
+				$attr = $this->parentObject->setAttr($t3mind,'node_color',$attr,'BACKGROUND_COLOR');
+
+				
+				$rowNode = $this->parentObject->addNode($tableNode,$attr);
+				
 				if( isset($row['deleted']) && $row['deleted'] == 1 ){
 					$this->parentObject->addIcon($rowNode,'button_cancel');
 				}
@@ -161,9 +178,10 @@ class Tx_Typo3mind_Utility_DbList {
 				}
 				
 				
-			}
+			}/*endforeach*/
+			/*</list the entries in a sysfolder node>*/
 
-		} /* endforeach */
+		}/*endforeach*/
 
 
 	}/*</getTRsysFolderContent>*/

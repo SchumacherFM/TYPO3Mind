@@ -421,20 +421,13 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 
 				/*<add font>*/
-				$subNodeAttr = array();
-				$subNodeAttr = $this->setAttr($t3mindCurrent,'font_face',$subNodeAttr,'NAME');
-				$subNodeAttr = $this->setAttr($t3mindCurrent,'font_size',$subNodeAttr,'SIZE');
-				$subNodeAttr = $this->setAttr($t3mindCurrent,'font_bold',$subNodeAttr,'BOLD');
-				$subNodeAttr = $this->setAttr($t3mindCurrent,'font_italic',$subNodeAttr,'ITALIC');
 
-				if($isRecursive &&  !empty($subNodeAttr['COLOR']) && !empty($alternatingColors['font']) ){
+/*				if($isRecursive && !empty($subNodeAttr['COLOR']) && !empty($alternatingColors['font']) ){
 					$subNodeAttr['COLOR'] = $alternatingColors['font'] = $this->RGBinterpolate->interpolate( $alternatingColors['font'], '#ffffff', 0.075 );
 					// $this->RGBinterpolate->getColor();
-				}
+				} */
 
-				if( count($subNodeAttr)>0 ){
-					$this->addFont($pageParent,$subNodeAttr);
-				}
+				$this->setNodeFont($pageParent,$t3mindCurrent);
 				/*</add font>*/
 
 				/*<add node icon> not recursive*/

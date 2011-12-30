@@ -73,7 +73,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 *
 	 * @var array
 	 */
-	protected $mapMode;
+	public $mapMode;
 
 	/**
 	 * Constructor
@@ -124,7 +124,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @param	none
 	 * @return	string
 	 */
-	protected function getBEHttpHost() {
+	public function getBEHttpHost() {
 		return $this->httpHosts['backend'];
 	}
 	/**
@@ -133,7 +133,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @param	none
 	 * @return	string
 	 */
-	protected function getFEHttpHost( $page_Uid ) {
+	public function getFEHttpHost( $page_Uid ) {
 		if( isset($this->sysDomains[$page_Uid]) ){
 			$this->httpHosts['frontend'] = 'http://'.$this->sysDomains[$page_Uid].'/';
 		}

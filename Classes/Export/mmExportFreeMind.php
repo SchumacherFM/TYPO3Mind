@@ -238,7 +238,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 
 		$node = $xml->addChild('node','');
 		$attributes = $this->checkNodeAttr($attributes);
-
+		if( isset($attributes['TEXT']) ){ unset($attributes['TEXT']); }
 		$this->addAttributes($node,$attributes);
 
 		$realType = $type;
@@ -273,7 +273,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	}
 
 	/**
-	 * Sets an attribute for something
+	 * Sets an attribute for a node or font or ...
 	 *
 	 * @param	array $t3mind
 	 * @param	string $t3mindName
@@ -281,12 +281,31 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	 * @param	string $attributeName
 	 * @return	array
 	 */
-	protected function setAttr($t3mind,$t3mindName,$attributes,$attributeName) {
+	public function setAttr($t3mind,$t3mindName,$attributes,$attributeName) {
 	
 		if( isset($t3mind[$t3mindName]) && !empty($t3mind[$t3mindName]) && $t3mind[$t3mindName] !== 'false' ){ 
 			$attributes[$attributeName] = $t3mind[$t3mindName]; 
 		}
 		return $attributes;
+	}
+
+	/**
+	 * Sets the font for a node
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	array $t3mind from the DB
+	 * @return	array
+	 */
+	public function setNodeFont(SimpleXMLElement $xmlNode,$t3mind) {
+		$attributes = array();
+		$attributes = $this->setAttr($t3mind,'font_face',$attributes,'NAME');
+		$attributes = $this->setAttr($t3mind,'font_size',$attributes,'SIZE');
+		$attributes = $this->setAttr($t3mind,'font_bold',$attributes,'BOLD');
+		$attributes = $this->setAttr($t3mind,'font_italic',$attributes,'ITALIC');
+
+		if( count($attributes)>0 ){
+			$this->addFont($xmlNode,$attributes);
+		}
 	}
 
 	/**
@@ -303,7 +322,11 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 
 		$attributes['TEXT'] = ($this->strip_tags( str_replace('"','',$attributes['TEXT']) ));
 
-		if( isset($attributes['LINK']) && empty($attributes['LINK']) ){ unset($attributes['LINK']); }
+		if( isset($attributes['LINK']) && empty($attributes['LINK']) ){ 
+			unset($attributes['LINK']); 
+		} else {
+			$attributes['LINK'] = $attributes['LINK'];
+		}
 
 		return $attributes;
 	}
@@ -406,8 +429,8 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 
 
 		$xml = str_replace(
-			array('|lt|',	'|gt|',	'@#',	'&amp;gt;',	'&amp;lt;'),
-			array('<',		'>',	'&#',	'&gt;',		'&lt;'),
+			array('|lt|',	'|gt|',	'@#',	'&amp;gt;',	'&amp;lt;',	'&amp;amp;'),
+			array('<',		'>',	'&#',	'&gt;',		'&lt;',		'&amp;'),
 			$xml->asXML()
 		);
 
