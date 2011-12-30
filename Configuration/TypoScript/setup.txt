@@ -69,6 +69,7 @@ module.tx_typo3mind {
 			tt_news = datetime,short,bodytext
 			tt_products = subtitle,itemnumber
 		}
+		SysFolderContentListTextMaxLength = 250
 		
 		design {
 			# function name, color index for % count(settings->BeUsersHandleRow), as many colors as you like

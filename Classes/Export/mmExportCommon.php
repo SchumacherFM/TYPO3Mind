@@ -74,7 +74,13 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @var array
 	 */
 	public $mapMode;
-
+	
+	/**
+	 * assoc array containing the ID and the name of the user
+	 * @var array
+	*/
+	public $cruser_id;
+	
 	/**
 	 * Constructor
 	 *
@@ -88,6 +94,26 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		$this->setmapMode();
 		$this->initSysDomains();
 		$this->setHttpHosts();
+		$this->setCruserId();
+	}
+	/**
+	 * sets the CruserId
+	 *
+	 * @param	none
+	 * @return	nothing
+	 */
+	private function setCruserId() {
+		$this->cruser_id = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('uid,concat(realName,\'(\',username,\')\') as user','be_users','','','','','uid');
+	}
+	
+	/**
+	 * gets the User by Id
+	 *
+	 * @param	integer $uid
+	 * @return	nothing
+	 */
+	public function getUserById($uid) {
+		return isset($this->cruser_id[$uid]) ? $this->cruser_id[$uid]['user'] : $this->translate('UserNotFound').' ('.$uid.')';
 	}
 
 	/**
@@ -480,6 +506,8 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 
 		/* list user defined columsn for a table listet in a sysfolder */
 		if( $tableName <> '' && count($row)>0 ){
+		
+			$bodyLength = isset($this->settings['SysFolderContentListTextMaxLength']) ? (int)$this->settings['SysFolderContentListTextMaxLength'] : 250;
 
 			foreach($row as $colName=>$colVal){
 
@@ -492,8 +520,8 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 				elseif( $tcaType == 'text' || $tcaType == 'input' ){
 					/* we can't relay on the user, that all HTML is XML valid ... */
 					$colVal = strip_tags($colVal);
+					if( strlen($colVal) > $bodyLength ){ $colVal = preg_replace('/^(.{'.$bodyLength.'}\S*).*$/s','\\1 ...',$colVal); }
 					$colVal = nl2br($colVal);
-					// limit the length with preg_replace ...
 				}
 				 
 				$htmlContent[] = $this->getNoteTableRow($label,$colVal );
@@ -506,14 +534,32 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		return implode('',$htmlContent);
 	}/*</getNoteContentFromRow>*/
 
-		private function getNoteTableRow($label,$value){	
-			$value = str_replace(array('&lt;','&gt;'),array('|lt|','|gt|'),htmlspecialchars($value));
-			return '<tr valign="top"><td>'.htmlspecialchars($label).'</td><td>'.$value.'</td></tr>';
-		}
-		private function getNoteTableRowLabel($tableName,$col,$alt){
-			global $TCA;
-			$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : $alt;
-			if( empty($label) ){ $label = $alt; }
-			return $label;
-		}
+	/**
+	 * generates a HTML table row
+	 *
+	 * @param string $label
+	 * @param string $value
+	 * @return	void
+	 * @see getNoteContentFromRow
+	 */
+	private function getNoteTableRow($label,$value){	
+		$value = str_replace(array('&lt;','&gt;'),array('|lt|','|gt|'),htmlspecialchars($value));
+		return '<tr valign="top"><td>'.htmlspecialchars($label).'</td><td>'.$value.'</td></tr>';
+	}
+	
+	/**
+	 * generates a label for a HTML table row
+	 *
+	 * @param string $tableName
+	 * @param string $col the column
+	 * @param string $alt alternative text
+	 * @return	void
+	 * @see getNoteContentFromRow
+	 */
+	private function getNoteTableRowLabel($tableName,$col,$alt){
+		global $TCA;
+		$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : $alt;
+		if( empty($label) ){ $label = $alt; }
+		return $label;
+	}
 }
