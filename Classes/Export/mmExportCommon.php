@@ -76,13 +76,6 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	public $mapMode;
 
 	/**
-	 * HTML RTE parser ... to get rid of <link tags and so on ...
-	 *
-	 * @var t3lib_parsehtml_proc
-	 */
-	protected $parsehtml_proc;
-
-	/**
 	 * Constructor
 	 *
 	 * @param array $settings
@@ -95,11 +88,6 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		$this->setmapMode();
 		$this->initSysDomains();
 		$this->setHttpHosts();
-		
-		/* to parse cObj: http://www.typo3-scout.de/2008/05/28/cobject-im-backend/ */
-		/*http://api.typo3.org/typo3v4/45/html/classt3lib__parsehtml__proc.html*/
-		$this->parsehtml_proc = new t3lib_parsehtml_proc();
-
 	}
 
 	/**
@@ -495,16 +483,17 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 
 			foreach($row as $colName=>$colVal){
 
-				$label = $this->getNoteTableRowLabel($tableName,$colName,$colName);
-				$tcaEval = $TCA[$tableName]['columns'][$colName]['config']['eval'];
-				$tcaType = strtolower($TCA[$tableName]['columns'][$colName]['config']['type']);
+			$label = $this->getNoteTableRowLabel($tableName,$colName,$colName);
+			$tcaEval = isset($TCA[$tableName]['columns'][$colName]) ? $TCA[$tableName]['columns'][$colName]['config']['eval'] : '';
+			$tcaType = isset($TCA[$tableName]['columns'][$colName]) ? strtolower($TCA[$tableName]['columns'][$colName]['config']['type']) : 'text';
 				
+			
 				if( stristr($tcaEval,'date')!==false ){ $colVal = $this->getDateTime($colVal); }
-				elseif( $tcaType == 'text' && stristr($colVal,'<im')!==false ){
-					$colVal = $this->parsehtml_proc->TS_links_rte($colVal); //
-					echo '<pre>';
-					var_dump($colVal);
-					die('</pre>');
+				elseif( $tcaType == 'text' || $tcaType == 'input' ){
+					/* we can't relay on the user, that all HTML is XML valid ... */
+					$colVal = strip_tags($colVal);
+					$colVal = nl2br($colVal);
+					// limit the length with preg_replace ...
 				}
 				 
 				$htmlContent[] = $this->getNoteTableRow($label,$colVal );
