@@ -374,6 +374,38 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	}
 
 	/**
+	 * adds one image to a note
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	array $attributes
+	 * @param	string $imgRelPath relativ image path like ../typo3conf/ext/..../ext_icon.gif
+	 * @param	string $imgHTML additionl html for the img tag
+	 * @param	string $noteHTML 
+	 * @param	array $addEdgeAttr
+	 * @param	array $addFontAttr
+	 * @return	nothing
+	 */
+	public function addImgNote(SimpleXMLElement $xmlNode, $attributes, $imgRelPath, $imgHTML='', 
+		$noteHTML,	$addEdgeAttr = array(),	$addFontAttr = array()) {
+
+		$iconLocal = str_replace('../','',$imgRelPath);
+
+		if( is_file(PATH_site.$iconLocal)  ){
+
+			$htmlContent = array(
+				'NODE'=>'<img '.$imgHTML.' src="'.$this->getBEHttpHost().$iconLocal.'"/>'.
+						'@#160;@#160;'.htmlspecialchars( $attributes['TEXT']),
+				'NOTE'=>$noteHTML,
+			);
+			$childNode = $this->addRichContentNote($xmlNode, $attributes ,$htmlContent,$addEdgeAttr,$addFontAttr,'BOTH');
+
+		}else {
+			$childNode = $this->addNode($xmlNode,$attributes);
+		}
+
+		return $childNode;
+	}
+	/**
 	 * adds multiple images with links to a node - HYPERLINKS ARE NOT SUPPORTED BY FREEMIND IN RICHCONTENT NODES!
 	 *
 	 * @param	SimpleXMLElement $xmlNode

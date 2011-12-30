@@ -126,15 +126,7 @@ class Tx_Typo3mind_Utility_DbList {
 		GLOBAL $TCA;
 		$this->setPID($uid);
 		$this->generateList();
-/*
-		if( $uid == 141 ){
-			echo '<pre>'; 
-			var_dump($t3mind); 
-			var_dump($depth); 
-			var_dump($uid); 
-			exit;
-		}
-*/
+
 		// todo hier geht es weiter ... LINKS einbauen, icons, etc TCA hide table auswerten ...
 		foreach($this->tablesInSysFolder as $tableName=>$values){
 	
@@ -154,7 +146,14 @@ class Tx_Typo3mind_Utility_DbList {
 			$attr = $this->parentObject->setAttr($t3mind,'node_color',$attr,'BACKGROUND_COLOR');
 			
 			// table icon?
-			$tableNode = $this->parentObject->addNode($xmlNode,$attr);
+			$icon = $TCA[$tableName]['ctrl']['iconfile'];
+			$tableNode = $this->parentObject->addImgNode($xmlNode,$attr,$icon);
+			
+/*
+addImgNote(SimpleXMLElement $xmlNode, $attributes, $imgRelPath, $imgHTML='', 
+		$noteHTML,	$addEdgeAttr = array(),	$addFontAttr = array())
+*/			
+			
 			
 			/*<add font>*/
 			$this->parentObject->setNodeFont($tableNode,$t3mind);
@@ -166,6 +165,10 @@ class Tx_Typo3mind_Utility_DbList {
 				$attr = array('TEXT'=>$row['titInt0'].' (ID:'.$row['uid'].')');
 				$attr = $this->parentObject->setAttr($t3mind,'font_color',$attr,'COLOR');
 				$attr = $this->parentObject->setAttr($t3mind,'node_color',$attr,'BACKGROUND_COLOR');
+				
+				if( $this->parentObject->mapMode['isbe'] ) {
+					$attr['LINK'] = $this->parentObject->getBEHttpHost().'typo3/alt_doc.php?edit['.$tableName.']['.$row['uid'].']=edit';
+				}
 
 				
 				$rowNode = $this->parentObject->addNode($tableNode,$attr);
@@ -176,6 +179,7 @@ class Tx_Typo3mind_Utility_DbList {
 				if( isset($row['hidden']) && $row['hidden'] == 1 ){
 					$this->parentObject->addIcon($rowNode,'closed');
 				}
+				$this->parentObject->setNodeFont($rowNode,$t3mind);
 				
 				
 			}/*endforeach*/
