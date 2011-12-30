@@ -273,6 +273,23 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	}
 
 	/**
+	 * Sets an attribute for something
+	 *
+	 * @param	array $t3mind
+	 * @param	string $t3mindName
+	 * @param	array $attributes
+	 * @param	string $attributeName
+	 * @return	array
+	 */
+	protected function setAttr($t3mind,$t3mindName,$attributes,$attributeName) {
+	
+		if( isset($t3mind[$t3mindName]) && $t3mind[$t3mindName] <> '' ){ 
+			$attributes[$attributeName] = $t3mind[$t3mindName]; 
+		}
+		return $attributes;
+	}
+
+	/**
 	 * Checks if neccessary attributes are set for a node
 	 *
 	 * @param	array $attributes

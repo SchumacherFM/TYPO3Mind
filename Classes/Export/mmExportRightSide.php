@@ -148,6 +148,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 		foreach($t3MindRepositoryFindAll as $k=>$v){
 			unset($v['l10n_parent']);
 			unset($v['l10n_diffsource']);
+			$v['node_folded'] = ($v['node_folded']==1 ? 'true' : 'false'); /*must be a string*/
 			$this->t3mind[ $v['page_uid'] ] = $v;
 		}
 		unset($t3MindRepositoryFindAll);
@@ -332,7 +333,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				unset($attr['LINK']);
 			}
 			// isRecursive
-			if( isset($t3mindCurrent['font_color']) && $t3mindCurrent['font_color'] <> '' ){ $attr['COLOR'] = $t3mindCurrent['font_color']; }
+			$attr = $this->setAttr($t3mindCurrent,'font_color',$attr,'COLOR');
 
 			/*
 				TESTING:
@@ -344,7 +345,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 			if( isset($t3mindCurrent['node_color']) && $t3mindCurrent['node_color'] <> '' ){
 
-				$attr['BACKGROUND_COLOR'] = $t3mindCurrent['node_color'];
+				$attr = $this->setAttr($t3mindCurrent,'node_color',$attr,'BACKGROUND_COLOR');
 
 				if($isRecursive && !empty($alternatingColors['node'])){
 					$attr['BACKGROUND_COLOR'] = $alternatingColors['node'] = $this->RGBinterpolate->interpolate(
@@ -355,7 +356,9 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			}
 
 
-			if( isset($t3mindCurrent['node_folded']) && isset($childUids['subrow']) && $t3mindCurrent['node_folded'] == 1 ){ $attr['FOLDED'] = 'true'; }
+			if( isset($childUids['subrow']) ){ 
+				$attr = $this->setAttr($t3mindCurrent,'node_folded',$attr,'FOLDED');
+			}
 			if( isset($t3mindCurrent['node_style']) && $t3mindCurrent['node_style'] <> '' ){ $attr['STYLE'] = $t3mindCurrent['node_style']; }
 
 			/*first 3 levels are folded */
