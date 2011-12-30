@@ -162,15 +162,11 @@ class Tx_Typo3mind_Utility_DbList {
 				
 				
 			}
-			/*
- echo '<pre>'.$tableName;
-var_dump( $text );
- var_dump($this->tablesInSysFolder);
-echo '</pre><hr/>'; exit; 	*/
+
 		} /* endforeach */
 
 
-	}
+	}/*</getTRsysFolderContent>*/
 
 	/**
 	 * Traverses the table(s) to be listed and renders the output code for each:

@@ -426,11 +426,11 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		GLOBAL $TCA;
 
 		if( !empty($tables) ){
-			$nodeTables = $this->addNode($xmlNode,array_merge($attr,array('TEXT'=>$this->translate($translateKey))));
+			$nodeTables = $this->addNode($xmlNode,array_merge($attr,array('FOLDED'=>'true','TEXT'=>$this->translate($translateKey))));
 			$exploded = t3lib_div::trimExplode(',', $tables ,1 );
-			sort($exploded);
+			ksort($exploded);
 			foreach($exploded as $k=>$table){
-				$this->addNode($nodeTables,array_merge($attr,array('TEXT'=>$this->SYSLANG->sL( $TCA[$table]['ctrl']['title'] )) ));
+				$this->addNode($nodeTables,array_merge($attr,array('TEXT'=>'['.$table.'] '.$this->SYSLANG->sL( $TCA[$table]['ctrl']['title'] )) ));
 			}
 		}
 
