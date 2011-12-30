@@ -297,7 +297,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	protected function getPlainTextPasswordFromMD5($md5){
 		return Tx_Typo3mind_Utility_UnsecurePasswords::getPlainPW($md5);
 	}
-	
+
 	/**
 	 * if defined in the settings TS it returned the color count for alternating colors
 	 *
@@ -307,21 +307,21 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @return string
 	 */
 	protected function getDesignAlternatingColor($methodName,$rowCounter,$type='BACKGROUND_COLOR'){
-		if( !isset($this->settings['design'][$methodName]) ){ 
-			$this->settings['design'][$methodName] = array($type=>array() ); 
+		if( !isset($this->settings['design'][$methodName]) ){
+			$this->settings['design'][$methodName] = array($type=>array() );
 		}
-		elseif( !isset($this->settings['design'][$methodName][$type]) ){ 
-			$this->settings['design'][$methodName][$type] = array(); 
+		elseif( !isset($this->settings['design'][$methodName][$type]) ){
+			$this->settings['design'][$methodName][$type] = array();
 		}
-		
+
 		$count = count($this->settings['design'][$methodName][$type]);
 		$count = $count == 0 ? 1 : $count;
-		
+
 		$mod = $rowCounter % $count;
 		return isset($this->settings['design'][$methodName][$type][$mod]) ? $this->settings['design'][$methodName][$type][$mod] : '';
-		
+
 	}/*</getDesignAlternatingColor>*/
-	
+
 	/**
 	 * if defined in the settings TS it returned the edge width
 	 *
@@ -329,17 +329,17 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @return string
 	 */
 	protected function getDesignEdgeWidth($methodName){
-		if( !isset($this->settings['design'][$methodName]) ){ 
+		if( !isset($this->settings['design'][$methodName]) ){
 			$this->settings['design'][$methodName] = array('EDGE_WIDTH'=>0 ); /*no edge width*/
 		}
-		elseif( !isset($this->settings['design'][$methodName]['EDGE_WIDTH']) ){ 
-			$this->settings['design'][$methodName]['EDGE_WIDTH'] = 0; 
+		elseif( !isset($this->settings['design'][$methodName]['EDGE_WIDTH']) ){
+			$this->settings['design'][$methodName]['EDGE_WIDTH'] = 0;
 		}
-		
+
 		return (int)$this->settings['design'][$methodName]['EDGE_WIDTH'];
-		
+
 	}/*</getDesignEdgeWidth>*/
-	
+
 	/**
 	 * if defined in the settings TS it returned the edge width
 	 *
@@ -347,32 +347,32 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @return string
 	 */
 	protected function RssFeeds2Node(SimpleXMLElement $xmlNode){
-		
+
 		if( count($this->settings['TYPO3SecurityRssFeeds'])==0 ){
 			return false;
 		}
-		
+
 		foreach($this->settings['TYPO3SecurityRssFeeds'] as $index=>$feedURL){
-		
+
 			$rssContent = simplexml_load_string($this->getURLcache($feedURL));
 			if( $rssContent ){
-			
+
 				$rssHeadNode = $this->addNode($xmlNode,array('FOLDED'=>'true','TEXT'=>$rssContent->channel->title,'LINK'=>$rssContent->channel->link));
 				foreach($rssContent->channel->item as $index=>$item){
-				
+
 					$htmlContent = array();
 					$htmlContent[] = '<p>'.$item->author.'</p>';
 					$htmlContent[] = '<p>'.$item->pubDate.'</p>';
 					$htmlContent[] = '<p>'.$item->description.'</p>';
 
 					$rssItemNode = $this->addRichContentNote($rssHeadNode,array('TEXT'=>$item->title,'LINK'=>$item->link),implode('',$htmlContent));
-				
+
 				}/*endforeach*/
 			}/*endif $rssContent*/
 		}/*endforeach*/
 		return true;
 	}/*</RssFeeds2Node>*/
-	
+
 	/**
 	 * gets the enc key with a specific length
 	 *
@@ -390,7 +390,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @return string
 	 */
 	protected function getURLcache($url){
-	
+
 		$urlContent = false;
 		$cacheFile = PATH_site.'typo3temp/t3m_'.md5($_SERVER['HTTP_HOST'] . $url);
 		if( !file_exists($cacheFile) || filemtime($cacheFile) < (time()-(3600*24*3)) ){
@@ -399,7 +399,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 				$encK = $this->getencryptionKey(strlen($urlContent));
 				/* echo "Wrote Cache $cacheFile<br>\n"; */
 				t3lib_div::writeFile($cacheFile,($urlContent ^ $encK) ); /* hihihi ;-) */
-				
+
 			}else{ return false; }
 		}else{
 			/* echo "Read Cache $cacheFile<br>\n"; */
@@ -409,7 +409,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		}
 		return $urlContent;
 	}
-	
+
 	/**
 	 * returns formated date, used the global T3 config
 	 *
@@ -422,7 +422,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		$timeFormat = $GLOBALS['TYPO3_CONF_VARS']['SYS']['hhmm'];
 		return date($dateFormat . ', ' . $timeFormat,$unixTimeStamp);
 	}
-	
+
 	/**
 	 * gets the note content from a DB row
 	 *
@@ -432,16 +432,14 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 */
 	public function getNoteContentFromRow($tableName,$row){
 		global $TCA;
-/* echo '<pre>';
-var_dump($TCA['tt_news']['columns'] );
-die('</pre>');	*/
+
 		$htmlContent = array('<table>');
 		$htmlContent[] = $this->getNoteTableRow('UID',$row['uid']); unset($row['uid']);
-		
+
 		$col = 'crdate';
 		$label = $this->getNoteTableRowLabel($tableName,$col,'Created');
 		$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
-		
+
 		$col = 'cruser_id';
 		$label = $this->getNoteTableRowLabel($tableName,$col,'Created by');
 		$htmlContent[] = $this->getNoteTableRow($label,$this->getUserById($row[$col]) ); unset($row[$col]);
@@ -449,25 +447,25 @@ die('</pre>');	*/
 		$col = 'tstamp';
 		$label = $this->getNoteTableRowLabel($tableName,$col,'Last update');
 		$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
- 
-		
-		if( isset($row['sys_language_uid']) ){ 
+
+
+		if( isset($row['sys_language_uid']) ){
 			$col = 'sys_language_uid';
 			$label = $this->getNoteTableRowLabel($tableName,$col,'Language ID');
-			$htmlContent[] = $this->getNoteTableRow($label,$row[$col] ); 
+			$htmlContent[] = $this->getNoteTableRow($label,$row[$col] );
 		} unset($row[$col]);
-		
-		if( isset($row['starttime']) && $row['starttime'] > 0 ){ 
+
+		if( isset($row['starttime']) && $row['starttime'] > 0 ){
 			$col = 'starttime';
 			$label = $this->getNoteTableRowLabel($tableName,$col,'Starttime');
-			$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); 
-		} 
+			$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) );
+		}
 		unset($row['starttime']);
-		if( isset($row['endtime']) && $row['endtime'] > 0 ){ 
+		if( isset($row['endtime']) && $row['endtime'] > 0 ){
 			$col = 'endtime';
 			$label = $this->getNoteTableRowLabel($tableName,$col,'Endtime');
-			$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); 
-		} 
+			$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) );
+		}
 		unset($row['endtime']);
 		unset($row['uid']);
 		unset($row['pid']);
@@ -480,29 +478,28 @@ die('</pre>');	*/
 		if( $tableName <> '' && count($row)>0 ){
 
 			foreach($row as $colName=>$colVal){
-			 
+
 				$label = $this->getNoteTableRowLabel($tableName,$colName,$colName);
-				
-				$colVal = (string)$colVal;
-				if( preg_match('^[0-9]{10}$',$colVal) ){ $colVal = $this->getDateTime($colVal); }
-				
-				$htmlContent[] = $this->getNoteTableRow($label,$colVal ); 
+				$tcaEval = $TCA[$tableName]['columns'][$colName]['config']['eval'];
+				if( stristr($tcaEval,'date')!==false ){ $colVal = $this->getDateTime($colVal); }
+
+				$htmlContent[] = $this->getNoteTableRow($label,$colVal );
 
 			}
-		
+
 		}/*endif $tableName*/
-		
+
 		$htmlContent[] = '</table>';
 		return implode('',$htmlContent);
 	}/*</getNoteContentFromRow>*/
-	
+
 		private function getNoteTableRow($label,$value){
-			return '<tr valign="top"><td>'.htmlspecialchars($label).'</td><td>'.htmlspecialchars($value).'</td></tr>'; 
+			return '<tr valign="top"><td>'.htmlspecialchars($label).'</td><td>'.htmlspecialchars($value).'</td></tr>';
 		}
 		private function getNoteTableRowLabel($tableName,$col,$alt){
 			global $TCA;
 			$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : $alt;
 			if( empty($label) ){ $label = $alt; }
-			return $label; 
+			return $label;
 		}
 }
