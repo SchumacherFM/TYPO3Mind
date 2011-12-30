@@ -64,7 +64,8 @@ module.tx_typo3mind {
 		
 		# for each record in a SysFolder you can define here which additional columsn can be listet.
 		# tableName = columns as csv
-		SysFolderContentListColumns {
+		# only column names [a-z0-9_]i are supported, no other crap
+		SysFolderContentListAdditionalColumns {
 			tt_news = datetime,short,category
 			tt_products = subtitle,itemnumber
 		}

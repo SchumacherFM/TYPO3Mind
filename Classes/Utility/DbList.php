@@ -102,7 +102,7 @@ class Tx_Typo3mind_Utility_DbList {
 	public function __construct(&$parentObject){
 		$this->parentObject = $parentObject;
 	}
-	
+
 	/**
 	 * sets the pid
 	 * @param pid
@@ -129,11 +129,11 @@ class Tx_Typo3mind_Utility_DbList {
 
 		// todo hier geht es weiter ... LINKS einbauen, icons, etc TCA hide table auswerten ...
 		foreach($this->tablesInSysFolder as $tableName=>$values){
-		
+
 			$attr = array();
 			$llangTitle = $GLOBALS['LANG']->sL( $TCA[$tableName]['ctrl']['title'] );
 			$attr['TEXT'] = ( !empty($llangTitle) ? $llangTitle : $tableName ) . ' (C:'.$values['TotalItems'].')';
-			
+
 			unset($values['TotalItems']);
 			if( count($values) > 1 ){
 				$attr['FOLDED'] = 'true';
@@ -141,32 +141,32 @@ class Tx_Typo3mind_Utility_DbList {
 			if( $this->parentObject->mapMode['isbe'] ) {
 				$attr['LINK'] = $this->parentObject->getBEHttpHost().'typo3/mod.php?M=web_list&id='.$uid.'&table='.$tableName;
 			}
-			
+
 			$attr = $this->parentObject->setAttr($t3mind,'font_color',$attr,'COLOR');
 			$attr = $this->parentObject->setAttr($t3mind,'node_color',$attr,'BACKGROUND_COLOR');
-			
+
 			// table icon?
 			$icon = $TCA[$tableName]['ctrl']['iconfile'];
 			$tableNode = $this->parentObject->addImgNode($xmlNode,$attr,$icon);
-			
+
 			/*<add font>*/
 			$this->parentObject->setNodeFont($tableNode,$t3mind);
 			/*</add font>*/
-	
+
 			/*<list the entries in a sysfolder node>*/
 			foreach($values as $k=>$row){
-				
+
 				$attr = array('TEXT'=>$row['titInt0'] /* we'll have it in the note: .' (ID:'.$row['uid'].')' */ );
 				$attr = $this->parentObject->setAttr($t3mind,'font_color',$attr,'COLOR');
 				$attr = $this->parentObject->setAttr($t3mind,'node_color',$attr,'BACKGROUND_COLOR');
-				
+
 				if( $this->parentObject->mapMode['isbe'] ) {
 					$attr['LINK'] = $this->parentObject->getBEHttpHost().'typo3/alt_doc.php?edit['.$tableName.']['.$row['uid'].']=edit';
 				}
 
 				$htmlContent = $this->parentObject->getNoteContentFromRow($tableName,$row);
 				$rowNode = $this->parentObject->addRichContentNote($tableNode,$attr,$htmlContent);
-				
+
 
 				if( isset($row['deleted']) && $row['deleted'] == 1 ){
 					$this->parentObject->addIcon($rowNode,'button_cancel');
@@ -175,8 +175,8 @@ class Tx_Typo3mind_Utility_DbList {
 					$this->parentObject->addIcon($rowNode,'closed');
 				}
 				$this->parentObject->setNodeFont($rowNode,$t3mind);
-				
-				
+
+
 			}/*endforeach*/
 			/*</list the entries in a sysfolder node>*/
 
@@ -205,43 +205,51 @@ class Tx_Typo3mind_Utility_DbList {
 			// Load full table definitions:
 			t3lib_div::loadTCA($tableName);
 
-// for later ... Don't show table if hidden by TCA ctrl section
-//		$hideTable = $GLOBALS['TCA'][$tableName]['ctrl']['hideTable'] ? TRUE : FALSE;
+			// for later ... Don't show table if hidden by TCA ctrl section
+			//		$hideTable = $GLOBALS['TCA'][$tableName]['ctrl']['hideTable'] ? TRUE : FALSE;
 
-			// Setting fields to select:
+			/* Setting fields to select: */
 			$fields = $this->makeFieldList($value,$tableName);
 
-				$orderBy = ($value['ctrl']['sortby']) ? 'ORDER BY '.$value['ctrl']['sortby'] : ( isset($value['ctrl']['default_sortby']) ? $value['ctrl']['default_sortby'] : 'ORDER BY uid desc' );
+			/* get user defined columns ... for each table listet in a SysFolder */
+			if( isset($this->parentObject->settings['SysFolderContentListAdditionalColumns'][$tableName]) ){
 
-				$queryParts = array(
-					'SELECT' => implode(',',$fields),
-					'FROM' => $tableName,
-					'WHERE' => $this->pidSelect,
-					'GROUPBY' => '',
-					'ORDERBY' => $GLOBALS['TYPO3_DB']->stripOrderBy($orderBy),
-					'LIMIT' => '0,10'
+				$sqlRaw = preg_replace('~[^a-z0-9_,]+~i','',$this->parentObject->settings['SysFolderContentListAdditionalColumns'][$tableName]);
+				$sqlRawE = t3lib_div::trimExplode(',',$sqlRaw,1);
+				$fields = array_merge($fields,$sqlRawE);
+			}
+
+			$orderBy = ($value['ctrl']['sortby']) ? 'ORDER BY '.$value['ctrl']['sortby'] : ( isset($value['ctrl']['default_sortby']) ? $value['ctrl']['default_sortby'] : 'ORDER BY uid desc' );
+
+			$queryParts = array(
+				'SELECT' => implode(',',$fields),
+				'FROM' => $tableName,
+				'WHERE' => $this->pidSelect,
+				'GROUPBY' => '',
+				'ORDERBY' => $GLOBALS['TYPO3_DB']->stripOrderBy($orderBy),
+				'LIMIT' => '0,10'
+			);
+
+			$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
+			$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
+
+			$accRows = false;
+			if( $dbCount ){
+				$this->tablesInSysFolder[$tableName] = array(
+					'TotalItems'=>$this->getTotalItems($queryParts),
 				);
+				$accRows = array();	// Accumulate rows here
+				while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result))	{
+					// In offline workspace, look for alternative record:
+					// t3lib_BEfunc::workspaceOL($table, $row, $GLOBALS['BE_USER']->workspace, TRUE);
 
-				$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
-				$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
-
-				$accRows = false;
-				if( $dbCount ){
-					$this->tablesInSysFolder[$tableName] = array(
-						'TotalItems'=>$this->getTotalItems($queryParts),
-					);
-					$accRows = array();	// Accumulate rows here
-					while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result))	{
-						// In offline workspace, look for alternative record:
-						// t3lib_BEfunc::workspaceOL($table, $row, $GLOBALS['BE_USER']->workspace, TRUE);
-
-						if (is_array($row))	{
-							$accRows = true;
-							$this->tablesInSysFolder[$tableName][] = $row;
-						}
+					if (is_array($row))	{
+						$accRows = true;
+						$this->tablesInSysFolder[$tableName][] = $row;
 					}
-					$GLOBALS['TYPO3_DB']->sql_free_result($result);
-				} /* endif $dbCount */
+				}
+				$GLOBALS['TYPO3_DB']->sql_free_result($result);
+			} /* endif $dbCount */
 
 
 		}/* endforeach */

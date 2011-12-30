@@ -51,7 +51,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 *
 	 * @var array
 	 */
-	protected $settings;
+	public $settings;
 
 	/**
 	 * t3MindRepository
@@ -439,39 +439,57 @@ die('</pre>');	*/
 		$htmlContent[] = $this->getNoteTableRow('UID',$row['uid']); unset($row['uid']);
 		
 		$col = 'crdate';
-		$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : 'Created';
+		$label = $this->getNoteTableRowLabel($tableName,$col,'Created');
 		$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
 		
 		$col = 'cruser_id';
-		$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : 'Created by';
+		$label = $this->getNoteTableRowLabel($tableName,$col,'Created by');
 		$htmlContent[] = $this->getNoteTableRow($label,$this->getUserById($row[$col]) ); unset($row[$col]);
 
 		$col = 'tstamp';
-		$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : 'Last update';
+		$label = $this->getNoteTableRowLabel($tableName,$col,'Last update');
 		$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
  
 		
 		if( isset($row['sys_language_uid']) ){ 
 			$col = 'sys_language_uid';
-			$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : 'Language ID';
-			$htmlContent[] = $this->getNoteTableRow($label,$row[$col] ); unset($row[$col]);
-		}
+			$label = $this->getNoteTableRowLabel($tableName,$col,'Language ID');
+			$htmlContent[] = $this->getNoteTableRow($label,$row[$col] ); 
+		} unset($row[$col]);
 		
 		if( isset($row['starttime']) && $row['starttime'] > 0 ){ 
 			$col = 'starttime';
-			$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : 'Starttime';
-			$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
-		}
+			$label = $this->getNoteTableRowLabel($tableName,$col,'Starttime');
+			$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); 
+		} 
+		unset($row['starttime']);
 		if( isset($row['endtime']) && $row['endtime'] > 0 ){ 
 			$col = 'endtime';
-			$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : 'Endtime';
-			$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
-		}
+			$label = $this->getNoteTableRowLabel($tableName,$col,'Endtime');
+			$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); 
+		} 
+		unset($row['endtime']);
+		unset($row['uid']);
+		unset($row['pid']);
+		unset($row['titInt0']);
+		unset($row['deleted']);
+		unset($row['hidden']);
+		unset($row['disable']);
 		
 		/* maybe not needed .. we have to defined via TS if you want to list more ... */
 		if( $tableName <> '' && count($row)>0 ){
+/* echo '<pre>';
+var_dump($tableName);
+var_dump($row);
+die('</pre>'); */
 			foreach($row as $colName=>$colVal){
-			
+			 
+				$label = $this->getNoteTableRowLabel($tableName,$colName,$colName);
+				
+				$colVal = (string)$colVal;
+				if( preg_match('^[0-9]{13}$',$colVal) ){ $colVal = $this->getDateTime($colVal); }
+				
+				$htmlContent[] = $this->getNoteTableRow($label,$colVal ); 
 
 			
 		//		$col = $this->SYSLANG->sL( $TCA[$tableName]['columns'][$colName]['label'] )
@@ -481,11 +499,15 @@ die('</pre>');	*/
 		
 		$htmlContent[] = '</table>';
 		return implode('',$htmlContent);
-	}
+	}/*</getNoteContentFromRow>*/
 	
-	private function getNoteTableRow($label,$value){
-		
-		return '<tr><td>'.$label.'</td><td>'.$value.'</td></tr>'; 
-	
-	}
+		private function getNoteTableRow($label,$value){
+			return '<tr><td>'.$label.'</td><td>'.htmlspecialchars($value).'</td></tr>'; 
+		}
+		private function getNoteTableRowLabel($tableName,$col,$alt){
+			global $TCA;
+			$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : $alt;
+			if( empty($label) ){ $label = $alt; }
+			return $label; 
+		}
 }
