@@ -100,6 +100,9 @@ class Tx_Typo3mind_Utility_eIDDispatcher {
 /*		$GLOBALS['TSFE']->tmpl = t3lib_div::makeInstance('t3lib_tstemplate');
 		$GLOBALS['TSFE']->tmpl->init();	*/
 
+$GLOBALS['BE_USER'] = t3lib_div::makeInstance('t3lib_beUserAuth'); // New backend user object
+$GLOBALS['BE_USER']->start(); // Object is initialized
+		 
 // $GLOBALS['TSFE']->connectToDB();
 $GLOBALS['TSFE']->initFEuser();
 $GLOBALS['TSFE']->determineId();
