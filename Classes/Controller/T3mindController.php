@@ -123,16 +123,6 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	}
 
 	/**
-	 * shows the flash browser and load the current tree
-	 *
-	 * @return void
-	 */
-	public function browserAction() {
-
-	}
-
-
-	/**
 	 * action editPages
 	 *
 	 * @param $T3mind
@@ -211,7 +201,6 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	public function exportAction() {
 
 		/*TODO export via ajax ...*/
-		// $expObj = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExport',$this->settings);
 		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);
 		$typo3tempFilename = $expObj->getContent();
 
@@ -221,7 +210,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 
 	/**
 	 * action export via eID
-	 http://xxxxxxxxxxxxx/index.php?eID=typo3mind&id=6&apikey=tYeAvJ4rgxWSU9C!.mf5k:-dMQq_
+	 http://xxxxxxxxxxxxx/index.php?eID=typo3mind&id=6&apikey=K589jNRSoMsFbg-@L897XdESD
 	 http://stuff.lime-flavour.de/link-typo3-eid-use-with-extbase-and-fluid/
 	 *
 	 * $apikey string the key
@@ -234,15 +223,14 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 		}
 
 
-		// xml header ...
+		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);
+		$typo3tempFilename = $expObj->getContent();
 
 echo '<pre>';
-// echo( htmlspecialchars($xml) );
-echo 'wrote file to typo3temp';
+var_dump($typo3tempFilename);
 echo '</pre>';
 
-		exit;
-
+		return '';
 
 	}
 	 
