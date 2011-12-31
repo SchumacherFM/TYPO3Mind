@@ -39,6 +39,8 @@
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *
  */
+ 
+ 
 class Tx_Typo3mind_Utility_eIDDispatcher {
 	
 	
@@ -72,19 +74,47 @@ class Tx_Typo3mind_Utility_eIDDispatcher {
 	 */
 	protected $actionName;
 	
+	/*
+	 * page id
+	 * @var integer
+	*/
+	protected $id;
 	
 	/**
 	 * @var array
 	 */
 	protected $arguments;
 	
-	
+	public function __construct(){
+		global $GLOBALS,$TYPO3_CONF_VARS;
+		
+		$this->id = (int)t3lib_div::_GP('id');
+
+		
+		$GLOBALS['LANG'] = t3lib_div::makeInstance('language');
+		$GLOBALS['LANG']->init('default');
+//		echo $GLOBALS['LANG']->sL('holla');
+		$temp_TSFEclassName = t3lib_div::makeInstance('tslib_fe');
+		$GLOBALS['TSFE'] = new $temp_TSFEclassName($TYPO3_CONF_VARS, $this->id, 0, true);	
+		$GLOBALS['TSFE']->sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
+/*		$GLOBALS['TSFE']->tmpl = t3lib_div::makeInstance('t3lib_tstemplate');
+		$GLOBALS['TSFE']->tmpl->init();	*/
+
+// $GLOBALS['TSFE']->connectToDB();
+$GLOBALS['TSFE']->initFEuser();
+$GLOBALS['TSFE']->determineId();
+$GLOBALS['TSFE']->getCompressedTCarray();
+$GLOBALS['TSFE']->initTemplate();
+$GLOBALS['TSFE']->getConfigArray();
+		
+	}
 	
 	/**
 	 * Called by ajax.php / eID.php
 	 * Builds an extbase context and returns the response
 	 */
 	public function dispatch() {
+		
 		$this->prepareCallArguments();
 		
 		$configuration['extensionName'] = $this->extensionName;
@@ -102,10 +132,16 @@ class Tx_Typo3mind_Utility_eIDDispatcher {
 		$dispatcher =  $this->objectManager->get('Tx_Extbase_MVC_Dispatcher');
 		$dispatcher->dispatch($request, $response);
 
-		echo $response->getContent();
+        $response->sendHeaders();
+        echo $response->getContent();
+         
+        $this->cleanShutDown();
 	}
 
-	
+    protected function cleanShutDown() {
+        $this->objectManager->get('Tx_Extbase_Persistence_Manager')->persistAll();
+        $this->objectManager->get('Tx_Extbase_Reflection_Service')->shutdown();
+    }	
 	
 	/**
 	 * Build a request object
@@ -145,7 +181,7 @@ class Tx_Typo3mind_Utility_eIDDispatcher {
 		$this->pluginName 		= 'fm2be';
 		$this->controllerName 	= 'T3mind';
 		$this->actionName 		= 'exportEID';
-		$this->arguments 		= array('apikey'=>$apikey);	
+		$this->arguments 		= array('apikey'=>$apikey,'id'=>$this->id);	
 	}
 }
 
