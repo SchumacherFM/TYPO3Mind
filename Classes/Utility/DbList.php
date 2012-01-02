@@ -127,16 +127,11 @@ class Tx_Typo3mind_Utility_DbList {
 		$this->setPID($uid);
 		$this->generateList();
 
-if( $uid == 109 ){
-echo '<pre>';
-var_dump($this->tablesInSysFolder);
-die('</pre>');
-}		
 		
 		// todo hier geht es weiter ... LINKS einbauen, icons, etc TCA hide table auswerten ...
 		foreach($this->tablesInSysFolder as $tableName=>$values){
 
-			/* we do not want to list the pages in a sysfolder ... that means subfolders */
+			/* we do not want to list the pages in a sysfolder ... that means subsysfolders */
 			if( $tableName == 'pages' ){ continue; }
 		
 			$attr = array();

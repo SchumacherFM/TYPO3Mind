@@ -582,8 +582,8 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 							
 							$currentMD5 = @md5_file(PATH_site.$row['fileref']);
 							if($currentMD5 <> $row['fileref_md5'] ){
-								$colVal = '<img src="'.$this->getBEHttpHost().'typo3/sysext/t3skin/icons/gfx/icon_warning.gif"/> New Hash: '.$currentMD5.' Old Hash: '.$colVal;
-							
+								$label .= ' <img src="'.$this->getBEHttpHost().'typo3/sysext/t3skin/icons/gfx/icon_warning.gif"/>';
+								$colVal = ' New: '.$currentMD5.'<br />Old: '.$colVal;
 							}
 						}elseif($colName=='datastructure' || $colName=='fileref'){
 							$colVal = $this->value2ATag($colVal);
