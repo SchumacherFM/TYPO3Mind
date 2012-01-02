@@ -9,7 +9,7 @@ module.tx_typo3mind {
 	}
 	persistence {
 		# cat=module.tx_typo3mind//a; type=int+; label=Default storage PID
-		# change this to your SysFolder ID!
+		# change this to your SysFolder ID or not ...
 		storagePid = 
 	}
 }

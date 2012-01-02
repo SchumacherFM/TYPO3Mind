@@ -170,8 +170,8 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 		// todo find out what the default language is ... currently it is 0 but how to access config.language
 		// $GLOBALS['TSFE']->config['config']['language'];
 		// sure DE is not default ...
-		$domainNode = $this->addImgNode($MainNode,	$this->createTLFattr('(0) default',$link),
-			'typo3/sysext/t3skin/images/flags/de.png'
+		$domainNode = $this->addImgNode($MainNode,	$this->createTLFattr('(0) '.$this->getSysLanguageDetails(0,'title'),''),
+			$this->getSysLanguageDetails(0,'flag')
 		);
 
 

@@ -69,6 +69,13 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	protected $sysDomains;
 
 	/**
+	 * Lists all Sys Languages
+	 *
+	 * @var array
+	 */
+	protected $sysLanguages;
+
+	/**
 	 * Check what type your are running ...
 	 *
 	 * @var array
@@ -93,6 +100,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		$this->t3MindRepository = $t3MindRepository;
 		$this->setmapMode();
 		$this->initSysDomains();
+		$this->initSysLanguages();
 		$this->setHttpHosts();
 		$this->setCruserId();
 	}
@@ -261,7 +269,56 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 			$this->sysDomains[ $r['pid'] ] = $r['domainName'];
 		}
 	}
+	
+	/**
+	 * gets all Sys Languages
+	 *
+	 * @return string
+	 */
+	private function initSysLanguages(){
+/*
+	mod.SHARED {
+		defaultLanguageFlag = de.gif
+		defaultLanguageLabel = german
+	}	
+*/	
+		$modSharedTSconfig = t3lib_BEfunc::getModTSconfig( $this->settings['pageUid'], 'mod.SHARED');
 
+		// fallback non sprite-configuration
+		if (preg_match('/\.gif$/', $modSharedTSconfig['properties']['defaultLanguageFlag'])) {
+			$modSharedTSconfig['properties']['defaultLanguageFlag'] = str_replace('.gif', '', $modSharedTSconfig['properties']['defaultLanguageFlag']);
+		}
+
+
+		$this->sysLanguages = array(
+			0=>array(
+				'title' => strlen($modSharedTSconfig['properties']['defaultLanguageLabel']) ? $modSharedTSconfig['properties']['defaultLanguageLabel'].' ('.$GLOBALS['LANG']->sl('LLL:EXT:lang/locallang_mod_web_list.xml:defaultLanguage').')' : $GLOBALS['LANG']->sl('LLL:EXT:lang/locallang_mod_web_list.xml:defaultLanguage'),
+				'flag' => $modSharedTSconfig['properties']['defaultLanguageFlag'],
+			)
+		);
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,title,flag',
+			'sys_language', '', '', '' );
+		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
+			$this->sysLanguages[ $r['uid'] ] = $r;
+		}
+	}
+
+	/**
+	 * gets details for a Sys Languages
+	 *
+	 * @param integer $language_id
+	 * @param string $column (title or flag)
+	 * @return string
+	 */
+	public function getSysLanguageDetails($language_id,$column){
+		if( $column == 'flag' ){
+			$return = 'typo3/gfx/flags/'.$this->sysLanguages[$language_id][$column].'.gif';
+		}else{
+			$return = $this->sysLanguages[$language_id][$column];
+		
+		}
+		return $return;
+	}
 
 	/**
 	 * format the size by bytes ... outputs human readable...
@@ -482,7 +539,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		if( isset($row['sys_language_uid']) ){
 			$col = 'sys_language_uid';
 			$label = $this->getNoteTableRowLabel($tableName,$col,'Language ID');
-			$htmlContent[] = $this->getNoteTableRow($label,$row[$col] );
+			$htmlContent[] = $this->getNoteTableRow($label,'('.$row[$col].') '.$this->getSysLanguageDetails($row[$col],'title').' <img src="'.$this->getBEHttpHost().$this->getSysLanguageDetails($row[$col],'flag').'"/>' );
 		} unset($row[$col]);
 
 		if( isset($row['starttime']) && $row['starttime'] > 0 ){

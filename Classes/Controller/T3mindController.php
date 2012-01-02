@@ -76,7 +76,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 * @var Tx_Typo3mind_Utility_Helpers
 	 */
 	protected $helpers;
-
+	
 	/**
 	 * initializeAction
 	 *
@@ -199,13 +199,22 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 * @return void
 	 */
 	public function exportAction() {
+		if( $this->pageUid == 0 ){
+			// todo better error messages .... 8-)
+			die('<h2>No page ID selected. Please click in the tree on the root page and then on "TYPO3Mind Export".</h2>');
+		}
 
+		$tt = new t3lib_timetrack();
+		$tt->start();
+		
+		$this->settings['pageUid'] = $this->pageUid;
 		/*TODO export via ajax ...*/
 		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);
 		$typo3tempFilename = $expObj->getContent();
 
 		$this->view->assign('downloadURL', '/typo3temp/'.$typo3tempFilename);
 		$this->view->assign('filename', $typo3tempFilename);
+		$this->view->assign('duration',$tt->getDifferenceToStarttime());
 	}
 
 	/**
@@ -222,13 +231,14 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 			die('API Keys does not match!');
 		}
 
+		die('Still not supported');
 
 		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);
 		$typo3tempFilename = $expObj->getContent();
 
-echo '<pre>';
-var_dump($typo3tempFilename);
-echo '</pre>';
+		echo '<pre>';
+		var_dump($typo3tempFilename);
+		echo '</pre>';
 
 		return '';
 
