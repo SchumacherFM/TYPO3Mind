@@ -189,6 +189,27 @@ class Tx_Typo3mind_Utility_eIDDispatcher {
 		$this->arguments 		= array('apikey'=>$apikey,'id'=>$this->id);	
 	}
 }
+/**
+ * Loads the TypoScript for the given extension prefix, e.g. tx_cspuppyfunctions_pi1, for use in a backend module.
+ *
+ * @param string $extKey
+ * @return array
+ */
+function loadTypoScriptForBEModule($extKey) {
+	require_once(PATH_t3lib . 'class.t3lib_page.php');
+	require_once(PATH_t3lib . 'class.t3lib_tstemplate.php');
+	require_once(PATH_t3lib . 'class.t3lib_tsparser_ext.php');
+	list($page) = t3lib_BEfunc::getRecordsByField('pages', 'pid', 0);
+	$pageUid = intval($page['uid']);
+	$sysPageObj = t3lib_div::makeInstance('t3lib_pageSelect');
+	$rootLine = $sysPageObj->getRootLine($pageUid);
+	$TSObj = t3lib_div::makeInstance('t3lib_tsparser_ext');
+	$TSObj->tt_track = 0;
+	$TSObj->init();
+	$TSObj->runThroughTemplates($rootLine);
+	$TSObj->generateConfig();
+	return $TSObj->setup['plugin.'][$extKey . '.'];
+}
 
 // eID specific initialization of user and database
 tslib_eidtools::connectDB();
