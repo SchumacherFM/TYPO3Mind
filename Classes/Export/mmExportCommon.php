@@ -597,11 +597,11 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 						}
 						if( $colName == 'constants' || $colName == 'config' ){
 							$noLtGtReplace = 1;
-/*
+
 $checkIncludeLines = Tx_Typo3mind_Utility_Helpers::TSIncludeLines2Link($colVal,1,true);
 echo '<pre>';
 var_dump($checkIncludeLines);
-echo('</pre><hr/>');	*/
+echo('</pre><hr/>');	
 							$colVal = '|lt|pre|gt|'.trim($colVal).'|lt|/pre|gt|';
 						}
 					}/*</Templates>*/

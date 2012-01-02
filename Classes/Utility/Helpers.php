@@ -108,7 +108,7 @@ echo('</pre>'); */
 											if (@is_file($filename) && filesize($filename) < 100000) { // Max. 100 KB include files!
 													// check for includes in included text
 												$includedFiles[] = $filename;
-												$included_text = self::checkIncludeLines(t3lib_div::getUrl($filename), $cycle_counter + 1, $returnFiles);
+												$included_text = self::TSIncludeLines2Link(t3lib_div::getUrl($filename), $cycle_counter + 1, $returnFiles);
 													// If the method also has to return all included files, merge currently included
 													// files with files included by recursively calling itself
 												if ($returnFiles && is_array($included_text)) {
