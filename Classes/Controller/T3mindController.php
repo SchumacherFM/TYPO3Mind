@@ -78,6 +78,13 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	protected $helpers;
 	
 	/**
+	 * time track
+	 *
+	 * @var t3lib_timetrack
+	 */
+	protected $tt;
+	
+	/**
 	 * initializeAction
 	 *
 	 * @return void
@@ -85,8 +92,10 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	public function initializeAction() {
 		$this->pageUid = (int)t3lib_div::_GET('id');
 		$this->apikey = md5(t3lib_div::_GET('apikey'));
-		$this->helpers = new Tx_Typo3mind_Utility_Helpers();
+		$this->helpers = t3lib_div::makeInstance('Tx_Typo3mind_Utility_Helpers');
         $this->extConfSettings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['typo3mind']);
+		$this->tt = t3lib_div::makeInstance('t3lib_timetrack');
+		$this->tt->start();
 
 		// todo: better error handling
 		if( !isset($this->extConfSettings['apikey']) || trim($this->extConfSettings['apikey'])=='' ){
@@ -204,8 +213,6 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 			die('<h2>No page ID selected. Please click in the tree on the root page and then on "TYPO3Mind Export".</h2>');
 		}
 
-		$tt = new t3lib_timetrack();
-		$tt->start();
 		
 		$this->settings['pageUid'] = $this->pageUid;
 		/*TODO export via ajax ...*/
@@ -214,12 +221,12 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 
 		$this->view->assign('downloadURL', '/typo3temp/'.$typo3tempFilename);
 		$this->view->assign('filename', $typo3tempFilename);
-		$this->view->assign('duration',$tt->getDifferenceToStarttime());
+		$this->view->assign('duration', ($this->tt->getDifferenceToStarttime() /1000) );
 	}
 
 	/**
 	 * action export via eID
-	 http://xxxxxxxxxxxxx/index.php?eID=typo3mind&id=6&apikey=K589jNRSoMsFbg-@L897XdESD
+	 http://xxxxxxxxxxxxx/index.php?eID=typo3mind&id=6&apikey=xxxxxxx
 	 http://stuff.lime-flavour.de/link-typo3-eid-use-with-extbase-and-fluid/
 	 *
 	 * $apikey string the key
