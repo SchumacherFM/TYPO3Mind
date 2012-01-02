@@ -597,11 +597,11 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 						}
 						if( $colName == 'constants' || $colName == 'config' ){
 							$noLtGtReplace = 1;
-
+/*
 $checkIncludeLines = Tx_Typo3mind_Utility_Helpers::TSIncludeLines2Link($colVal,1,true);
 echo '<pre>';
 var_dump($checkIncludeLines);
-echo('</pre><hr/>');
+echo('</pre><hr/>');	*/
 							$colVal = '<pre>'.trim($colVal).'</pre>';
 						}
 					}/*</Templates>*/
@@ -643,12 +643,6 @@ echo('</pre><hr/>');
 	private function getNoteTableRow($label,$value,$noLtGtReplace=0){	
 		$value = htmlspecialchars($value);
 		if( $noLtGtReplace == 0 ){ $value = str_replace(array('&lt;','&gt;'),array('|lt|','|gt|'),$value); }
-if($label == 'ssssSetup:'){
-echo '<pre>';
-var_dump($noLtGtReplace);
-var_dump($value);
-echo('</pre>');
-}
 		return '<tr valign="top"><td>'.htmlspecialchars($label).'</td><td>'.$value.'</td></tr>';
 	}
 	

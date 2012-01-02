@@ -95,9 +95,9 @@ class Tx_Typo3mind_Utility_Helpers {
 							// SO, the include was positively recognized:
 						
 						$params = t3lib_div::get_tag_attributes($subparts[0]);
-echo '<pre>';
+/* echo '<pre>';
 var_dump($params);
-die('</pre>');
+echo('</pre>'); */
 						if ($params['source']) {
 							$sourceParts = explode(':', $params['source'], 2);
 							switch (strtolower(trim($sourceParts[0]))) {
