@@ -90,26 +90,28 @@ class Tx_Typo3mind_Utility_eIDDispatcher {
 		
 		$this->id = (int)t3lib_div::_GP('id');
 
-		
+		/*
 		$GLOBALS['LANG'] = t3lib_div::makeInstance('language');
 		$GLOBALS['LANG']->init('default');
 //		echo $GLOBALS['LANG']->sL('holla');
 		$temp_TSFEclassName = t3lib_div::makeInstance('tslib_fe');
 		$GLOBALS['TSFE'] = new $temp_TSFEclassName($TYPO3_CONF_VARS, $this->id, 0, true);	
 		$GLOBALS['TSFE']->sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
-/*		$GLOBALS['TSFE']->tmpl = t3lib_div::makeInstance('t3lib_tstemplate');
-		$GLOBALS['TSFE']->tmpl->init();	*/
-
-$GLOBALS['BE_USER'] = t3lib_div::makeInstance('t3lib_beUserAuth'); // New backend user object
-$GLOBALS['BE_USER']->start(); // Object is initialized
-		 
-// $GLOBALS['TSFE']->connectToDB();
-$GLOBALS['TSFE']->initFEuser();
-$GLOBALS['TSFE']->determineId();
-$GLOBALS['TSFE']->getCompressedTCarray();
-$GLOBALS['TSFE']->initTemplate();
-$GLOBALS['TSFE']->getConfigArray();
-		
+		$GLOBALS['TSFE']->tmpl = t3lib_div::makeInstance('t3lib_tstemplate');
+		$GLOBALS['TSFE']->tmpl->init();	
+		// t3lib_userAuth
+		$GLOBALS['BE_USER'] = t3lib_div::makeInstance('t3lib_beUserAuth'); // New backend user object
+		// $GLOBALS['BE_USER']->start(); // Object is initialized
+		//$GLOBALS['BE_USER']->backendCheckLogin();       // Checking if there's a user logged in
+		//define('TYPO3_PROCEED_IF_NO_USER', true);
+				
+		// $GLOBALS['TSFE']->connectToDB();
+		$GLOBALS['TSFE']->initFEuser();
+		$GLOBALS['TSFE']->determineId();
+		$GLOBALS['TSFE']->getCompressedTCarray();
+		$GLOBALS['TSFE']->initTemplate();
+		$GLOBALS['TSFE']->getConfigArray();
+		*/
 	}
 	
 	/**
@@ -187,6 +189,28 @@ $GLOBALS['TSFE']->getConfigArray();
 		$this->arguments 		= array('apikey'=>$apikey,'id'=>$this->id);	
 	}
 }
+
+// eID specific initialization of user and database
+tslib_eidtools::connectDB();
+tslib_eidtools::initFeUser();
+
+// initialize TSFE
+require_once(PATH_tslib.'class.tslib_fe.php');
+require_once(PATH_t3lib.'class.t3lib_page.php');
+$temp_TSFEclassName = t3lib_div::makeInstanceClassName('tslib_fe');
+$GLOBALS['TSFE'] = new $temp_TSFEclassName($TYPO3_CONF_VARS, (int)t3lib_div::_GP('id'), 0, true);
+$GLOBALS['TSFE']->connectToDB();
+$GLOBALS['TSFE']->initFEuser();
+$GLOBALS['TSFE']->determineId();
+$GLOBALS['TSFE']->getCompressedTCarray();
+$GLOBALS['TSFE']->initTemplate();
+$GLOBALS['TSFE']->getConfigArray();
+$GLOBALS['LANG'] = t3lib_div::makeInstance('language');
+$GLOBALS['LANG']->init('default');
+
+/*
+	hmm there are still a lot of classes missing to get it run via eID ... and I not sure if a backend modul kan even run via eID
+*/
 
 $dispatcher = t3lib_div::makeInstance('Tx_Typo3mind_Utility_eIDDispatcher');
 $dispatcher->dispatch();
