@@ -567,13 +567,30 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 			$bodyLength = isset($this->settings['SysFolderContentListTextMaxLength']) ? (int)$this->settings['SysFolderContentListTextMaxLength'] : 250;
 
 			foreach($row as $colName=>$colVal){
+
+			
 				if( $colVal <> '' ){
 					$label = $this->getNoteTableRowLabel($tableName,$colName,$colName);
 					$tcaEval = isset($TCA[$tableName]['columns'][$colName]) ? $TCA[$tableName]['columns'][$colName]['config']['eval'] : '';
 					$tcaType = isset($TCA[$tableName]['columns'][$colName]) ? strtolower($TCA[$tableName]['columns'][$colName]['config']['type']) : 'text';
 					
-				
-					if( stristr($tcaEval,'date')!==false ){ $colVal = $this->getDateTime($colVal); }
+					/*<TemplaVoila>*/
+					if( $tableName == 'tx_templavoila_tmplobj' ){
+					
+						if( $colName=='fileref_md5' && isset($row['fileref_md5']) && 
+							isset($row['fileref']) && file_exists(PATH_site.$row['fileref']) ){
+							
+							$currentMD5 = @md5_file(PATH_site.$row['fileref']);
+							if($currentMD5 <> $row['fileref_md5'] ){
+								$colVal = '<img src="'.$this->getBEHttpHost().'typo3/sysext/t3skin/icons/gfx/icon_warning.gif"/> New Hash: '.$currentMD5.' Old Hash: '.$colVal;
+							
+							}
+						}elseif($colName=='datastructure' || $colName=='fileref'){
+							$colVal = $this->value2ATag($colVal);
+						}
+					}/*</TemplaVoila>*/
+					/*<default values>*/
+					elseif( stristr($tcaEval,'date')!==false ){ $colVal = $this->getDateTime($colVal); }
 					elseif( $tcaType == 'text' || $tcaType == 'input' ){
 						/* we can't relay on the user, that all HTML is XML valid ... */
 						$colVal = strip_tags($colVal);
@@ -581,6 +598,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 						$colVal = preg_replace('~[\r\n]+~',"\n",$colVal);
 						$colVal = nl2br($colVal);
 					}
+					/*</default values>*/
 					 
 					$htmlContent[] = $this->getNoteTableRow($label,$colVal );
 				}/*endif*/
@@ -592,6 +610,11 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		return implode('',$htmlContent);
 	}/*</getNoteContentFromRow>*/
 
+	
+	private function value2ATag($string){
+		return '<a href="'.$this->getBEHttpHost().$string.'">'.$string.'</a> '.$this->translate('value2ATag');
+	}
+	
 	/**
 	 * generates a HTML table row
 	 *

@@ -27,6 +27,10 @@
 
 
 			<label index="UserNotFound">User not found</label>
+			<label index="value2ATag">(Hint: CTRL+Click!)</label>
+			
+			
+			
 			<label index="tree.security">Security</label>
 			
 			<label index="tree.fileInfo">About this file</label>

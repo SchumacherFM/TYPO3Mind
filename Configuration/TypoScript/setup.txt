@@ -68,6 +68,9 @@ module.tx_typo3mind {
 		SysFolderContentListAdditionalColumns {
 			tt_news = datetime,short,bodytext
 			tt_products = subtitle,itemnumber
+			
+			# if these three columns are set, they show you additional infos for TemplaVoila
+			tx_templavoila_tmplobj = datastructure,fileref,fileref_md5
 		}
 		SysFolderContentListTextMaxLength = 250
 		
