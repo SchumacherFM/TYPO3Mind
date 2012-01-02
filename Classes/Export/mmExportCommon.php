@@ -602,7 +602,7 @@ $checkIncludeLines = Tx_Typo3mind_Utility_Helpers::TSIncludeLines2Link($colVal,1
 echo '<pre>';
 var_dump($checkIncludeLines);
 echo('</pre><hr/>');	*/
-							$colVal = '<pre>'.trim($colVal).'</pre>';
+							$colVal = '|lt|pre|gt|'.trim($colVal).'|lt|/pre|gt|';
 						}
 					}/*</Templates>*/
 					
