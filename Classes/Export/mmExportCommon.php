@@ -567,7 +567,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 			$bodyLength = isset($this->settings['SysFolderContentListTextMaxLength']) ? (int)$this->settings['SysFolderContentListTextMaxLength'] : 250;
 
 			foreach($row as $colName=>$colVal){
-
+				$noLtGtReplace = 0;
 			
 				if( $colVal <> '' ){
 					$label = $this->getNoteTableRowLabel($tableName,$colName,$colName);
@@ -575,7 +575,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 					$tcaType = isset($TCA[$tableName]['columns'][$colName]) ? strtolower($TCA[$tableName]['columns'][$colName]['config']['type']) : 'text';
 					
 					/*<TemplaVoila>*/
-					if( $tableName == 'tx_templavoila_tmplobj' ){
+					if( $tableName == 'tx_templavoila_tmplobj' && in_array($colName,array('fileref_md5','fileref','datastructure')) ){
 					
 						if( $colName=='fileref_md5' && isset($row['fileref_md5']) && 
 							isset($row['fileref']) && file_exists(PATH_site.$row['fileref']) ){
@@ -589,6 +589,23 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 							$colVal = $this->value2ATag($colVal);
 						}
 					}/*</TemplaVoila>*/
+					
+					/*<Templates>*/
+					elseif( $tableName == 'sys_template' && in_array($colName,array('include_static_file','constants','config')) ){
+						if( $colName == 'include_static_file' ){
+							$colVal = implode('<br />',explode(',',$colVal));
+						}
+						if( $colName == 'constants' || $colName == 'config' ){
+							$noLtGtReplace = 1;
+
+$checkIncludeLines = Tx_Typo3mind_Utility_Helpers::TSIncludeLines2Link($colVal,1,true);
+echo '<pre>';
+var_dump($checkIncludeLines);
+echo('</pre><hr/>');
+							$colVal = '<pre>'.trim($colVal).'</pre>';
+						}
+					}/*</Templates>*/
+					
 					/*<default values>*/
 					elseif( stristr($tcaEval,'date')!==false ){ $colVal = $this->getDateTime($colVal); }
 					elseif( $tcaType == 'text' || $tcaType == 'input' ){
@@ -600,7 +617,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 					}
 					/*</default values>*/
 					 
-					$htmlContent[] = $this->getNoteTableRow($label,$colVal );
+					$htmlContent[] = $this->getNoteTableRow($label,$colVal,$noLtGtReplace );
 				}/*endif*/
 			}/*endforeach*/
 
@@ -623,8 +640,15 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @return	void
 	 * @see getNoteContentFromRow
 	 */
-	private function getNoteTableRow($label,$value){	
-		$value = str_replace(array('&lt;','&gt;'),array('|lt|','|gt|'),htmlspecialchars($value));
+	private function getNoteTableRow($label,$value,$noLtGtReplace=0){	
+		$value = htmlspecialchars($value);
+		if( $noLtGtReplace == 0 ){ $value = str_replace(array('&lt;','&gt;'),array('|lt|','|gt|'),$value); }
+if($label == 'ssssSetup:'){
+echo '<pre>';
+var_dump($noLtGtReplace);
+var_dump($value);
+echo('</pre>');
+}
 		return '<tr valign="top"><td>'.htmlspecialchars($label).'</td><td>'.$value.'</td></tr>';
 	}
 	
