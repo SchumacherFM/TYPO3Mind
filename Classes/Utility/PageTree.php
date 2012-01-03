@@ -239,10 +239,10 @@ class Tx_Typo3mind_Utility_PageTree {
 			if ($newID == 0) {
 				throw new RuntimeException('Endless recursion detected: TYPO3 has detected an error in the database. Please fix it manually (e.g. using phpMyAdmin) and change the UID of ' . $this->table . ':0 to a new value.<br /><br />See <a href="http://bugs.typo3.org/view.php?id=3495" target="_blank">bugs.typo3.org/view.php?id=3495</a> to get more information about a possible cause.');
 			}
-
+/* not needed
 			$this->tree[] = array(); // Reserve space.
 			end($this->tree);
-			$treeKey = key($this->tree); // Get the key for this space
+			$treeKey = key($this->tree); // Get the key for this space	*/
 			$LN = ($a == $c) ? 'blank' : 'line';
 
 				// If records should be accumulated, do so
@@ -276,13 +276,14 @@ class Tx_Typo3mind_Utility_PageTree {
 				$nextCount = $this->getCount($newID);
 				$exp = 0; // Clear "did expand" flag
 			}
-
+/*
+not needed 
 				// Finally, add the row/HTML content to the ->tree array in the reserved key.
 			$this->tree[$treeKey] = array(
 				'row' => $row,
 				'invertedDepth' => $depth,
 				'blankLineCode' => $blankLineCode,
-			);
+			); */
 		}
 
 		$this->getDataFree($res);
