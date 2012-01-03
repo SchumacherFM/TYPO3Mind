@@ -243,6 +243,8 @@ class Tx_Typo3mind_Utility_PageTree {
 			$this->tree[] = array(); // Reserve space.
 			end($this->tree);
 			$treeKey = key($this->tree); // Get the key for this space	*/
+			
+			
 			$LN = ($a == $c) ? 'blank' : 'line';
 
 				// If records should be accumulated, do so
