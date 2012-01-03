@@ -595,11 +595,13 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 					}/*</TemplaVoila>*/
 					
 					/*<Templates>*/
-					elseif( $tableName == 'sys_template' && in_array($colName,array('include_static_file','constants','config')) ){
+					elseif( ($tableName == 'sys_template' || $tableName == 'pages' ) && 
+						in_array($colName,array('include_static_file','constants','config','TSconfig')) ){
+						/* @TODO better implementing of tables which has TS column */
 						if( $colName == 'include_static_file' ){
 							$colVal = implode('<br />',explode(',',$colVal));
 						}
-						if( $colName == 'constants' || $colName == 'config' ){
+						if( $colName == 'constants' || $colName == 'config'  || $colName == 'TSconfig' ){
 							$noLtGtReplace = 1;
 
 							/* @todo link external TS files via eID ... still to think about it ...

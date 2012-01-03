@@ -69,11 +69,15 @@ module.tx_typo3mind {
 			tt_news = datetime,short,bodytext
 			tt_products = subtitle,itemnumber
 			
+			
 			# if these three columns are set, they show you additional infos for TemplaVoila
 			tx_templavoila_tmplobj = datastructure,fileref,fileref_md5
 			sys_template = root,clear,include_static,include_static_file,constants,config
 		}
 		SysFolderContentListTextMaxLength = 250
+		
+		# if set to 1 then each page show create date, create user, storage_pid and many more things
+		ShowExtendedDetailsInPageTree = 1
 		
 		design {
 			# function name, color index for % count(settings->BeUsersHandleRow), as many colors as you like

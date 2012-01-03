@@ -358,15 +358,17 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				foreach($uicons as $k=>$name){
 					$iconArray[] = array('path'=>$this->settings['userIconsPath'].$name);
 				}
-
+				/* @TODO implement function addImageNote() */
 				$pageParent = $this->addImagesNode($xmlNode,$attr,$iconArray,1);
 			} else {
-		//		$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
-echo '<pre>';
-var_dump($record);
-die('</pre>');
-				$htmlContent = $this->getNoteContentFromRow('pages',$record);
-				$rowNode = $this->addImgNote($xmlNode,$attr,$iconDokType,'',$htmlContent);
+			
+				/* @TODO defined in the table to show details for a page OR not! */
+				if( (int)$this->settings['ShowExtendedDetailsInPageTree'] == 1 ){
+					$htmlContent = $this->getNoteContentFromRow('pages',$record);
+					$pageParent = $this->addImgNote($xmlNode,$attr,$iconDokType,'',$htmlContent);
+				}else{
+					$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
+				}
 				
 			}
 

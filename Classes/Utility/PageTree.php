@@ -89,7 +89,22 @@ class Tx_Typo3mind_Utility_PageTree {
 	 * @see addField()
 	 */
 	public $fieldArray = array('uid', 'title','deleted','hidden','doktype','shortcut_mode','crdate','tstamp','module',
-		'cruser_id','sys_language_uid','starttime','endtime'
+		'cruser_id','starttime','endtime','storage_pid','TSconfig','no_cache','media','subtitle'
+	);
+	/* @TODO add additional cloumns via TS ... if columns are empty automatic remove ... SysFolderContentListAdditionalColumns */
+	
+	/*
+	 * assoc array for faster access ... if set then this column will be removed when empty()==true
+	 * @var array
+	*/
+	public $fieldArrayUnsetColumns = array(
+		'storage_pid' => 1,
+		'starttime' => 1,
+		'endtime' => 1,
+		'TSconfig' => 1,
+		'no_cache' => 1,
+		'media' => 1,
+		'subtitle' => 1,
 	);
 
 	/**
@@ -232,7 +247,13 @@ class Tx_Typo3mind_Utility_PageTree {
 
 				// If records should be accumulated, do so
 			// todo get all columns and store here so that we don't need a 2nd DB query
-			$this->recs[$row['uid']] = $row;
+			$rowRecs = $row;
+			foreach( $row as $rrk=>$rrv ){
+				/* unset empty columns ... @TODO define via TS in settings */
+				$rrv = trim($rrv);
+				if( isset($this->fieldArrayUnsetColumns[$rrk]) && empty($rrv) ){ unset($rowRecs[$rrk]); }
+			}
+			$this->recs[$row['uid']] = $rowRecs;
 
 				// Accumulate the id of the element in the internal arrays
 			$this->ids[] = $idH[$row['uid']]['uid'] = $row['uid'];
