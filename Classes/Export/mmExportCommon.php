@@ -598,10 +598,9 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 						if( $colName == 'constants' || $colName == 'config' ){
 							$noLtGtReplace = 1;
 
-$checkIncludeLines = Tx_Typo3mind_Utility_Helpers::TSIncludeLines2Link($colVal,1,true);
-echo '<pre>';
-var_dump($checkIncludeLines);
-echo('</pre><hr/>');	
+							/* @todo link external TS files via eID ... still to think about it ...
+							$colVal = Tx_Typo3mind_Utility_Helpers::TSReplaceFileLinkWithHref($colVal); 
+							*/
 							$colVal = '|lt|pre|gt|'.trim($colVal).'|lt|/pre|gt|';
 						}
 					}/*</Templates>*/
@@ -643,7 +642,7 @@ echo('</pre><hr/>');
 	private function getNoteTableRow($label,$value,$noLtGtReplace=0){	
 		$value = htmlspecialchars($value);
 		if( $noLtGtReplace == 0 ){ $value = str_replace(array('&lt;','&gt;'),array('|lt|','|gt|'),$value); }
-		return '<tr valign="top"><td>'.htmlspecialchars($label).'</td><td>'.$value.'</td></tr>';
+		return '<tr style=" border-style: solid;  border-bottom-width: 1;" valign="top"><td>'.htmlspecialchars($label).'</td><td>'.$value.'</td></tr>';
 	}
 	
 	/**

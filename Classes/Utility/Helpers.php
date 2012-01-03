@@ -56,21 +56,37 @@ class Tx_Typo3mind_Utility_Helpers {
 	 * @return	array
 	 */
 	public static function trimExplodeVK($d,$s) {
-	
+
 		return self::arrayKeysEqualValues ( t3lib_div::trimExplode($d, $s ,1 ) );
 	}
 
 	/**
+	 * To click and view TS Files
+	 *
+	 * @param	string		Unparsed TypoScript
+	 * @return	array
+	 * @static
+	 */
+	public static function  TSReplaceFileLinkWithHref($TSstring) {
+		$fileNames = self::TSgetIncludedFileNames($TSstring);
+		// @todo implement secure preview URL via eID with API key for a short time valid ...
+		foreach($fileNames as $tsFile){
+			$TSstring = preg_replace('~(FILE\s*:\s*)'.preg_quote($tsFile).'~i','\\1|lt|a href="#"|gt|'.$tsFile.'|lt|/a|gt|',$TSstring);
+		}
+		return $TSstring;
+	}
+	/**
+	 *  (c) 1999-2011 Kasper Skårhøj (kasperYYYY@typo3.com)
+	 *  All rights reserved
 	 * Checks the input string (un-parsed TypoScript) for include-commands ("<INCLUDE_TYPOSCRIPT: ....")
 	 * Use: t3lib_TSparser::checkIncludeLines()
 	 *
 	 * @param	string		Unparsed TypoScript
 	 * @param	integer		Counter for detecting endless loops
-	 * @param	boolean		When set an array containing the resulting typoscript and all included files will get returned
-	 * @return	string		Complete TypoScript with includes added.
+	 * @return	array
 	 * @static
 	 */
-	public static function  TSIncludeLines2Link($string, $cycle_counter = 1, $returnFiles = FALSE) {
+	private static function  TSgetIncludedFileNames($string, $cycle_counter = 1 ) {
 		$includedFiles = array();
 		if ($cycle_counter > 100) {
 			t3lib_div::sysLog('It appears like TypoScript code is looping over itself. Check your templates for "&lt;INCLUDE_TYPOSCRIPT: ..." tags', 'Core', 2);
@@ -88,16 +104,14 @@ class Tx_Typo3mind_Utility_Helpers {
 			$allParts = explode($splitStr, LF . $string . LF); // adds line break char before/after
 			foreach ($allParts as $c => $v) {
 				if (!$c) { // first goes through
-					 
+
 				} elseif (preg_match('/\r?\n\s*$/', $allParts[$c - 1])) { // There must be a line-break char before.
 					$subparts = explode('>', $v, 2);
 					if (preg_match('/^\s*\r?\n/', $subparts[1])) { // There must be a line-break char after
 							// SO, the include was positively recognized:
-						
+
 						$params = t3lib_div::get_tag_attributes($subparts[0]);
-/* echo '<pre>';
-var_dump($params);
-echo('</pre>'); */
+
 						if ($params['source']) {
 							$sourceParts = explode(':', $params['source'], 2);
 							switch (strtolower(trim($sourceParts[0]))) {
@@ -107,15 +121,9 @@ echo('</pre>'); */
 										if (t3lib_div::verifyFilenameAgainstDenyPattern($filename)) { // Check for allowed files
 											if (@is_file($filename) && filesize($filename) < 100000) { // Max. 100 KB include files!
 													// check for includes in included text
-												$includedFiles[] = $filename;
-												$included_text = self::TSIncludeLines2Link(t3lib_div::getUrl($filename), $cycle_counter + 1, $returnFiles);
-													// If the method also has to return all included files, merge currently included
-													// files with files included by recursively calling itself
-												if ($returnFiles && is_array($included_text)) {
-													$includedFiles = array_merge($includedFiles, $included_text['files']);
-													$included_text = $included_text['typoscript'];
-												}
-												
+												$includedFiles[] = str_replace(PATH_site,'',$filename);
+												$included_text = self::TSgetIncludedFileNames(t3lib_div::getUrl($filename), $cycle_counter + 1);
+												$includedFiles = array_merge($includedFiles, $included_text);
 											}
 										} else {
 											t3lib_div::sysLog('File "' . $filename . '" was not included since it is not allowed due to fileDenyPattern', 'Core', 2);
@@ -124,20 +132,15 @@ echo('</pre>'); */
 								break;
 							}
 						}
-					} 
+					}
 				}
 			}
 
 		}
 			// When all included files should get returned, simply return an compound array containing
 			// the TypoScript with all "includes" processed and the files which got included
-		if ($returnFiles) {
-			return array(
-				'typoscript' => $string,
-				'files' => $includedFiles,
-			);
-		}
-		return $string;
+			return $includedFiles;
+
 	}
 
 }
