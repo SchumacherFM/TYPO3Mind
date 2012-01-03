@@ -361,7 +361,13 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 				$pageParent = $this->addImagesNode($xmlNode,$attr,$iconArray,1);
 			} else {
-				$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
+		//		$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
+echo '<pre>';
+var_dump($record);
+die('</pre>');
+				$htmlContent = $this->getNoteContentFromRow('pages',$record);
+				$rowNode = $this->addImgNote($xmlNode,$attr,$iconDokType,'',$htmlContent);
+				
 			}
 
 			if( is_array($t3mindCurrent) ){

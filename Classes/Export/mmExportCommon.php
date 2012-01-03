@@ -557,6 +557,10 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		unset($row['uid']);
 		unset($row['pid']);
 		unset($row['titInt0']);
+		unset($row['title']);
+		unset($row['doktype']);
+		unset($row['shortcut_mode']);
+		unset($row['module']);
 		unset($row['deleted']);
 		unset($row['hidden']);
 		unset($row['disable']);
@@ -642,7 +646,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	private function getNoteTableRow($label,$value,$noLtGtReplace=0){	
 		$value = htmlspecialchars($value);
 		if( $noLtGtReplace == 0 ){ $value = str_replace(array('&lt;','&gt;'),array('|lt|','|gt|'),$value); }
-		return '<tr style=" border-style: solid;  border-bottom-width: 1;" valign="top"><td>'.htmlspecialchars($label).'</td><td>'.$value.'</td></tr>';
+		return '<tr valign="top"><td>'.htmlspecialchars($label).'</td><td>'.$value.'</td></tr>';
 	}
 	
 	/**
