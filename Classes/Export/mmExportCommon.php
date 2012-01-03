@@ -657,7 +657,7 @@ echo('</pre><hr/>');
 	 */
 	private function getNoteTableRowLabel($tableName,$col,$alt){
 		global $TCA;
-		$label = isset($TCA[$tableName]['columns'][$col]) ? $this->SYSLANG->sL( $TCA[$tableName]['columns'][$col]['label']) : $alt;
+		$label = isset($TCA[$tableName]['columns'][$col]) ? $GLOBALS['LANG']->sL( $TCA[$tableName]['columns'][$col]['label']) : $alt;
 		if( empty($label) ){ $label = $alt; }
 		return $label;
 	}

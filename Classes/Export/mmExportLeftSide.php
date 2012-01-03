@@ -39,11 +39,6 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	protected $xmlParentNode;
 
 	/**
-	 * @var object
-	 */
-	protected $SYSLANG;
-
-	/**
 	 * @var array
 	 */
 	protected $categories;
@@ -73,25 +68,23 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 */
 	public function __construct(array $settings,Tx_Typo3mind_Domain_Repository_T3mindRepository $t3MindRepository) {
 		parent::__construct($settings,$t3MindRepository);
- 
-		$this->SYSLANG = t3lib_div::makeInstance('language');
-		$this->SYSLANG->init('default');	// initalize language-object with actual language
+
 		$this->categories = array(
-			'be' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_BE'),
-			'module' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_BE_modules'),
-			'fe' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_FE'),
-			'plugin' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_FE_plugins'),
-			'misc' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_miscellanous'),
-			'services' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_services'),
-			'templates' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_templates'),
-			'example' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_examples'),
-			'doc' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_documentation'),
+			'be' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_BE'),
+			'module' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_BE_modules'),
+			'fe' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_FE'),
+			'plugin' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_FE_plugins'),
+			'misc' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_miscellanous'),
+			'services' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_services'),
+			'templates' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_templates'),
+			'example' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_examples'),
+			'doc' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_documentation'),
 			'' => 'none'
 		);
 		$this->types = array(
-			'S' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:type_system'),
-			'G' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:type_global'),
-			'L' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:type_local'),
+			'S' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:type_system'),
+			'G' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:type_global'),
+			'L' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:type_local'),
 		);
 
 
@@ -430,7 +423,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			$exploded = t3lib_div::trimExplode(',', $tables ,1 );
 			ksort($exploded);
 			foreach($exploded as $k=>$table){
-				$this->addNode($nodeTables,array_merge($attr,array('TEXT'=>'['.$table.'] '.$this->SYSLANG->sL( $TCA[$table]['ctrl']['title'] )) ));
+				$this->addNode($nodeTables,array_merge($attr,array('TEXT'=>'['.$table.'] '.$GLOBALS['LANG']->sL( $TCA[$table]['ctrl']['title'] )) ));
 			}
 		}
 
@@ -839,7 +832,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		));
 
 		foreach( $TCA['tt_content']['columns']['list_type']['config']['items'] as $ei=>$extA ){
-			$extA[0] = $this->SYSLANG->sL($extA[0]);
+			$extA[0] = $GLOBALS['LANG']->sL($extA[0]);
 			if( !empty($extA[0]) ){
 				$this->addImgNode($selectableExtensions,array(
 					'TEXT'=> '('.$extA[1].') '.$extA[0],

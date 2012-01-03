@@ -57,7 +57,6 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 		$attributes = array(
 			'COLOR'=>'#993300',
 		);
-// $temp_TTclassName = t3lib_div::makeInstanceClassName(‘t3lib_timeTrack’);
 
 		$html = '<center><img src="'.$this->getBEHttpHost().'typo3/sysext/t3skin/icons/gfx/loginlogo_transp.gif" alt="TYPO3 Logo" />
 		<h2>'.$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'].'</h2>

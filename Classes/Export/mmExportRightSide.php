@@ -38,11 +38,6 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	protected $xmlParentNode;
 
 	/**
-	 * @var language
-	 */
-	protected $SYSLANG;
-
-	/**
 	 * the whole tree
 	 * @var Tx_Typo3mind_Utility_PageTree
 	 */
@@ -86,21 +81,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 		$this->RGBinterpolate = t3lib_div::makeInstance('Tx_Typo3mind_Utility_RGBinterpolate');
 
-		$this->SYSLANG = t3lib_div::makeInstance('language');
-		$this->SYSLANG->init('default');	// initalize language-object with actual language
-/*		$this->categories = array(
-			'be' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_BE'),
-			'module' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_BE_modules'),
-			'fe' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_FE'),
-			'plugin' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_FE_plugins'),
-			'misc' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_miscellanous'),
-			'services' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_services'),
-			'templates' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_templates'),
-			'example' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_examples'),
-			'doc' => $this->SYSLANG->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_documentation'),
-			'' => 'none'
-		);
-*/
+		
 		$this->tree = t3lib_div::makeInstance('Tx_Typo3mind_Utility_PageTree');
 		$this->tree->init('');
 		$this->tree->getTree(0, 999, '');
