@@ -130,7 +130,32 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 		$this->view->assign('redirect','alt_doc.php?returnUrl='.$T3_THIS_LOCATION.'&edit[tx_typo3mind_domain_model_t3mind]['.$T3mind->getUid().']=edit');
 		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'uid,title' ) );
 	}
+	/**
+	 * action export
+	 *
+	 * @return void
+	 */
+	public function exportAction() {
+		if( $this->pageUid == 0 ){
+			// todo better error messages .... 8-)
+			die('<h2>No page ID selected. Please click in the tree on the root page and then on "TYPO3Mind Export".</h2>');
+		}
 
+		
+		$this->settings['pageUid'] = $this->pageUid;
+		/*TODO export via ajax ...*/
+		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);
+		$typo3tempFilename = $expObj->getContent();
+
+		$this->view->assign('downloadURL', '/typo3temp/'.$typo3tempFilename);
+		$this->view->assign('filename', $typo3tempFilename);
+		$this->view->assign('duration', ($this->tt->getDifferenceToStarttime() /1000) );
+	}
+
+	
+	/*************************************************************************************************
+		NOT USED, but keept for later ....
+	*************************************************************************************************/
 	/**
 	 * action editPages
 	 *
@@ -200,28 +225,6 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 		$this->view->assign('options', $options );
 		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'title' ) );
 
-	}
-
-	/**
-	 * action export
-	 *
-	 * @return void
-	 */
-	public function exportAction() {
-		if( $this->pageUid == 0 ){
-			// todo better error messages .... 8-)
-			die('<h2>No page ID selected. Please click in the tree on the root page and then on "TYPO3Mind Export".</h2>');
-		}
-
-		
-		$this->settings['pageUid'] = $this->pageUid;
-		/*TODO export via ajax ...*/
-		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);
-		$typo3tempFilename = $expObj->getContent();
-
-		$this->view->assign('downloadURL', '/typo3temp/'.$typo3tempFilename);
-		$this->view->assign('filename', $typo3tempFilename);
-		$this->view->assign('duration', ($this->tt->getDifferenceToStarttime() /1000) );
 	}
 
 	/**
