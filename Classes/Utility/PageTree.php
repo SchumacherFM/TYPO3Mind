@@ -223,14 +223,14 @@ class Tx_Typo3mind_Utility_PageTree {
 		$depth = intval($depth);
 		$a = 0;
 
-		$res = $this->getDataInit($uid);
-		$c = $this->getDataCount($res);
+		$res = $this->_getDataInit($uid);
+		$c = $this->_getDataCount($res);
 		$crazyRecursionLimiter = 999;
 
 		$idH = array();
 
 			// Traverse the records:
-		while ($crazyRecursionLimiter > 0 && $row = $this->getDataNext($res)) {
+		while ($crazyRecursionLimiter > 0 && $row = $this->_getDataNext($res)) {
 			$a++;
 			$crazyRecursionLimiter--;
 
@@ -275,7 +275,7 @@ class Tx_Typo3mind_Utility_PageTree {
 				}
 				$exp = 1; // Set "did expand" flag
 			} else {
-				$nextCount = $this->getCount($newID);
+				$nextCount = $this->_getCount($newID);
 				$exp = 0; // Clear "did expand" flag
 			}
 /*
@@ -288,7 +288,7 @@ not needed
 			); */
 		}
 
-		$this->getDataFree($res);
+		$this->_getDataFree($res);
 		$this->buffer_idH = $idH;
 		return $c;
 	}
@@ -308,7 +308,7 @@ not needed
 	 * @return	integer
 	 * @access private
 	 */
-	private function getCount($uid) {
+	private function _getCount($uid) {
 
 		return $GLOBALS['TYPO3_DB']->exec_SELECTcountRows(
 			'uid',
@@ -320,18 +320,6 @@ not needed
 		);
 	}
 
-
-	/**
-	 * Returns root record for uid (<=0)
-	 *
-	 * @param	integer		uid, <= 0 (normally, this does not matter)
-	 * @return	array		Array with title/uid keys with values of $this->title/0 (zero)
-	 */
-	private function getRootRecord($uid) {
-		return array('title' => $this->title, 'uid' => 0);
-	}
-
-
 	/**
 	 * Returns the record for a uid.
 	 * For tables: Looks up the record in the database.
@@ -340,7 +328,7 @@ not needed
 	 * @param	integer		UID to look up
 	 * @return	array		The record
 	 */
-	private function getRecord($uid) {
+	private function _getRecord($uid) {
 		return t3lib_BEfunc::getRecordWSOL($this->table, $uid);
 	}
 
@@ -352,7 +340,7 @@ not needed
 	 * @return	mixed		data handle (Tables: An sql-resource, arrays: A parentId integer. -1 is returned if there were NO subLevel.)
 	 * @access private
 	 */
-	private function getDataInit($parentId) {
+	private function _getDataInit($parentId) {
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 				implode(',', $this->fieldArray),
 				$this->table,
@@ -372,9 +360,9 @@ not needed
 	 * @param	mixed		data handle
 	 * @return	integer		number of items
 	 * @access private
-	 * @see getDataInit()
+	 * @see _getDataInit()
 	 */
-	private function getDataCount(&$res) {
+	private function _getDataCount(&$res) {
 		$c = $GLOBALS['TYPO3_DB']->sql_num_rows($res);
 		return $c;
 	}
@@ -385,9 +373,9 @@ not needed
 	 * @param	mixed		data handle
 	 * @return	array		item data array OR FALSE if end of elements.
 	 * @access private
-	 * @see getDataInit()
+	 * @see _getDataInit()
 	 */
-	private function getDataNext(&$res) {
+	private function _getDataNext(&$res) {
 		while ($row = @$GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 			t3lib_BEfunc::workspaceOL($this->table, $row, $this->BE_USER->workspace, TRUE);
 			if (is_array($row)) {
@@ -404,7 +392,7 @@ not needed
 	 * @return	void
 	 * @access private
 	 */
-	private function getDataFree(&$res) {
+	private function _getDataFree(&$res) {
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);
 	}
 
