@@ -3,7 +3,7 @@
  *  Copyright notice
  *
  *  (c) 2011 Cyrill Schumacher <Cyrill@Schumacher.fm>
- *  
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -42,7 +42,7 @@ class Tx_Typo3mind_Domain_Repository_T3mindRepository extends Tx_Extbase_Persist
 		parent::__construct($objectManager);
 		$this->defaultQuerySettings = new Tx_Extbase_Persistence_Typo3QuerySettings();
 		$this->defaultQuerySettings->setRespectStoragePage(FALSE);
-	}	
+	}
 
 	/**
 	 * Finds all and returns all them as an array
@@ -61,10 +61,10 @@ class Tx_Typo3mind_Domain_Repository_T3mindRepository extends Tx_Extbase_Persist
 	 */
 	public function getIcons($settingsIcons){
 
-		$path = t3lib_extMgm::extPath('typo3mind').'Resources/Public/'.$settingsIcons['iconsPath']; 
+		$path = t3lib_extMgm::extPath('typo3mind').'Resources/Public/'.$settingsIcons['iconsPath'];
 
 		$icons = scanDir($path,0);
-		
+
 		$icons2 = array();
 		foreach($icons as $k=>$v){
 			if( preg_match('~(.+)\.(png)$~i',$v,$filename) ){
@@ -72,7 +72,7 @@ class Tx_Typo3mind_Domain_Repository_T3mindRepository extends Tx_Extbase_Persist
 			}
 		}
 		return $icons2;
-	
+
 	}
 
 	/**
@@ -82,24 +82,17 @@ class Tx_Typo3mind_Domain_Repository_T3mindRepository extends Tx_Extbase_Persist
 	 */
 	public function getUserIcons($settingsIcons){
 
-		$path = t3lib_div::getIndpEnv('TYPO3_DOCUMENT_ROOT').'/'.$settingsIcons['userIconsPath']; 
+		$path = t3lib_div::getIndpEnv('TYPO3_DOCUMENT_ROOT').'/'.$settingsIcons['userIconsPath'];
 
 		$icons = scanDir($path,0);
-		
+
 		$icons2 = array();
 		foreach($icons as $k=>$v){
 			if( preg_match('~(.+)\.(png|jpg|gif)$~i',$v,$filename) ){
 				$icons2[ $filename[1] ] = $settingsIcons['userIconsPath'].$v;
 			}
 		}
-/*	echo '<pre>'; 
-	var_dump($path); 
-	var_dump($icons2); 
-	exit; 
-*/
-		
 		return $icons2;
-	
 	}
 
 }

@@ -125,7 +125,7 @@ class Tx_Typo3mind_Utility_DbList {
 	public function getTRsysFolderContent(SimpleXMLElement &$xmlNode,$uid,$depth,$t3mind = NULL) {
 		GLOBAL $TCA;
 		$this->setPID($uid);
-		$this->generateList();
+		$this->_generateList();
 
 		
 		// todo hier geht es weiter ... LINKS einbauen, icons, etc TCA hide table auswerten ...
@@ -195,7 +195,7 @@ class Tx_Typo3mind_Utility_DbList {
 	 *
 	 * @return	void
 	 */
-	private function generateList()	{
+	private function _generateList()	{
 		global $TCA;
 
 
@@ -213,7 +213,7 @@ class Tx_Typo3mind_Utility_DbList {
 			// $hideTable = $GLOBALS['TCA'][$tableName]['ctrl']['hideTable'] ? TRUE : FALSE;
 
 			/* Setting fields to select: */
-			$fields = $this->makeFieldList($value,$tableName);
+			$fields = $this->_makeFieldList($value,$tableName);
 
 			/* get user defined columns ... for each table listet in a SysFolder */
 			if( isset($this->parentObject->settings['SysFolderContentListAdditionalColumns'][$tableName]) ){
@@ -240,7 +240,7 @@ class Tx_Typo3mind_Utility_DbList {
 			$accRows = false;
 			if( $dbCount ){
 				$this->tablesInSysFolder[$tableName] = array(
-					'TotalItems'=>$this->getTotalItems($queryParts),
+					'TotalItems'=>$this->_getTotalItems($queryParts),
 				);
 				$accRows = array();	// Accumulate rows here
 				while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result))	{
@@ -268,7 +268,7 @@ class Tx_Typo3mind_Utility_DbList {
 	 * @param	array		Query array
 	 * @return	void
 	 */
-	private function getTotalItems($queryParts)	{
+	private function _getTotalItems($queryParts)	{
 		return $GLOBALS['TYPO3_DB']->exec_SELECTcountRows(
 			'*',
 			$queryParts['FROM'],
@@ -286,7 +286,7 @@ class Tx_Typo3mind_Utility_DbList {
 	 * @param	boolean		If set, users access to the field (non-exclude-fields) is NOT checked.
 	 * @return	array		Array, where values are fieldnames to include in query
 	 */
-	private function makeFieldList($tcaCurrent,$table)	{
+	private function _makeFieldList($tcaCurrent,$table)	{
 		global $TCA;
 
 		$fields = array();
@@ -337,7 +337,7 @@ class Tx_Typo3mind_Utility_DbList {
 	 *
 	 * @return	string		HTML for the sys-notes (if any)
 	 */
-	function showSysNotesForPage()	{
+	public function showSysNotesForPage()	{
 		global $TCA;
 
 		$out='';
@@ -394,10 +394,5 @@ class Tx_Typo3mind_Utility_DbList {
 		}
 		return $out;
 	}
-
-
-
-
-
 
 }

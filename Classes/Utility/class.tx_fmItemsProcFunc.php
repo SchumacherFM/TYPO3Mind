@@ -88,7 +88,7 @@ class tx_fmItemsProcFunc {
 			is_dir(PATH_site.$tsValue)
 		){
 
-			$params['items'] = $this->getFiles( $tsValue );
+			$params['items'] = $this->_getFiles( $tsValue );
 
 		}else{
 
@@ -126,13 +126,13 @@ class tx_fmItemsProcFunc {
 	 * @param	string 	path
 	 * @return	array
 	 */
-	private function getFiles( $path ) {
+	private function _getFiles( $path ) {
 			$subA = $fileArray = array();
 			$pics = scandir(PATH_site.$path);
 			foreach($pics as $k=>$v){
 				$subPath = $path.$v.'/';
 				if( $v!='.' && $v != '..' && is_dir(PATH_site.$subPath) ){
-					$subA = $this->getFiles( $subPath );
+					$subA = $this->_getFiles( $subPath );
 					$fileArray = array_merge($fileArray,$subA);
 				}
 				if( preg_match('~\.(png|jpg|gif|jpeg|webp)$~i',$v) ){
