@@ -409,6 +409,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	 * @param	SimpleXMLElement $xmlNode
 	 * @param	array $attributes
 	 * @param	array $images [] = array(path=>,html=>,link=>) relativ image path like ../typo3conf/ext/..../ext_icon.gif
+	 * @param	string $noteHTML 
 	 * @return	nothing
 	 */
 	public function addImagesNote(SimpleXMLElement $xmlNode,$attributes,$images,$noteHTML ) {
@@ -438,7 +439,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 			$childNode = $this->addRichContentNote($xmlNode, $attributes ,$htmlContent,array(),array(),'BOTH');
 
 		}else {
-			$childNode = $this->addRichContentNote($xmlNode, $attributes ,$nodeHTML,array(),array(),'BOTH');
+			$childNode = $this->addRichContentNote($xmlNode, $attributes ,$noteHTML,array(),array(),'BOTH');
 		}
 		return $childNode;
 	}
@@ -511,6 +512,15 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 
 		file_put_contents(PATH_site.'typo3temp/'.$fileName, $xml );
 		return $fileName;
+	}
+	/**
+	 * convert < and > to special internal strings to recover it in xml out to original < and > ;-)
+	 *
+	 * @param string $string
+	 * @return	string
+	 */
+	public function convertLTGT($string){
+		return str_replace( array('<','>'), array('|lt|','|gt|'), $string );
 	}
 
 }

@@ -521,37 +521,37 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		global $TCA;
 
 		$htmlContent = array('<table>');
-		$htmlContent[] = $this->getNoteTableRow('UID',$row['uid']); unset($row['uid']);
+		$htmlContent[] = $this->_getNoteTableRow('UID',$row['uid']); unset($row['uid']);
 
 		$col = 'crdate';
-		$label = $this->getNoteTableRowLabel($tableName,$col,'Created');
-		$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
+		$label = $this->_getNoteTableRowLabel($tableName,$col,'Created');
+		$htmlContent[] = $this->_getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
 
 		$col = 'cruser_id';
-		$label = $this->getNoteTableRowLabel($tableName,$col,'Created by');
-		$htmlContent[] = $this->getNoteTableRow($label,$this->getUserById($row[$col]) ); unset($row[$col]);
+		$label = $this->_getNoteTableRowLabel($tableName,$col,'Created by');
+		$htmlContent[] = $this->_getNoteTableRow($label,$this->getUserById($row[$col]) ); unset($row[$col]);
 
 		$col = 'tstamp';
-		$label = $this->getNoteTableRowLabel($tableName,$col,'Last update');
-		$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
+		$label = $this->_getNoteTableRowLabel($tableName,$col,'Last update');
+		$htmlContent[] = $this->_getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
 
 
 		if( isset($row['sys_language_uid']) ){
 			$col = 'sys_language_uid';
-			$label = $this->getNoteTableRowLabel($tableName,$col,'Language ID');
-			$htmlContent[] = $this->getNoteTableRow($label,'('.$row[$col].') '.$this->getSysLanguageDetails($row[$col],'title').' <img src="'.$this->getBEHttpHost().$this->getSysLanguageDetails($row[$col],'flag').'"/>' );
+			$label = $this->_getNoteTableRowLabel($tableName,$col,'Language ID');
+			$htmlContent[] = $this->_getNoteTableRow($label,'('.$row[$col].') '.$this->getSysLanguageDetails($row[$col],'title').' <img src="'.$this->getBEHttpHost().$this->getSysLanguageDetails($row[$col],'flag').'"/>' );
 		} unset($row[$col]);
 
 		if( isset($row['starttime']) && $row['starttime'] > 0 ){
 			$col = 'starttime';
-			$label = $this->getNoteTableRowLabel($tableName,$col,'Starttime');
-			$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) );
+			$label = $this->_getNoteTableRowLabel($tableName,$col,'Starttime');
+			$htmlContent[] = $this->_getNoteTableRow($label,$this->getDateTime($row[$col]) );
 		}
 		unset($row['starttime']);
 		if( isset($row['endtime']) && $row['endtime'] > 0 ){
 			$col = 'endtime';
-			$label = $this->getNoteTableRowLabel($tableName,$col,'Endtime');
-			$htmlContent[] = $this->getNoteTableRow($label,$this->getDateTime($row[$col]) );
+			$label = $this->_getNoteTableRowLabel($tableName,$col,'Endtime');
+			$htmlContent[] = $this->_getNoteTableRow($label,$this->getDateTime($row[$col]) );
 		}
 		unset($row['endtime']);
 		unset($row['uid']);
@@ -574,7 +574,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 				$noLtGtReplace = 0;
 			
 				if( $colVal <> '' ){
-					$label = $this->getNoteTableRowLabel($tableName,$colName,$colName);
+					$label = $this->_getNoteTableRowLabel($tableName,$colName,$colName);
 					$tcaEval = isset($TCA[$tableName]['columns'][$colName]) ? $TCA[$tableName]['columns'][$colName]['config']['eval'] : '';
 					$tcaType = isset($TCA[$tableName]['columns'][$colName]) ? strtolower($TCA[$tableName]['columns'][$colName]['config']['type']) : 'text';
 					
@@ -586,11 +586,11 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 							
 							$currentMD5 = @md5_file(PATH_site.$row['fileref']);
 							if($currentMD5 <> $row['fileref_md5'] ){
-								$label .= ' <img src="'.$this->getBEHttpHost().'typo3/sysext/t3skin/icons/gfx/icon_warning.gif"/>';
+								$label .= $this->convertLTGT(' <img src="'.$this->getBEHttpHost().'typo3/sysext/t3skin/icons/gfx/icon_warning.gif"/>');
 								$colVal = ' New: '.$currentMD5.'<br />Old: '.$colVal;
 							}
 						}elseif($colName=='datastructure' || $colName=='fileref'){
-							$colVal = $this->value2ATag($colVal);
+							$colVal = $this->_value2ATag($colVal);
 						}
 					}/*</TemplaVoila>*/
 					
@@ -607,7 +607,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 							/* @todo link external TS files via eID ... still to think about it ...
 							$colVal = Tx_Typo3mind_Utility_Helpers::TSReplaceFileLinkWithHref($colVal); 
 							*/
-							$colVal = '|lt|pre|gt|'.trim($colVal).'|lt|/pre|gt|';
+							$colVal = $this->convertLTGT('<pre>').trim($colVal).$this->convertLTGT('</pre>');
 						}
 					}/*</Templates>*/
 					
@@ -622,7 +622,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 					}
 					/*</default values>*/
 					 
-					$htmlContent[] = $this->getNoteTableRow($label,$colVal,$noLtGtReplace );
+					$htmlContent[] = $this->_getNoteTableRow($label,$colVal,$noLtGtReplace );
 				}/*endif*/
 			}/*endforeach*/
 
@@ -633,7 +633,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	}/*</getNoteContentFromRow>*/
 
 	
-	private function value2ATag($string){
+	private function _value2ATag($string){
 		return '<a href="'.$this->getBEHttpHost().$string.'">'.$string.'</a> '.$this->translate('value2ATag');
 	}
 	
@@ -645,7 +645,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @return	void
 	 * @see getNoteContentFromRow
 	 */
-	private function getNoteTableRow($label,$value,$noLtGtReplace=0){	
+	private function _getNoteTableRow($label,$value,$noLtGtReplace=0){	
 		$value = htmlspecialchars($value);
 		if( $noLtGtReplace == 0 ){ $value = str_replace(array('&lt;','&gt;'),array('|lt|','|gt|'),$value); }
 		return '<tr valign="top"><td>'.htmlspecialchars($label).'</td><td>'.$value.'</td></tr>';
@@ -660,10 +660,11 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @return	void
 	 * @see getNoteContentFromRow
 	 */
-	private function getNoteTableRowLabel($tableName,$col,$alt){
+	private function _getNoteTableRowLabel($tableName,$col,$alt){
 		global $TCA;
 		$label = isset($TCA[$tableName]['columns'][$col]) ? $GLOBALS['LANG']->sL( $TCA[$tableName]['columns'][$col]['label']) : $alt;
 		if( empty($label) ){ $label = $alt; }
 		return $label;
 	}
+	
 }

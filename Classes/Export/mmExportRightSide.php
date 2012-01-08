@@ -352,7 +352,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				)
 			) ? true : false;			
 
-			// if user assigns multiple images then use: addImagesNode
+			// if user assigns multiple images then use: addImagesNode/addImagesNote
 			if( isset($this->t3mind[$uid]) && !empty($this->t3mind[$uid]['node_user_icon']) ){
 
 				$ui = $this->t3mind[$uid]['node_user_icon'];
