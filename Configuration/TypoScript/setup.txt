@@ -78,7 +78,7 @@ module.tx_typo3mind {
 		
 		# if set to 1 then each page shows create date, create user, storage_pid and many more things
 		# if set to 0 then only these pages will show extended details which have set the flag in the backend.
-		ShowExtendedDetailsInPageTree = 0
+		ShowExtendedDetailsInPageTree = 1
 		
 		design {
 			# function name, color index for % count(settings->BeUsersHandleRow), as many colors as you like

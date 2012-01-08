@@ -510,7 +510,16 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 			$xml
 		).'<!--HiddenMD5:'.$md5.'-->';
 
-		file_put_contents(PATH_site.'typo3temp/'.$fileName, $xml );
+		$fileName = 'typo3temp/'.$fileName;
+		
+		file_put_contents(PATH_site.$fileName, $xml );
+		unset($xml);
+		
+		/* check if file has been build successfully */
+		$xml = simplexml_load_file($fileName);
+echo '<pre>';
+var_dump($xml);
+die('</pre>');
 		return $fileName;
 	}
 	/**
