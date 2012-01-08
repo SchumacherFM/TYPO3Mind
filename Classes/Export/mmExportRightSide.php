@@ -345,6 +345,12 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				$attr['FOLDED'] = 'true'; 
 			}
 
+			
+			$ShowExtendedDetailsInPageTree = ((int)$this->settings['ShowExtendedDetailsInPageTree'] == 1 || 
+				(
+					(int)$this->settings['ShowExtendedDetailsInPageTree'] == 0 && $t3mindCurrent['show_details_note'] == 1
+				)
+			) ? true : false;			
 
 			// if user assigns multiple images then use: addImagesNode
 			if( isset($this->t3mind[$uid]) && !empty($this->t3mind[$uid]['node_user_icon']) ){
@@ -355,20 +361,22 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				foreach($uicons as $k=>$name){
 					$iconArray[] = array('path'=>$this->settings['userIconsPath'].$name);
 				}
-				/* @TODO implement function addImageNote() */
-				$pageParent = $this->addImagesNode($xmlNode,$attr,$iconArray,1);
+				
+				if( $ShowExtendedDetailsInPageTree === true	){
+					$htmlContent = $this->getNoteContentFromRow('pages',$record);
+					$pageParent = $this->addImagesNote($xmlNode,$attr,$iconArray,$htmlContent);
+				}else{
+					$pageParent = $this->addImagesNode($xmlNode,$attr,$iconArray);
+				}
+				
+				
 			} else {
-			
-				/* @TODO defined in the table model config to show details for a page OR not! 
-				showDetailsNote / show_details_note
-				*/
-				if( (int)$this->settings['ShowExtendedDetailsInPageTree'] == 1 ){
+				if( $ShowExtendedDetailsInPageTree === true	){
 					$htmlContent = $this->getNoteContentFromRow('pages',$record);
 					$pageParent = $this->addImgNote($xmlNode,$attr,$iconDokType,'',$htmlContent);
 				}else{
 					$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
 				}
-				
 			}
 
 			if( is_array($t3mindCurrent) ){

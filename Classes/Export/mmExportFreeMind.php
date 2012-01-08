@@ -411,12 +411,40 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	 * @param	array $images [] = array(path=>,html=>,link=>) relativ image path like ../typo3conf/ext/..../ext_icon.gif
 	 * @return	nothing
 	 */
-	public function addImagesNote(SimpleXMLElement $xmlNode,$attributes,$images,$noteHTML,	$addEdgeAttr = array(),	$addFontAttr = array() ) {
-		/*@TODO implement*/
+	public function addImagesNote(SimpleXMLElement $xmlNode,$attributes,$images,$noteHTML ) {
+
+		$html = array();
+
+		foreach($images as $k=>$img){
+			$iconLocal = str_replace('../','',$img['path']);
+			if( is_file(PATH_site.$iconLocal)  ){
+
+				if( isset($img['link']) ){
+					$img['link'] = str_replace('&','&amp;',$img['link']);
+					$html[] = '<a href="'.$img['link'].'"><img border="0" '.$img['html'].' src="'.$this->getBEHttpHost().$iconLocal.'"/></a>';
+				}else{
+					$html[] = '<img '.$img['html'].' src="'.$this->getBEHttpHost().$iconLocal.'"/>';
+				}
+
+			}
+		}
+		$htmlContent = array(
+			'NODE' => implode('@#160;@#160;',$html).'@#160;@#160;'.htmlspecialchars( $attributes['TEXT'] ),
+			'NOTE' => $noteHTML,
+		);
+
+		if( count($html) > 0  ){
+ 
+			$childNode = $this->addRichContentNote($xmlNode, $attributes ,$htmlContent,array(),array(),'BOTH');
+
+		}else {
+			$childNode = $this->addRichContentNote($xmlNode, $attributes ,$nodeHTML,array(),array(),'BOTH');
+		}
+		return $childNode;
 	}
 	
 	/**
-	 * adds multiple images with links to a node - HYPERLINKS ARE NOT SUPPORTED BY FREEMIND IN RICHCONTENT NODES!
+	 * adds multiple images with links to a node - HYPERLINKS ARE NOT SUPPORTED in the images BY FREEMIND IN RICHCONTENT NODES!
 	 *
 	 * @param	SimpleXMLElement $xmlNode
 	 * @param	array $attributes

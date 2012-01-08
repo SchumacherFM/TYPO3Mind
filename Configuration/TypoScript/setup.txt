@@ -77,8 +77,8 @@ module.tx_typo3mind {
 		SysFolderContentListTextMaxLength = 250
 		
 		# if set to 1 then each page shows create date, create user, storage_pid and many more things
-		# you can define in the config per page if to show these data. this is the global flag.
-		ShowExtendedDetailsInPageTree = 1
+		# if set to 0 then only these pages will show extended details which have set the flag in the backend.
+		ShowExtendedDetailsInPageTree = 0
 		
 		design {
 			# function name, color index for % count(settings->BeUsersHandleRow), as many colors as you like
