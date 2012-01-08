@@ -516,8 +516,9 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 		unset($xml);
 		
 		/* check if file has been build successfully */
-		$xml = simplexml_load_file($fileName);
+		$xml = simplexml_load_file(PATH_site.$fileName);
 echo '<pre>';
+var_dump($fileName);
 var_dump($xml);
 die('</pre>');
 		return $fileName;
