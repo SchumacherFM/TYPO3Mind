@@ -141,7 +141,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 			die('<h2>No page ID selected. Please click in the tree on the root page and then on "TYPO3Mind Export".</h2>');
 		}
 
-		
+		libxml_use_internal_errors(true);
 		$this->settings['pageUid'] = $this->pageUid;
 		/*TODO export via ajax ...*/
 		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);

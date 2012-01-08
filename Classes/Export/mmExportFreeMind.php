@@ -497,10 +497,15 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 		$fileName = preg_replace('~\[([a-z_\-]+)\]~ie','date(\'\\1\')',$fileName);
 		$fileName = empty($fileName) ? 'TYPO3Mind_'.mt_rand().'.mm' : $fileName;
 
+		$dom = dom_import_simplexml($xml);
+		$dom->preserveWhiteSpace = false;
+		$dom->formatOutput = true;
+		$xml = $dom->ownerDocument->saveXML();		
+		
 		$xml = str_replace(
 			array('|lt|',	'|gt|',	'@#',	'&amp;gt;',	'&amp;lt;',	'&amp;amp;'),
 			array('<',		'>',	'&#',	'&gt;',		'&lt;',		'&amp;'),
-			$xml->asXML()
+			$xml
 		);
 
 		$md5 = md5($xml);
@@ -520,18 +525,21 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 
 		$xmlErrors = array();
 		if ( $xml === false ) {
-			foreach(libxml_get_errors() as $error) {
+			$libxmlErrors = libxml_get_errors();
+			foreach($libxmlErrors as $error) {
 				$xmlErrors[] = $error->message;
 			}
 			$return = $xmlErrors;
 		}else{	
-			unset($xml);
+//			unset($xml);
 			$return = $fileName;
 		}
 		
 		
 echo '<pre>';
 var_dump($fileName);
+var_dump($xml);
+var_dump($libxmlErrors);
 var_dump($xmlErrors);
 die('</pre>');
 		return $return;
