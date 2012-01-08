@@ -145,10 +145,13 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 		$this->settings['pageUid'] = $this->pageUid;
 		/*TODO export via ajax ...*/
 		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);
-		$typo3tempFilename = $expObj->getContent();
+		$mmFile = $expObj->getContent();
 
-		$this->view->assign('downloadURL', '/typo3temp/'.$typo3tempFilename);
-		$this->view->assign('filename', $typo3tempFilename);
+		$this->view->assign('downloadURL', '/typo3temp/'.$mmFile['file']);
+		$this->view->assign('filename', basename($mmFile['file']) );
+		$this->view->assign('filekb', $mmFile['filekb'] );
+		$this->view->assign('iserror', $mmFile['iserror'] );
+		$this->view->assign('errors', $mmFile['errors'] );
 		$this->view->assign('duration', ($this->tt->getDifferenceToStarttime() /1000) );
 	}
 

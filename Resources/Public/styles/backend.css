@@ -49,3 +49,7 @@ div.colorarea {
 	width:155px; height:62px;
 	vertical-align:middle;
 }
+
+table.error tr td, table.error tr th {
+	padding:3px;
+}

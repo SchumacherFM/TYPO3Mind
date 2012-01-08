@@ -3,8 +3,33 @@
 
 <h1>TYPO3Mind Export</h1>
 
-<h2><a href="{downloadURL}">{filename}</a></h2>
+<f:if condition="{iserror}">
+	<f:then>
+	<h2>Errors in file {filename}</h2>
+		<table class="error" border="1" cellpadding="3" cellspacing="0">
+		  <tr>
+			<th>Leve</th>
+			<th>Line No</th>
+			<th>Column No</th>
+			<th>Message</th>
+		  </tr>
+		<f:for each="{errors}" as="obj" key="index">
+		  <tr>
+			<td>{obj.level}</td>
+			<td>{obj.line}</td>
+			<td>{obj.column}</td>
+			<td>{obj.message}</td>
+		  </tr>
+		</f:for>
+		</table>
+	
+	</f:then>
+	<f:else>
+		<h2><a href="{downloadURL}">{filename}</a></h2>
+	</f:else>
+</f:if>
 
+<h2>Filesize: {filekb} KB</h2>
 <h2>Duration: {duration} secs</h2>
 
 

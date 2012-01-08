@@ -486,7 +486,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	 *
 	 * @param	SimpleXMLElement $xml
 	 * @param	array $attributes  key is the name and value the value
-	 * @return	string the filename
+	 * @return	array
 	 */
 	protected function finalOutputFile(SimpleXMLElement $xml) {
 
@@ -497,17 +497,11 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 		$fileName = preg_replace('~\[([a-z_\-]+)\]~ie','date(\'\\1\')',$fileName);
 		$fileName = empty($fileName) ? 'TYPO3Mind_'.mt_rand().'.mm' : $fileName;
 
-
-		$dom = new DOMDocument('1.0');
-		$dom->preserveWhiteSpace = false;
-		$dom->formatOutput = true;
-		$dom->loadXML($xml->asXML());
-		$xml = $dom->saveXML();
-
+		
 		$xml = str_replace(
 			array('|lt|',	'|gt|',	'@#',	'&amp;gt;',	'&amp;lt;',	'&amp;amp;'),
 			array('<',		'>',	'&#',	'&gt;',		'&lt;',		'&amp;'),
-			$xml
+			$xml->asXML()
 		);
 
 		$md5 = md5($xml);
@@ -519,31 +513,26 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 
 		$fileName = 'typo3temp/'.$fileName;
 		
-		file_put_contents(PATH_site.$fileName, $xml );
+		$bytesWritten = file_put_contents(PATH_site.$fileName, $xml );
 		unset($xml);
 		
-		/* check if file has been build successfully */
-		$xml = simplexml_load_file(PATH_site.$fileName);
-
-		$xmlErrors = array();
-		if ( $xml === false ) {
-			$libxmlErrors = libxml_get_errors();
-			foreach($libxmlErrors as $error) {
-				$xmlErrors[] = $error->message;
-			}
-			$return = $xmlErrors;
-		}else{	
-//			unset($xml);
-			$return = $fileName;
+		if( $bytesWritten === false ){
+			die('<h2>Write to file '.PATH_site.$fileName.' failed ... check permissions!</h2>');
+		}
+		elseif( $bytesWritten == 0 ){
+			die('<h2>Zero bytes written to file '.PATH_site.$fileName.' ... hmmm.... ?</h2>');
 		}
 		
-		
-echo '<pre>';
-var_dump($fileName);
-var_dump($xml);
-var_dump($libxmlErrors);
-var_dump($xmlErrors);
-die('</pre>');
+		/* check if file has been build successfully */
+		$return = array();
+		$return['iserror'] = simplexml_load_file(PATH_site.$fileName) === false ? true : false;		
+		$return['errors'] = array_reverse( libxml_get_errors(), true);
+		foreach($return['errors'] as $k=>$v){
+			if( $v->level > 2 ){ $return['errors'][$k] = (array)$v; } else { unset($return['errors'][$k]); }
+		}
+		$return['filekb'] = sprintf('%.2f',$bytesWritten/1024);
+		$return['file'] = $fileName;
+
 		return $return;
 	}
 	/**
