@@ -9,6 +9,7 @@ CREATE TABLE tx_typo3mind_domain_model_t3mind (
 	page_uid int(11) DEFAULT '0' NOT NULL,
 	encrypt tinyint(1) unsigned DEFAULT '0' NOT NULL,
 	recursive tinyint(1) unsigned DEFAULT '0' NOT NULL,
+	show_details_note tinyint(1) unsigned DEFAULT '0' NOT NULL,
 	font_face varchar(255) DEFAULT '' NOT NULL,
 	font_color varchar(7) DEFAULT '' NOT NULL,
 	font_size int(11) DEFAULT '0' NOT NULL,

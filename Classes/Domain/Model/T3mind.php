@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2011 
+ *  (c) 2011
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -53,6 +53,13 @@ class Tx_Typo3mind_Domain_Model_T3mind extends Tx_Extbase_DomainObject_AbstractE
 	 * @var boolean
 	 */
 	protected $recursive;
+
+	/**
+	 * To show the details note in a page node
+	 *
+	 * @var boolean
+	 */
+	protected $showDetailsNote;
 
 	/**
 	 * Font Face
@@ -224,7 +231,26 @@ class Tx_Typo3mind_Domain_Model_T3mind extends Tx_Extbase_DomainObject_AbstractE
 	public function setrecursive($recursive) {
 		$this->recursive = (boolean)$recursive;
 	}
-	
+
+
+	/**
+	 * Returns the showDetailsNote
+	 *
+	 * @return boolean $showDetailsNote
+	 */
+	public function getshowDetailsNote() {
+		return (boolean)$this->showDetailsNote;
+	}
+
+	/**
+	 * Sets the showDetailsNote
+	 *
+	 * @param boolean $showDetailsNote
+	 * @return void
+	 */
+	public function setshowDetailsNote($showDetailsNote) {
+		$this->showDetailsNote = (boolean)$showDetailsNote;
+	}
 	
 	/**
 	 * Returns the fontFace

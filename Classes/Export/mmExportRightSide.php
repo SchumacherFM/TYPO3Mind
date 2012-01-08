@@ -359,7 +359,9 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				$pageParent = $this->addImagesNode($xmlNode,$attr,$iconArray,1);
 			} else {
 			
-				/* @TODO defined in the table model config to show details for a page OR not! */
+				/* @TODO defined in the table model config to show details for a page OR not! 
+				showDetailsNote / show_details_note
+				*/
 				if( (int)$this->settings['ShowExtendedDetailsInPageTree'] == 1 ){
 					$htmlContent = $this->getNoteContentFromRow('pages',$record);
 					$pageParent = $this->addImgNote($xmlNode,$attr,$iconDokType,'',$htmlContent);
