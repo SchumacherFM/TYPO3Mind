@@ -259,7 +259,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		/*</show all admins>*/
 
 
-		// TODO: to which group belongs a user?
+		// @TODO: to which group belongs a user?
 		/*<show all non admins>*/
 		$UserUserNode = $this->addNode($UsersNode,array(
 			'FOLDED'=>'true',
@@ -375,7 +375,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 	/**
 	 * handles a row returned from mysql with the backend groups values
-	 * TODO:  list all settings for a group ... it seems complicated ...
+	 * @TODO:  list all settings for a group ... it seems complicated ...
 	 *
 	 * @param	SimpleXMLElement $xmlNode
 	 * @param	array $row
