@@ -517,11 +517,24 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 		
 		/* check if file has been build successfully */
 		$xml = simplexml_load_file(PATH_site.$fileName);
+
+		$xmlErrors = array();
+		if ( $xml === false ) {
+			foreach(libxml_get_errors() as $error) {
+				$xmlErrors[] = $error->message;
+			}
+			$return = $xmlErrors;
+		}else{	
+			unset($xml);
+			$return = $fileName;
+		}
+		
+		
 echo '<pre>';
 var_dump($fileName);
-var_dump($xml);
+var_dump($xmlErrors);
 die('</pre>');
-		return $fileName;
+		return $return;
 	}
 	/**
 	 * convert < and > to special internal strings to recover it in xml out to original < and > ;-)
