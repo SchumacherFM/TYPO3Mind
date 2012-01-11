@@ -63,7 +63,7 @@ class Tx_Typo3mind_Utility_T3ConfCheck {
 				} else {
 					if (preg_match('/["\']([[:alnum:]_-]*)["\'][[:space:]]*=>(.*)/i',$lc,$reg)) {
 						preg_match('/,[\t\s]*\/\/(.*)/i',$reg[2],$creg);
-						$theComment = trim($creg[1]);
+						$theComment = trim( isset($creg[1]) ? $creg[1] : '' );
 						if (substr(strtolower(trim($reg[2])),0,5)=='array' && !strcmp($reg[1],strtoupper($reg[1]))) {
 							$mainKey=trim($reg[1]);
 							$mainArray[$mainKey]=$theComment;

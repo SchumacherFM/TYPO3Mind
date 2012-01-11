@@ -260,10 +260,10 @@ class Tx_Typo3mind_Utility_PageTree {
 				// Accumulate the id of the element in the internal arrays
 			$this->ids[] = $idH[$row['uid']]['uid'] = $row['uid'];
 			$this->ids_hierarchy[$depth][] = $row['uid'];
-			$this->orig_ids_hierarchy[$depth][] = $row['_ORIG_uid'] ? $row['_ORIG_uid'] : $row['uid'];
+			$this->orig_ids_hierarchy[$depth][] = isset($row['_ORIG_uid']) ? $row['_ORIG_uid'] : $row['uid'];
 
 				// Make a recursive call to the next level
-			if ($depth > 1 && !$row['php_tree_stop']) {
+			if ($depth > 1 && ( !isset($row['php_tree_stop']) || $row['php_tree_stop']==0 ) ) {
 				$nextCount = $this->getTree(
 					$newID,
 					$depth - 1,

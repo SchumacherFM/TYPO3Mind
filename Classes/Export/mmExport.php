@@ -52,7 +52,6 @@ class Tx_Typo3mind_Export_mmExport extends Tx_Typo3mind_Export_mmExportCommon im
 
 		$rootNode = $this->getMap();
 
-
 		$mmExportLeftSide = t3lib_div::makeInstance('Tx_Typo3mind_Export_mmExportLeftSide',$this->settings,$this->t3MindRepository);
 		$mmExportLeftSide->getSecurityNode($rootNode);
 		$mmExportLeftSide->getTYPONode($rootNode);

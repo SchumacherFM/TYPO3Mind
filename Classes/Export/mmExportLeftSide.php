@@ -58,7 +58,16 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 */
 	protected $stateColors;
 
-
+	/**
+	 * @var t3lib_loadModules
+	 */
+	private $_loadModules;
+	
+	/**
+	 * @var t3lib_TCEforms
+	 */
+	private $_TCEforms;
+	
 	/**
 	 * __constructor
 	 *
@@ -68,6 +77,10 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 */
 	public function __construct(array $settings,Tx_Typo3mind_Domain_Repository_T3mindRepository $t3MindRepository) {
 		parent::__construct($settings,$t3MindRepository);
+		
+			$this->_loadModules = t3lib_div::makeInstance('t3lib_loadModules');
+			$this->_loadModules->load($GLOBALS['TBE_MODULES']);			
+			$this->_TCEforms = t3lib_div::makeInstance('t3lib_TCEforms');
 
 		$this->categories = array(
 			'be' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_tools_em.xml:category_BE'),
@@ -357,7 +370,9 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			while($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($DBresult) ){
 				if( !empty($r['log_data']) ){
 					$data = unserialize($r['log_data']);
-
+					for($o=0;$o<5;$o++){
+						if( !isset($data[$o]) ){ $data[$o]=''; }
+					}
 					$r['details'] = sprintf($r['details'], htmlspecialchars($data[0]), htmlspecialchars($data[1]), htmlspecialchars($data[2]), htmlspecialchars($data[3]), htmlspecialchars($data[4]));
 				}
 				unset($r['log_data']);
@@ -423,7 +438,8 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			$exploded = t3lib_div::trimExplode(',', $tables ,1 );
 			ksort($exploded);
 			foreach($exploded as $k=>$table){
-				$this->addNode($nodeTables,array_merge($attr,array('TEXT'=>'['.$table.'] '.$GLOBALS['LANG']->sL( $TCA[$table]['ctrl']['title'] )) ));
+				$text = isset($TCA[$table]) ? $GLOBALS['LANG']->sL( $TCA[$table]['ctrl']['title'] ) : $table;
+				$this->addNode($nodeTables,array_merge($attr,array('TEXT'=>'['.$table.'] '.$text) ));
 			}
 		}
 
@@ -440,10 +456,8 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 */
 	private function BeUserGroupsGetModList(SimpleXMLElement $xmlNode,$modListType,$groupMods,$attr = array()){
 
-			$loadModules = t3lib_div::makeInstance('t3lib_loadModules');
-			$loadModules->load($GLOBALS['TBE_MODULES']);
 
-			$modList = $modListType == 'modListUser' ? $loadModules->modListUser : $loadModules->modListGroup;
+			$modList = $modListType == 'modListUser' ? $this->_loadModules->modListUser : $this->_loadModules->modListGroup;
 
 			$groupModsExploded = Tx_Typo3mind_Utility_Helpers::trimExplodeVK(',', $groupMods );
 
@@ -457,7 +471,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 							$icon = '../' . substr($icon, strlen(PATH_site));
 						} */
 
-						$modLabel = t3lib_TCEforms::addSelectOptionsToItemArray_makeModuleData($theMod);
+						$modLabel = $this->_TCEforms->addSelectOptionsToItemArray_makeModuleData($theMod);
 						$attri = array_merge(array('TEXT'=>$modLabel),$attr);
 						$this->addNode($xmlNode,$attri);
 					}/*endif isset $groupModsExploded*/
@@ -559,8 +573,8 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 				}else{
 					$htmlContent = array();
-					$attr = array(
-						'TEXT'=>'['.$confName.'] = '.htmlspecialchars($v),
+					$attr = array(		
+						'TEXT'=>'['.$confName.'] = '.( !is_string($v) ? 'no-string given' : htmlspecialchars($v) ),
 					);
 
 					/*<check for unsecure installtool password!>*/
@@ -595,7 +609,6 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 			}/*endforeach*/
 		}/*endforeach*/
-
 	}/*</getTYPONodeConfVars>*/
 
 	/**

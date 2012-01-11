@@ -317,13 +317,13 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 		if( !isset($attributes['ID']) ){
 			$attributes['ID'] = 't3m'.mt_rand();
 		}
-
+		if( !isset($attributes['TEXT']) ){
+			$attributes['TEXT'] = 'No Text set!';
+		}
 		$attributes['TEXT'] = ($this->strip_tags( str_replace('"','',$attributes['TEXT']) ));
 
 		if( isset($attributes['LINK']) && empty($attributes['LINK']) ){ 
 			unset($attributes['LINK']); 
-		} else {
-			$attributes['LINK'] = $attributes['LINK'];
 		}
 
 		return $attributes;
