@@ -295,7 +295,9 @@ class Tx_Typo3mind_Utility_DbList {
 
 			$fields = array('uid','pid');
 			foreach($this->addFieldsDependedIfTheyAreSetOrNot as $k=>$column){
-				if( isset( $tcaCurrent['ctrl'][$column] ) && !empty($tcaCurrent['ctrl'][$column]) ){
+				/* @TODO $column for "enablecolumns" resolven  */
+				
+				if( !is_array($column) && isset( $tcaCurrent['ctrl'][$column] ) && !empty($tcaCurrent['ctrl'][$column]) ){
 					$fields[$column]=$tcaCurrent['ctrl'][$column];
 					if( $column == 'label' ){
 						$fields[$column] .= ' as titInt0'; /* title internal */
@@ -321,6 +323,7 @@ class Tx_Typo3mind_Utility_DbList {
 				}
 
 			}/*endforeach*/
+	
 		} /*endif is array*/
 		return $fields;
 

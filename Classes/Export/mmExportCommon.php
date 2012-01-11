@@ -575,7 +575,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 			
 				if( $colVal <> '' ){
 					$label = $this->_getNoteTableRowLabel($tableName,$colName,$colName);
-					$tcaEval = isset($TCA[$tableName]['columns'][$colName]) ? $TCA[$tableName]['columns'][$colName]['config']['eval'] : '';
+					$tcaEval = isset($TCA[$tableName]['columns'][$colName]['config']['eval']) ? $TCA[$tableName]['columns'][$colName]['config']['eval'] : '';
 					$tcaType = isset($TCA[$tableName]['columns'][$colName]) ? strtolower($TCA[$tableName]['columns'][$colName]['config']['type']) : 'text';
 					
 					/*<TemplaVoila>*/
@@ -662,7 +662,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 */
 	private function _getNoteTableRowLabel($tableName,$col,$alt){
 		global $TCA;
-		$label = isset($TCA[$tableName]['columns'][$col]) ? $GLOBALS['LANG']->sL( $TCA[$tableName]['columns'][$col]['label']) : $alt;
+		$label = isset($TCA[$tableName]['columns'][$col]['label']) ? $GLOBALS['LANG']->sL( $TCA[$tableName]['columns'][$col]['label']) : $alt;
 		if( empty($label) ){ $label = $alt; }
 		return $label;
 	}

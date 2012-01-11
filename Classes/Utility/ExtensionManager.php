@@ -178,7 +178,7 @@ class Tx_Typo3mind_Utility_ExtensionManager {
 				foreach ($constraints['depends'] as $key => $value) {
 					if ($value) {
 						$tmp = t3lib_div::trimExplode('-', $value, TRUE);
-						if (trim($tmp[1]) && trim($tmp[1]) !== '0.0.0') {
+						if (isset($tmp[1]) && trim($tmp[1]) && trim($tmp[1]) !== '0.0.0') {
 							$value = $tmp[0] . ' - ' . $tmp[1];
 						} else {
 							$value = $tmp[0];
