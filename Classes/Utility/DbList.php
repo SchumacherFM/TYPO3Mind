@@ -223,7 +223,7 @@ class Tx_Typo3mind_Utility_DbList {
 				$fields = array_merge($fields,$sqlRawE);
 			}
 
-			$orderBy = ($value['ctrl']['sortby']) ? 'ORDER BY '.$value['ctrl']['sortby'] : ( isset($value['ctrl']['default_sortby']) ? $value['ctrl']['default_sortby'] : 'ORDER BY uid desc' );
+			$orderBy = isset($value['ctrl']['sortby']) ? 'ORDER BY '.$value['ctrl']['sortby'] : ( isset($value['ctrl']['default_sortby']) ? $value['ctrl']['default_sortby'] : 'ORDER BY uid desc' );
 
 			$queryParts = array(
 				'SELECT' => implode(',',$fields),
@@ -312,9 +312,8 @@ class Tx_Typo3mind_Utility_DbList {
 
 				}
 
-				if( $k == 'enablecolumns' ){
+				if( $k === 'enablecolumns' ){
 					foreach($column as $kc=>$vc){
-
 						if( isset( $tcaCurrent['ctrl'][$k][$vc] ) && !empty($tcaCurrent['ctrl'][$k][$vc]) ){
 							$fields[$vc]=$tcaCurrent['ctrl'][$k][$vc];
 						}
