@@ -279,7 +279,7 @@ class Tx_Typo3mind_Utility_PageTree {
 				$exp = 0; // Clear "did expand" flag
 			}
 /*
-not needed 
+				not needed 
 				// Finally, add the row/HTML content to the ->tree array in the reserved key.
 			$this->tree[$treeKey] = array(
 				'row' => $row,
