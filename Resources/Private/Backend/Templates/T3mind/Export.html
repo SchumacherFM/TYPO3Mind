@@ -6,7 +6,10 @@
 <f:if condition="{iserror}">
 	<f:then>
 	<h2>Errors in file {filename}</h2>
-	<p>If you see this error ... </p>
+	<p>If you see this error ... then help me to find it please. I've even compared two phpinfo() and localconf files of two different TYPO3 installations on the same system.
+	One with T3 4.5.7 (this error) and the other T3 4.5.8 (working), both running on php 5.3.6. 
+	The failure is, that the function asXML() will not output the whole SimpleXML Element.
+	</p>
 		<table class="error" border="1" cellpadding="3" cellspacing="0">
 		  <tr>
 			<th>Leve</th>
