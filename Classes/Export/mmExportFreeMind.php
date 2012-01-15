@@ -500,7 +500,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 		$attributes['ENDINCLINATION'] = '440;0;';
 		$attributes['STARTINCLINATION'] = '440;0;';
 		
-		if( !isset($attributes['DESTINATION']) ){
+		if( !isset($attributes['DESTINATION']) || empty($attributes['DESTINATION']) ){
 			die('addArrowlink(): DESTINATION not set!');
 		}
 	
