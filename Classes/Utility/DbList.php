@@ -127,14 +127,13 @@ class Tx_Typo3mind_Utility_DbList {
 		$this->setPID($uid);
 		$this->_generateList();
 
-		
 		// todo hier geht es weiter ... LINKS einbauen, icons, etc TCA hide table auswerten ...
 		foreach($this->tablesInSysFolder as $tableName=>$values){
 
 			/* we do not want to list the pages in a sysfolder ... that means subsysfolders */
 			if( $tableName == 'pages' ){ continue; }
 		
-			$attr = array();
+			$attr = array('ID'=>'tISF139');
 			$llangTitle = $GLOBALS['LANG']->sL( $TCA[$tableName]['ctrl']['title'] );
 			$attr['TEXT'] = ( !empty($llangTitle) ? $llangTitle : $tableName ) . ' (C:'.$values['TotalItems'].')';
 
@@ -160,7 +159,7 @@ class Tx_Typo3mind_Utility_DbList {
 			/*<list the entries in a sysfolder node>*/
 			foreach($values as $k=>$row){
 
-				$attr = array('TEXT'=>$row['titInt0'] /* we'll have it in the note: .' (ID:'.$row['uid'].')' */ );
+				$attr = array('ID'=>'tISF139v','TEXT'=>$row['titInt0'] /* we'll have it in the note: .' (ID:'.$row['uid'].')' */ );
 				$attr = $this->parentObject->setAttr($t3mind,'font_color',$attr,'COLOR');
 				$attr = $this->parentObject->setAttr($t3mind,'node_color',$attr,'BACKGROUND_COLOR');
 

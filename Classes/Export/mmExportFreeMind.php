@@ -313,21 +313,23 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	 * @return	nothing
 	 */
 	protected function checkNodeAttr($attributes) {
-
+	
 		if( !isset($attributes['ID']) ){
 			$attributes['ID'] = 't3m'.mt_rand();
+		}else{
+			$attributes['ID'] .= '_'.mt_rand();
 		}
+		
 		if( !isset($attributes['TEXT']) ){
 			$attributes['TEXT'] = 'No Text set!';
 		}
 		
-		/* don't touch, unless you know what you are doing. ENT_XML1 is important!!  */
-		$attributes['TEXT'] = html_entity_decode($this->strip_tags( $attributes['TEXT'] ),ENT_XML1,'UTF-8');
+		$attributes['TEXT'] = htmlentities($this->strip_tags( $attributes['TEXT'] ) ,ENT_XML1 | ENT_IGNORE,'UTF-8' );
 
 		if( isset($attributes['LINK']) && empty($attributes['LINK']) ){ 
 			unset($attributes['LINK']); 
 		}
-
+		
 		return $attributes;
 	}
 
