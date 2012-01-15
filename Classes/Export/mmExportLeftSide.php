@@ -69,6 +69,12 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	private $_TCEforms;
 	
 	/**
+	 * Just to set an flag IF an extension update is available
+	 * @var array
+	 */
+	private $_isExtUpdateAvailable = array();
+	
+	/**
 	 * __constructor
 	 *
 	 * @param array $settings
@@ -883,15 +889,22 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 							'NODE' => '<img src="'.$extIcon.'"/>@#160;@#160;'.$extData['nicename'],
 							'NOTE'=> '<p>Version local: '.$extData['version_local'].'</p>'.
 								'<p>Version remote: '.$extData['version_remote'].'</p>'.
-								'<p>'.htmlspecialchars($extData['comment']).'</p>',
+								'<p>'.htmlspecialchars($this->convertLTGT($extData['comment'])).'</p>',
 						);
-						$extRCNode = $this->addRichContentNote($updateExtensions,array(), $htmlContent,array(),array(), 'BOTH' );
+						$this->_isExtUpdateAvailable[$extName] = 1;
+						$attr = array('ID'=>'LSupdate'.$extName,'LINK'=>'#LSext'.$extName);
+						
+						$extRCNode = $this->addRichContentNote($updateExtensions,$attr,$htmlContent,array(),array(), 'BOTH' );
 
+						$this->addArrowlink($extRCNode,array('DESTINATION'=>'LSext'.$extName));
+						
 			}/*endforeach*/
 		/*</check for extension updates!>*/
 
 
+		/*<Simple list all extensions and link them>*/
 
+		/*</Simple list all extensions and link them>*/
 
 		$installedExt = $extensionManager->getInstalledExtensions();
 		/* extension by modul state */
@@ -956,8 +969,11 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 						$extIcon = $preURI . $extKey . '/ext_icon.gif';
 
 						$extNode = $this->addImgNode($aStateNode,array(
+							'ID'=>'LSext'.$extKey,
 							'FOLDED'=>'true',
 							'TEXT'=> $extArray['EM_CONF']['title'],
+							/* if there is an extension update, then link back to the update! */
+							'LINK'=> isset($this->_isExtUpdateAvailable[$extKey]) ? '#LSupdate'.$extKey : '',
 						), $extIcon );
 
 						$color = $this->getDesignAlternatingColor('getExtensionNode',$extI,'CLOUD_COLOR');

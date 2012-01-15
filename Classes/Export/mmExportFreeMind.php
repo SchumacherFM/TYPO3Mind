@@ -316,8 +316,6 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	
 		if( !isset($attributes['ID']) ){
 			$attributes['ID'] = 't3m'.mt_rand();
-		}else{
-			$attributes['ID'] .= '_'.mt_rand();
 		}
 		
 		if( !isset($attributes['TEXT']) ){
@@ -484,6 +482,33 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 		}
 
 		return $childNode;
+	}
+	/**
+	 * adds adds an arrowlink to a destination ...
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	array $attributes
+	 * @return	nothing
+	 */
+	public function addArrowlink(SimpleXMLElement $xmlNode,$attributes) {
+	
+		// @todo set arrow color ... somewhere ...
+		$attributes['COLOR'] = '#FF0025';
+		$attributes['ENDARROW'] = 'Default'; /* there is an arrow */
+		$attributes['STARTARROW'] = 'Default'; /* there is an arrow */
+		$attributes['ID'] = 'Arrow_ID_'.mt_rand();
+		$attributes['ENDINCLINATION'] = '440;0;';
+		$attributes['STARTINCLINATION'] = '440;0;';
+		
+		if( !isset($attributes['DESTINATION']) ){
+			die('addArrowlink(): DESTINATION not set!');
+		}
+	
+		$child = $xmlNode->addChild('arrowlink','');
+
+		$this->addAttributes($child, $this->checkNodeAttr($attributes) );
+		return $child;
+
 	}
 	/**
 	 * Saves the SimpleXMLElement as a xml file in the typo3temp dir
