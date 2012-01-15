@@ -50,7 +50,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	 * @return	SimpleXMLElement
 	 */
 	protected function getMap() {
-		$this->mapXmlRoot = new SimpleXMLElement('<map></map>');
+		$this->mapXmlRoot = new SimpleXMLElement('<map></map>', LIBXML_NOXMLDECL | LIBXML_PARSEHUGE);
 		$this->mapXmlRoot->addAttribute('version',$this->mmVersion);
 
 
@@ -320,7 +320,9 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 		if( !isset($attributes['TEXT']) ){
 			$attributes['TEXT'] = 'No Text set!';
 		}
-		$attributes['TEXT'] = ($this->strip_tags( str_replace('"','',$attributes['TEXT']) ));
+		
+		/* don't touch, unless you know what you are doing. ENT_XML1 is important!!  */
+		$attributes['TEXT'] = html_entity_decode($this->strip_tags( $attributes['TEXT'] ),ENT_XML1,'UTF-8');
 
 		if( isset($attributes['LINK']) && empty($attributes['LINK']) ){ 
 			unset($attributes['LINK']); 
