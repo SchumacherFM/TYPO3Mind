@@ -162,7 +162,7 @@ class Tx_Typo3mind_Utility_T3ConfCheck {
 				@touch($file);
 				if (@is_file($file)) {
 					unlink($file);
-					if ($descr[2]) { $this->config_array[$descr[2]]=1; }
+					if ( isset($descr[2]) ) { $this->config_array[$descr[2]]=1; }
 					$this->message('ksmiletris', $relpath.' writable','',-1);
 				} else {
 					$severity = ($descr[1]==2 || $descr[1]==0) ? 3 : 2;

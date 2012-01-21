@@ -54,7 +54,7 @@ class Tx_Typo3mind_Utility_ExtensionManager {
 
 		foreach ($extList[0] as $name => $data) {
 			$this->xmlHandler->searchExtensionsXMLExact($name, '', '', TRUE, TRUE);
-			if (!is_array($this->xmlHandler->extensionsXML[$name])) {
+			if ( !isset($this->xmlHandler->extensionsXML[$name]) || !is_array($this->xmlHandler->extensionsXML[$name])) {
 				continue;
 			}
 
@@ -63,8 +63,8 @@ class Tx_Typo3mind_Utility_ExtensionManager {
 			natsort($versions);
 			$lastversion = end($versions);
 
-			if ((t3lib_extMgm::isLoaded($name) || $this->parentObject->MOD_SETTINGS['display_installed']) &&
-					($data['EM_CONF']['shy'] == 0 || $this->parentObject->MOD_SETTINGS['display_shy']) &&
+			if ((t3lib_extMgm::isLoaded($name) /* || $this->parentObject->MOD_SETTINGS['display_installed'] */ ) &&
+					($data['EM_CONF']['shy'] == 0 /* || $this->parentObject->MOD_SETTINGS['display_shy'] */ ) &&
 					tx_em_Tools::versionDifference($lastversion, $data['EM_CONF']['version'], 1)) {
 
 				$imgInfo = @getImageSize(tx_em_Tools::getExtPath($name, $data['type']) . '/ext_icon.gif');
@@ -79,15 +79,15 @@ class Tx_Typo3mind_Utility_ExtensionManager {
 					if (t3lib_div::int_from_ver($vk) <= t3lib_div::int_from_ver($data['EM_CONF']['version'])) {
 						continue;
 					}
-					$comment[] = $vk . ' '. nl2br($va[uploadcomment]);
+					$comment[] = $vk . ( isset($va['uploadcomment']) ?  ' '. nl2br($va['uploadcomment']) : '' );
 				}
 
 
 				$content[$name] = array(
-					'nicename' => $data[EM_CONF][title],
+					'nicename' => $data['EM_CONF']['title'],
 					'icon'=>$icon,
 					'comment'=>implode('<br/>',$comment),
-					'version_local'=>$data[EM_CONF][version],
+					'version_local'=>$data['EM_CONF']['version'],
 					'version_remote'=>$lastversion,
 				);
 
@@ -140,15 +140,15 @@ class Tx_Typo3mind_Utility_ExtensionManager {
 					if (@is_file($path . $extKey . '/ext_emconf.php')) {
 						$emConf = tx_em_Tools::includeEMCONF($path . $extKey . '/ext_emconf.php', $extKey);
 						if (is_array($emConf)) {
-							if (is_array($list[$extKey])) {
+							if ( isset($list[$extKey]) && is_array($list[$extKey])) {
 								$list[$extKey] = array('doubleInstall' => $list[$extKey]['doubleInstall']);
 							}
 							$list[$extKey]['extkey'] = $extKey;
-							$list[$extKey]['doubleInstall'] .= $type;
+							if( isset($list[$extKey]['doubleInstall'])) { 	$list[$extKey]['doubleInstall'] .= $type;	}
 							$list[$extKey]['type'] = $type;
 							$list[$extKey]['installed'] = t3lib_extMgm::isLoaded($extKey);
 							$list[$extKey]['EM_CONF'] = $emConf;
-							$list[$extKey]['files'] = t3lib_div::getFilesInDir($path . $extKey, '', 0, '', $this->excludeForPackaging);
+							$list[$extKey]['files'] = t3lib_div::getFilesInDir($path . $extKey, '', 0, '');
 
 							tx_em_Tools::setCat($cat, $list[$extKey], $extKey);
 						}
@@ -178,7 +178,7 @@ class Tx_Typo3mind_Utility_ExtensionManager {
 				foreach ($constraints['depends'] as $key => $value) {
 					if ($value) {
 						$tmp = t3lib_div::trimExplode('-', $value, TRUE);
-						if (trim($tmp[1]) && trim($tmp[1]) !== '0.0.0') {
+						if (isset($tmp[1]) && trim($tmp[1]) && trim($tmp[1]) !== '0.0.0') {
 							$value = $tmp[0] . ' - ' . $tmp[1];
 						} else {
 							$value = $tmp[0];
@@ -191,7 +191,7 @@ class Tx_Typo3mind_Utility_ExtensionManager {
 				foreach ($constraints['conflicts'] as $key => $value) {
 					if ($value) {
 						$tmp = t3lib_div::trimExplode('-', $value, TRUE);
-						if (trim($tmp[1]) && trim($tmp[1]) !== '0.0.0') {
+						if ( isset($tmp[1]) && trim($tmp[1]) && trim($tmp[1]) !== '0.0.0') {
 							$value = $tmp[0] . ' - ' . $tmp[1];
 						} else {
 							$value = $tmp[0];

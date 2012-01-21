@@ -39,6 +39,7 @@
 			<label index="tree.extensions.updates">Available Extension updates</label>
 			<label index="tree.extensions.updates.last">Last updated: </label>
 			<label index="tree.extensions.updates.number">Number of Extensions: </label>
+			<label index="tree.extensions.allext">All Extensions</label>
 			
 			<label index="tree.extensions.byState">Extensions by State</label>
 			<label index="tree.version">Version</label>

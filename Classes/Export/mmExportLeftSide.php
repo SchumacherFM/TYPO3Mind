@@ -69,6 +69,12 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	private $_TCEforms;
 	
 	/**
+	 * Just to set an flag IF an extension update is available
+	 * @var array
+	 */
+	private $_isExtUpdateAvailable = array();
+	
+	/**
 	 * __constructor
 	 *
 	 * @param array $settings
@@ -818,8 +824,32 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 
 		return $MainNode;
-	}
+	}/*</getDatabaseNode>*/
 
+	
+	private function _getExtensionNodeIcon($extKey,$extType){
+
+			switch($extType){
+				case 'S':
+					$preURI = TYPO3_mainDir.'sysext/';
+					$addTERLink = 0;
+				break;
+				case 'G':
+					$preURI = TYPO3_mainDir.'ext/';
+					$addTERLink = 1;
+				break;
+				case 'L':
+					$preURI = 'typo3conf/ext/';
+					$addTERLink = 1;
+				break;
+			}
+
+			// ext icon
+			$extIcon = $preURI . $extKey . '/ext_icon.gif';
+			
+		return array('addTERLink'=>$addTERLink,'extIcon'=>$extIcon);
+	}/*</_ExtensionNodeIcon>*/
+	
 	/**
 	 * gets the extension nodes
 	 *
@@ -843,12 +873,20 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'TEXT'=>$this->translate('tree.extensions.selectable'),
 			'FOLDED'=>'true',
 		));
-
+		
+		
 		foreach( $TCA['tt_content']['columns']['list_type']['config']['items'] as $ei=>$extA ){
 			$extA[0] = $GLOBALS['LANG']->sL($extA[0]);
 			if( !empty($extA[0]) ){
+			
+				$extName = array();
+				preg_match('~/([\w]+)/ext_icon\.gif~i',$extA[2],$extName);
+
+				$extKey = isset($extName[1]) ? $extName[1] : '';				
+				
 				$this->addImgNode($selectableExtensions,array(
 					'TEXT'=> '('.$extA[1].') '.$extA[0],
+					'LINK'=> '#LSext'.$extKey,
 				),$extA[2] );
 			}
 		}/*endforeach*/
@@ -883,17 +921,46 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 							'NODE' => '<img src="'.$extIcon.'"/>@#160;@#160;'.$extData['nicename'],
 							'NOTE'=> '<p>Version local: '.$extData['version_local'].'</p>'.
 								'<p>Version remote: '.$extData['version_remote'].'</p>'.
-								'<p>'.htmlspecialchars($extData['comment']).'</p>',
+								'<p>'.htmlspecialchars($this->convertLTGT($extData['comment'])).'</p>',
 						);
-						$extRCNode = $this->addRichContentNote($updateExtensions,array(), $htmlContent,array(),array(), 'BOTH' );
+						$this->_isExtUpdateAvailable[$extName] = 1;
+						$attr = array('ID'=>'LSupdate'.$extName,'LINK'=>'#LSext'.$extName);
+						
+						$extRCNode = $this->addRichContentNote($updateExtensions,$attr,$htmlContent,array(),array(), 'BOTH' );
 
+						$this->addArrowlink($extRCNode,array('DESTINATION'=>'LSext'.$extName));
+						
 			}/*endforeach*/
 		/*</check for extension updates!>*/
 
-
-
-
+		
 		$installedExt = $extensionManager->getInstalledExtensions();
+
+	//	echo '<pre>'; var_dump($installedExt[0]); die('</pre>');		
+
+		/*<Simple list all extensions and link them>*/
+		$ListAllExtensionsNode = $this->addNode($ChildFirst_Extensions,array(
+			'TEXT'=>$this->translate('tree.extensions.allext').' ('.count($installedExt[0]).')',
+			'FOLDED'=>'true',
+		));
+		
+		foreach($installedExt[0] as $extKey=>$extArray ){
+
+			// ext icon
+			$ico = $this->_getExtensionNodeIcon($extKey,$extArray['type']);
+
+			$extNode = $this->addImgNode($ListAllExtensionsNode,array(
+				'TEXT'=> $extArray['EM_CONF']['title'],
+				'LINK'=> '#LSext'.$extKey,
+			), $ico['extIcon'] );
+
+			// installed or not icon
+			$icon = $extArray['installed'] ? 'button_ok' : 'button_cancel';
+			$this->addIcon($extNode,$icon);
+		}
+		/*</Simple list all extensions and link them>*/
+		
+		
 		/* extension by modul state */
 
 		/* rebuilding the array by cat->state->name */
@@ -937,28 +1004,15 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 					$extI = 0;
 					foreach($stateArray as $extKey=>$extArray ){
 
-						switch($extArray['type']){
-							case 'S':
-								$preURI = TYPO3_mainDir.'sysext/';
-								$addTERLink = 0;
-							break;
-							case 'G':
-								$preURI = TYPO3_mainDir.'ext/';
-								$addTERLink = 1;
-							break;
-							case 'L':
-								$preURI = 'typo3conf/ext/';
-								$addTERLink = 1;
-							break;
-						}
-
-						// ext icon
-						$extIcon = $preURI . $extKey . '/ext_icon.gif';
+						$ico = $this->_getExtensionNodeIcon($extKey,$extArray['type']);
 
 						$extNode = $this->addImgNode($aStateNode,array(
+							'ID'=>'LSext'.$extKey,
 							'FOLDED'=>'true',
 							'TEXT'=> $extArray['EM_CONF']['title'],
-						), $extIcon );
+							/* if there is an extension update, then link back to the update! */
+							'LINK'=> isset($this->_isExtUpdateAvailable[$extKey]) ? '#LSupdate'.$extKey : '',
+						), $ico['extIcon'] );
 
 						$color = $this->getDesignAlternatingColor('getExtensionNode',$extI,'CLOUD_COLOR');
 						$this->addCloud($extNode,array('COLOR'=>$color ));
@@ -970,14 +1024,16 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 						// node for system global or local ext
 						$this->addNode($extNode, array(
-							// 'FOLDED'=>'true',
 							'TEXT'=>$this->types[ $extArray['type'] ],
 						) );
 
+						$this->addNode($extNode, array(
+							'TEXT'=>'Key: '.$extKey,
+						) );
+						
 						// link to TER
-						if( $addTERLink == 1 ){
+						if( $ico['addTERLink'] == 1 ){
 							$this->addNode($extNode, array(
-								// 'FOLDED'=>'true',
 								'TEXT'=>$this->translate('tree.linkName2TER'),
 								'LINK'=>$this->getTerURL($extKey),
 							) );

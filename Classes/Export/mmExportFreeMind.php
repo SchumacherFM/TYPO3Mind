@@ -50,7 +50,7 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	 * @return	SimpleXMLElement
 	 */
 	protected function getMap() {
-		$this->mapXmlRoot = new SimpleXMLElement('<map></map>');
+		$this->mapXmlRoot = new SimpleXMLElement('<map></map>', LIBXML_NOXMLDECL | LIBXML_PARSEHUGE);
 		$this->mapXmlRoot->addAttribute('version',$this->mmVersion);
 
 
@@ -313,19 +313,21 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	 * @return	nothing
 	 */
 	protected function checkNodeAttr($attributes) {
-
+	
 		if( !isset($attributes['ID']) ){
 			$attributes['ID'] = 't3m'.mt_rand();
 		}
+		
 		if( !isset($attributes['TEXT']) ){
 			$attributes['TEXT'] = 'No Text set!';
 		}
-		$attributes['TEXT'] = ($this->strip_tags( str_replace('"','',$attributes['TEXT']) ));
+		
+		$attributes['TEXT'] = htmlentities($this->strip_tags( $attributes['TEXT'] ) ,ENT_XML1 | ENT_IGNORE,'UTF-8' );
 
 		if( isset($attributes['LINK']) && empty($attributes['LINK']) ){ 
 			unset($attributes['LINK']); 
 		}
-
+		
 		return $attributes;
 	}
 
@@ -482,6 +484,33 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 		return $childNode;
 	}
 	/**
+	 * adds adds an arrowlink to a destination ...
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	array $attributes
+	 * @return	nothing
+	 */
+	public function addArrowlink(SimpleXMLElement $xmlNode,$attributes) {
+	
+		// @todo set arrow color ... somewhere ...
+		$attributes['COLOR'] = '#FF0025';
+		$attributes['ENDARROW'] = 'Default'; /* there is an arrow */
+		$attributes['STARTARROW'] = 'Default'; /* there is an arrow */
+		$attributes['ID'] = 'Arrow_ID_'.mt_rand();
+		$attributes['ENDINCLINATION'] = '440;0;';
+		$attributes['STARTINCLINATION'] = '440;0;';
+		
+		if( !isset($attributes['DESTINATION']) || empty($attributes['DESTINATION']) ){
+			die('addArrowlink(): DESTINATION not set!');
+		}
+	
+		$child = $xmlNode->addChild('arrowlink','');
+
+		$this->addAttributes($child, $this->checkNodeAttr($attributes) );
+		return $child;
+
+	}
+	/**
 	 * Saves the SimpleXMLElement as a xml file in the typo3temp dir
 	 *
 	 * @param	SimpleXMLElement $xml
@@ -496,7 +525,6 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 
 		$fileName = preg_replace('~\[([a-z_\-]+)\]~ie','date(\'\\1\')',$fileName);
 		$fileName = empty($fileName) ? 'TYPO3Mind_'.mt_rand().'.mm' : $fileName;
-
 		
 		$xml = str_replace(
 			array('|lt|',	'|gt|',	'@#',	'&amp;gt;',	'&amp;lt;',	'&amp;amp;'),
