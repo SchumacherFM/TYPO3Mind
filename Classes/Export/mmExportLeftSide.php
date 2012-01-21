@@ -541,8 +541,9 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		foreach($tcv as $section=>$seccfg){
 			$NodeSection = $this->addNode($t3ConfVarNode,array(
 				'FOLDED'=>count($seccfg) > 0 ? 'true' : 'false',
-				'TEXT'=>$section,
+				'TEXT'=>$this->translate('tree.typo3.typo3_conf_vars.'.$section),
 			));
+
 			ksort($seccfg);
 			foreach($seccfg as $confName=>$v){
 

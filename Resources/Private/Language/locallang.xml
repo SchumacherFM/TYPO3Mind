@@ -76,6 +76,18 @@
 			<label index="tree.typo3.typo3_conf_vars">TYPO3_CONF_VARS</label>
 			<label index="tree.typo3.typo3_conf_vars.value">Value</label>
 			
+			<label index="tree.typo3.typo3_conf_vars.GFX">Graphic (GFX)</label>
+			<label index="tree.typo3.typo3_conf_vars.SYS">System (SYS)</label>
+			<label index="tree.typo3.typo3_conf_vars.EXT">Extensions (EXT)</label>
+			<label index="tree.typo3.typo3_conf_vars.BE">Backend (BE)</label>
+			<label index="tree.typo3.typo3_conf_vars.FE">Frontend (FE)</label>
+			<label index="tree.typo3.typo3_conf_vars.MAIL">Email (MAIL)</label>
+			<label index="tree.typo3.typo3_conf_vars.MODS">Mods (MODS)</label>
+			<label index="tree.typo3.typo3_conf_vars.USER">User (USER)</label>
+			<label index="tree.typo3.typo3_conf_vars.EXTCONF">Extension Config (EXTCONF)</label>
+			<label index="tree.typo3.typo3_conf_vars.SVCONF">Services Config (SVCONF)</label>
+
+			
 			<label index="tree.typo3.checkDirs">Directory Check</label>
 			
 			
