@@ -375,10 +375,14 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * tries to get the plaintext password from an md5 string... returns false on failure
 	 *
 	 * @param string $md5
-	 * @return string
+	 * @return string|false
 	 */
 	protected function getPlainTextPasswordFromMD5($md5){
-		return Tx_Typo3mind_Utility_UnsecurePasswords::getPlainPW($md5);
+		if( $this->settings['MD5HashCrackSource'] == 'internal'){
+			return Tx_Typo3mind_Utility_UnsecurePasswords::getPlainPW($md5);
+		}else{
+			return false;
+		}
 	}
 
 	/**

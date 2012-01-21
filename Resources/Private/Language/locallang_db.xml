@@ -16,7 +16,7 @@
 		
 			<label index="tx_typo3mind_domain_model_t3mind">TYPO3Mind Page/Node Config</label>
 			<label index="tx_typo3mind_domain_model_t3mind.page_uid">Page Uid</label>
-			<label index="tx_typo3mind_domain_model_t3mind.encrypt">Encrypt this and all child nodes?</label>
+			<label index="tx_typo3mind_domain_model_t3mind.encrypt">Encrypt this and all child nodes? (@Todo)</label>
 			<label index="tx_typo3mind_domain_model_t3mind.recursive">Recursive? Extend to child pages?</label>
 			<label index="tx_typo3mind_domain_model_t3mind.show_details_note">Show extended details in page note?</label>
 			<label index="tx_typo3mind_domain_model_t3mind.font_face">Font Face</label>
