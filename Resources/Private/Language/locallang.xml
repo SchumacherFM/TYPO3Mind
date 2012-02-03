@@ -24,7 +24,12 @@
 			<label index="tx_typo3mind_domain_model_t3mind.edge_style">Edge style</label>
 			<label index="tx_typo3mind_domain_model_t3mind.edge_width">Edge width</label>
 
-
+			<label index="html.export.header">TYPO3Mind Export</label>
+			<label index="html.export.header.error">Errors in file %s</label>
+			<label index="html.export.header.error.text">Check the XML encoding settings or remove invalid characters. Which characters are affect can be seen at the last character in the XML file, before the last hash value comment.</label>
+			
+			<label index="html.export.Filesize">Filesize: %s KB</label>
+			<label index="html.export.Duration">Duration: %s secs</label>
 
 			<label index="UserNotFound">User not found</label>
 			<label index="value2ATag">(Hint: CTRL+Click!)</label>

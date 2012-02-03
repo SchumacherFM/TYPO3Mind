@@ -168,7 +168,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 */
 	public function editPagesAction(Tx_Typo3mind_Domain_Model_T3mind $T3mind = NULL) {
 
-		die('<h1>Use a TYPO3 Sysfolder and edit there they data for a page!</h1>');
+		die('<h1>Use a TYPO3 Sysfolder and edit there the TYPO3Mind node properties for a page!</h1>');
 	
 		/*TODO: */
 		if ($T3mind == NULL) {
@@ -202,7 +202,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 */
 	public function editPagesSaveAction(Tx_Typo3mind_Domain_Model_T3mind $T3mind, $options ) {
 	
-		die('<h1>Use a TYPO3 Sysfolder and edit there they data for a page!</h1>');
+		die('<h1>Use a TYPO3 Sysfolder and edit there the TYPO3Mind node properties for a page!</h1>');
 	
 		/*TODO: */
 
@@ -257,5 +257,15 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 
 	}
 	 
+	/**
+	 * Translate key from locallang.xml.
+	 *
+	 * @param string $key Key to translate
+	 * @param array $arguments Array of arguments to be used with vsprintf on the translated item.
+	 * @return string Translation output.
+	 */
+	protected function translate($key, $arguments = null) {
+		return Tx_Extbase_Utility_Localization::translate($key, 'Typo3mind', $arguments);
+	}
 
 }

@@ -1,16 +1,15 @@
 <f:layout name="Default" />
 <f:section name="content">
 
-<h1>TYPO3Mind Export</h1>
+<h1><f:translate key="html.export.header"/></h1>
 
 <f:if condition="{iserror}">
 	<f:then>
-	<h2>Errors in file {filename}</h2>
-	<p>Check the XML encoding settings or remove invalid characters. Which characters are affect can be seen at the last character in the XML file, before the last hash value comment.
-	</p>
+	<h2><f:translate key="html.export.header.error" arguments="{filename:filename}"/></h2>
+	<p><f:translate key="html.export.header.error.text"/></p>
 		<table class="error" border="1" cellpadding="3" cellspacing="0">
 		  <tr>
-			<th>Leve</th>
+			<th>Level</th>
 			<th>Line No</th>
 			<th>Column No</th>
 			<th>Message</th>
@@ -31,8 +30,8 @@
 	</f:else>
 </f:if>
 
-<h2>Filesize: {filekb} KB</h2>
-<h2>Duration: {duration} secs</h2>
+<h2><f:translate key="html.export.Filesize" arguments="{filekb:filekb}"/></h2>
+<h2><f:translate key="html.export.Duration" arguments="{duration:duration}"/></h2>
 
 
 
