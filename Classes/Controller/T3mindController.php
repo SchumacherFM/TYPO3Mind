@@ -99,7 +99,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 
 		// todo: better error handling
 		if( !isset($this->extConfSettings['apikey']) || trim($this->extConfSettings['apikey'])=='' ){
-			die('<h1>Please set an API Key in the Extension Manager: HowTo: https://github.com/SchumacherFM/TYPO3Mind/wiki/Adding-the-API-Key</h1>');
+			die('<h1>Please set an API Key in the Extension Manager.</h1>');
 		}
 
 	}
