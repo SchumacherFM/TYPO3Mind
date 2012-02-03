@@ -95,12 +95,33 @@ class Tx_Typo3mind_Utility_DbList {
 	private $parentObject;
 
 	/**
+	 * global array to collect columsn from a table ... caching ...
+	 * @var array
+	*/
+	private $tableColumns;
+	/**
 	 * sets the pid
 	 * @param pid
 	 * @return	void
 	 */
 	public function __construct(&$parentObject){
+		GLOBAL $TCA;
 		$this->parentObject = $parentObject;
+
+		/* internal cache which table has which columns */
+		foreach ($TCA as $tableName => $value) {
+
+			/*
+				http://forge.typo3.org/issues/33674
+				Check if table has really the columns... otherwise unset it.
+			*/
+			if( !isset($this->tableColumns[$tableName]) ){
+				$colResult = $GLOBALS['TYPO3_DB']->sql_query('show columns from '.$tableName);
+				while( $r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($colResult) ){
+					$this->tableColumns[$tableName][ $r['Field'] ] = $r['Field'];
+				}
+			}
+		}/*endforeach*/
 	}
 
 	/**
@@ -210,7 +231,19 @@ class Tx_Typo3mind_Utility_DbList {
 
 			// for later ... Don't show table if hidden by TCA ctrl section
 			// $hideTable = $GLOBALS['TCA'][$tableName]['ctrl']['hideTable'] ? TRUE : FALSE;
+			
+			/*
+				http://forge.typo3.org/issues/33674
+				Check if table has really the columns... otherwise unset it.
+			*/
+/*			if( !isset($this->tableColumns[$tableName]) ){
+				$colResult = $GLOBALS['TYPO3_DB']->sql_query('show columns from '.$tableName);
+				while( $r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($colResult) ){
+					$this->tableColumns[$tableName][ $r['Field'] ] = $r['Field'];
+				}
+			} */
 
+			
 			/* Setting fields to select: */
 			$fields = $this->_makeFieldList($value,$tableName);
 
@@ -220,7 +253,18 @@ class Tx_Typo3mind_Utility_DbList {
 				$sqlRaw = preg_replace('~[^a-z0-9_,]+~i','',$this->parentObject->settings['SysFolderContentListAdditionalColumns'][$tableName]);
 				$sqlRawE = t3lib_div::trimExplode(',',$sqlRaw,1);
 				$fields = array_merge($fields,$sqlRawE);
-			}
+				
+
+				/*
+					if column defined in setup.txt and this column is not in the table then silently drop it.
+				*/
+				foreach($fields as $kcol=>$vcol){
+					if( !isset( $this->tableColumns[$tableName][$vcol] ) ){
+						unset($fields[$kcol]);
+					}
+				}
+				
+			}/*endif SysFolderContentListAdditionalColumns*/
 
 			$orderBy = isset($value['ctrl']['sortby']) ? 'ORDER BY '.$value['ctrl']['sortby'] : ( isset($value['ctrl']['default_sortby']) ? $value['ctrl']['default_sortby'] : 'ORDER BY uid desc' );
 
@@ -231,11 +275,12 @@ class Tx_Typo3mind_Utility_DbList {
 				'GROUPBY' => '',
 				'ORDERBY' => $GLOBALS['TYPO3_DB']->stripOrderBy($orderBy),
 				'LIMIT' => '0,10'
-			);
+			); 
 
-			$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
+			$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts)  or die(mysql_error()."<hr>".var_export($queryParts,1)); 
 			$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
 
+			
 			$accRows = false;
 			if( $dbCount ){
 				$this->tablesInSysFolder[$tableName] = array(
@@ -297,9 +342,15 @@ class Tx_Typo3mind_Utility_DbList {
 				/* @TODO $column for "enablecolumns" resolven  */
 				
 				if( !is_array($column) && isset( $tcaCurrent['ctrl'][$column] ) && !empty($tcaCurrent['ctrl'][$column]) ){
+
 					$fields[$column]=$tcaCurrent['ctrl'][$column];
-					if( $column == 'label' ){
-						$fields[$column] .= ' as titInt0'; /* title internal */
+					if( $column == 'label' ){ /* column must exists in the table */
+
+						if( isset($this->tableColumns[$table][ $fields[$column] ])  ){
+							$fields[$column] .= ' as titInt0'; /* title internal, not sure if column really exists in the DB ... */
+						}else{
+							$fields[$column] = '\'LabelColumn\' as titInt0';
+						}
 					}
 					elseif( $column == 'label_alt' ){
 						/* just to be secure that no one has entered several commas without column names, avoid SQL errors */
