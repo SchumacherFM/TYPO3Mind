@@ -180,7 +180,10 @@ class Tx_Typo3mind_Utility_DbList {
 			/*<list the entries in a sysfolder node>*/
 			foreach($values as $k=>$row){
 
-				$attr = array('ID'=>'tISF139v','TEXT'=>$row['titInt0'] /* we'll have it in the note: .' (ID:'.$row['uid'].')' */ );
+				$attr = array('ID'=>'tISF139v','TEXT'=>(isset($row['titInt0']) ? $row['titInt0'] : 'No internal title set @ DbList.php '.__LINE__)
+						/* we'll have it in the note: .' (ID:'.$row['uid'].')' */ );
+						
+						
 				$attr = $this->parentObject->setAttr($t3mind,'font_color',$attr,'COLOR');
 				$attr = $this->parentObject->setAttr($t3mind,'node_color',$attr,'BACKGROUND_COLOR');
 
@@ -247,6 +250,9 @@ class Tx_Typo3mind_Utility_DbList {
 					if column defined in setup.txt and this column is not in the table then silently drop it.
 				*/
 				foreach($fields as $kcol=>$vcol){
+					/* remove SQL column alias ... */
+					$vcol = preg_replace('~\s+as\s+\S+~','',$vcol);
+				
 					if( !isset( $this->tableColumns[$tableName][$vcol] ) ){
 						unset($fields[$kcol]);
 					}
