@@ -26,7 +26,7 @@
 
 			<label index="html.export.header">TYPO3Mind Export</label>
 			<label index="html.export.header.error">Errors in file %s</label>
-			<label index="html.export.header.error.text">Check the XML encoding settings or remove invalid characters. Which characters are affect can be seen at the last character in the XML file, before the last hash value comment.</label>
+			<label index="html.export.header.error.text">Check the XML encoding settings or remove invalid characters or improper nested HTML tags.</label>
 			
 			<label index="html.export.Filesize">Filesize: %s KB</label>
 			<label index="html.export.Duration">Duration: %s secs</label>

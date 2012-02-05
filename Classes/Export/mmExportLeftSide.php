@@ -116,16 +116,14 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 	}
 
-
-
-
+	
 	/**
 	 * gets some T3 specific informations about fileadmin and uploads folder ...
 	 *
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
-	private function getTYPONodeFiles(SimpleXMLElement $xmlNode) {
+	private function _getTYPONodeFiles(SimpleXMLElement $xmlNode) {
 
 		$MainNode = $this->addImgNode($xmlNode,array(
 			'FOLDED'=>'true',
@@ -136,7 +134,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'TEXT'=>'fileadmin',
 			'FOLDED'=>'true',
 		));
-		$this->getTYPONodeFilesScandir($nodeFileadmin,PATH_site.'fileadmin/');
+		$this->_getTYPONodeFilesScandir($nodeFileadmin,PATH_site.'fileadmin/');
 
 
 
@@ -144,9 +142,9 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			'TEXT'=>'uploads',
 			'FOLDED'=>'true',
 		));
-		$this->getTYPONodeFilesScandir($nodeUpload,PATH_site.'uploads/');
+		$this->_getTYPONodeFilesScandir($nodeUpload,PATH_site.'uploads/');
 
-	}/*</getTYPONodeFiles>*/
+	}/*</_getTYPONodeFiles>*/
 
 
 	/**
@@ -156,7 +154,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	string $fullPath
 	 * @return	SimpleXMLElement
 	 */
-	private function getTYPONodeFilesScandir(SimpleXMLElement $xmlNode,$fullPath) {
+	private function _getTYPONodeFilesScandir(SimpleXMLElement $xmlNode,$fullPath) {
 
 		$dirLevel1 = scandir($fullPath);
 		foreach($dirLevel1 as $k=>$vL1){
@@ -193,7 +191,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 			}/*endif*/
 		} /*endforeach*/
-	}/*</getTYPONodeFilesScandir>*/
+	}/*</_getTYPONodeFilesScandir>*/
 
 	/**
 	 * gets some T3 logins and error logs
@@ -201,7 +199,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
-	private function getTYPONodeLogs(SimpleXMLElement $xmlNode) {
+	private function _getTYPONodeLogs(SimpleXMLElement $xmlNode) {
 		// logs
 		$LogsNode = $this->addImgNode($xmlNode,array(
 			'FOLDED'=>'true',
@@ -253,7 +251,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
-	private function getTYPONodeBackendUsers(SimpleXMLElement $xmlNode) {
+	private function _getTYPONodeBackendUsers(SimpleXMLElement $xmlNode) {
 
 
 		$UsersNode = $this->addImgNode($xmlNode,array(
@@ -273,7 +271,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,username,password,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=1', '', 'username'  );
 		$i=0;
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
-			$this->BeUsersHandleRow($UserAdminNode,$row,$i);
+			$this->_BeUsersHandleRow($UserAdminNode,$row,$i);
 			$i++;
 		}
 		/*</show all admins>*/
@@ -291,7 +289,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,username,password,email,realname,lastlogin,disable,deleted,userMods', 'be_users', 'admin=0', '', 'username' /* , (int)$this->settings['numberOfLogRows'] */ );
 		$i=0;
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
-			$this->BeUsersHandleRow($UserUserNode,$row,$i);
+			$this->_BeUsersHandleRow($UserUserNode,$row,$i);
 			$i++;
 		}
 		/*</show all non admins>*/
@@ -307,12 +305,12 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,title,hidden,deleted,crdate,tables_select,tables_modify,groupMods', 'be_groups', '', '', 'title' /* , (int)$this->settings['numberOfLogRows'] */ );
 		$i=0;
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
-			$this->BeGroupsHandleRow($UserGroupNode,$row,$i);
+			$this->_BeGroupsHandleRow($UserGroupNode,$row,$i);
 			$i++;
 		}
 		/*</show all groups>*/
 
-	}/*</getTYPONodeBackendUsers>*/
+	}/*</_getTYPONodeBackendUsers>*/
 
 	/**
 	 * handles a row returned from mysql with the backend user values
@@ -322,7 +320,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	integer $rowCounter
 	 * @return	SimpleXMLElement
 	 */
-	private function BeUsersHandleRow(SimpleXMLElement $xmlNode,$row,$rowCounter){
+	private function _BeUsersHandleRow(SimpleXMLElement $xmlNode,$row,$rowCounter){
 
 
 		$BACKGROUND_COLOR = $this->getDesignAlternatingColor('BeUsersHandleRow',$rowCounter);
@@ -366,7 +364,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			}
 			if( isset($row['userMods']) && !empty($row['userMods']) ){
 				$nodeUserMods = $this->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
-				$this->BeUserGroupsGetModList($nodeUserMods,'modListUser',$row['userMods'],array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR));
+				$this->_BeUserGroupsGetModList($nodeUserMods,'modListUser',$row['userMods'],array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR));
 			}/*endif*/
 
 
@@ -393,7 +391,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			}
 			/*</LOGS user logs>*/
 
-	} /*</BeUsersHandleRow>*/
+	} /*</_BeUsersHandleRow>*/
 
 	/**
 	 * handles a row returned from mysql with the backend groups values
@@ -404,7 +402,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	integer $rowCounter
 	 * @return	SimpleXMLElement
 	 */
-	private function BeGroupsHandleRow(SimpleXMLElement $xmlNode,$row,$rowCounter){
+	private function _BeGroupsHandleRow(SimpleXMLElement $xmlNode,$row,$rowCounter){
 
 		$BACKGROUND_COLOR = $this->getDesignAlternatingColor('BeGroupsHandleRow',$rowCounter);
 		$aGroupNode = $this->addNode($xmlNode,array(
@@ -420,13 +418,13 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 			if( !empty($row['groupMods']) ){
 				$nodeGroupMods = $this->addNode($aGroupNode,array('BACKGROUND_COLOR'=>$BACKGROUND_COLOR,'TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
-				$this->BeUserGroupsGetModList($nodeGroupMods,'modListGroup',$row['groupMods'],array('BACKGROUND_COLOR'=>$BACKGROUND_COLOR));
+				$this->_BeUserGroupsGetModList($nodeGroupMods,'modListGroup',$row['groupMods'],array('BACKGROUND_COLOR'=>$BACKGROUND_COLOR));
 			}/*endif*/
 
-			$this->BeGroupsHandleTableSelectModify($aGroupNode,$row['tables_select'],'tree.typo3.groups.tables_select',array('BACKGROUND_COLOR'=>$BACKGROUND_COLOR));
-			$this->BeGroupsHandleTableSelectModify($aGroupNode,$row['tables_modify'],'tree.typo3.groups.tables_modify',array('BACKGROUND_COLOR'=>$BACKGROUND_COLOR));
+			$this->_BeGroupsHandleTableSelectModify($aGroupNode,$row['tables_select'],'tree.typo3.groups.tables_select',array('BACKGROUND_COLOR'=>$BACKGROUND_COLOR));
+			$this->_BeGroupsHandleTableSelectModify($aGroupNode,$row['tables_modify'],'tree.typo3.groups.tables_modify',array('BACKGROUND_COLOR'=>$BACKGROUND_COLOR));
 
-	} /*</BeGroupsHandleRow>*/
+	} /*</_BeGroupsHandleRow>*/
 
 
 	/**
@@ -437,7 +435,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	array $attr
 	 * @return	SimpleXMLElement
 	 */
-	private function BeGroupsHandleTableSelectModify(SimpleXMLElement $xmlNode,$tables,$translateKey,$attr){
+	private function _BeGroupsHandleTableSelectModify(SimpleXMLElement $xmlNode,$tables,$translateKey,$attr){
 		GLOBAL $TCA;
 
 		if( !empty($tables) ){
@@ -450,7 +448,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			}
 		}
 
-	} /*</BeGroupsHandleTableSelectModify>*/
+	} /*</_BeGroupsHandleTableSelectModify>*/
 
 
 	/**
@@ -461,7 +459,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	array $attr
 	 * @return	SimpleXMLElement
 	 */
-	private function BeUserGroupsGetModList(SimpleXMLElement $xmlNode,$modListType,$groupMods,$attr = array()){
+	private function _BeUserGroupsGetModList(SimpleXMLElement $xmlNode,$modListType,$groupMods,$attr = array()){
 
 
 			$modList = $modListType == 'modListUser' ? $this->_loadModules->modListUser : $this->_loadModules->modListGroup;
@@ -484,7 +482,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 					}/*endif isset $groupModsExploded*/
 				}
 			}/*endif is array*/
-	}/*</BeUserGroupsGetModList>*/
+	}/*</_BeUserGroupsGetModList>*/
 
 
 
@@ -494,7 +492,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
-	private function getTYPONodeConfVars(SimpleXMLElement $xmlNode) {
+	private function _getTYPONodeConfVars(SimpleXMLElement $xmlNode) {
 
 		$t3ConfVarNode = $this->addNode($xmlNode,array(
 			'FOLDED'=>'true',
@@ -617,7 +615,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 			}/*endforeach*/
 		}/*endforeach*/
-	}/*</getTYPONodeConfVars>*/
+	}/*</_getTYPONodeConfVars>*/
 
 	/**
 	 * checks the directories
@@ -625,7 +623,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 	 * @param	SimpleXMLElement $xmlNode
 	 * @return	SimpleXMLElement
 	 */
-	private function getTYPONodeCheckDirs(SimpleXMLElement $xmlNode) {
+	private function _getTYPONodeCheckDirs(SimpleXMLElement $xmlNode) {
 
 		$checkDirNode = $this->addNode($xmlNode,array(
 			'FOLDED'=>'true',
@@ -652,7 +650,7 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 			$this->addIcon($messageNode,$message['icon']);
 		}/*endforeach*/
 
-	}/*</getTYPONodeCheckDirs>*/
+	}/*</_getTYPONodeCheckDirs>*/
 
 	/**
 	 * gets some T3 specific informations
@@ -670,16 +668,16 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 
 
 
-		$this->getTYPONodeFiles($MainNode);
+		$this->_getTYPONodeFiles($MainNode);
 
-		$this->getTYPONodeLogs($MainNode);
+		$this->_getTYPONodeLogs($MainNode);
 
 
-		$this->getTYPONodeBackendUsers($MainNode);
+		$this->_getTYPONodeBackendUsers($MainNode);
 
-		$this->getTYPONodeConfVars($MainNode);
+		$this->_getTYPONodeConfVars($MainNode);
 
-		$this->getTYPONodeCheckDirs($MainNode);
+		$this->_getTYPONodeCheckDirs($MainNode);
 
 
 

@@ -51,7 +51,7 @@ class Tx_Typo3mind_Utility_T3ConfCheck {
 	 */
 	public function getDefaultConfigArrayComments() {
 		$string = t3lib_div::getUrl(PATH_t3lib.'config_default.php');
-	
+
 		$lines = explode(LF, $string);
 		$in=0;
 		$mainKey='';
@@ -77,6 +77,21 @@ class Tx_Typo3mind_Utility_T3ConfCheck {
 				$in=1;
 			}
 		}
+
+		/* check commentArray if the HTML is compatible to XML. The TYPO3 team did not nested properly some tags in this file :-( damn it. */
+		foreach($commentArray as $section=>$comments){
+			foreach( $comments as $type=>$comment ){
+				$xmlS = '<?xml version="1.0"?><test>'.$comment.'</test>';
+				$xml = simplexml_load_string($xmlS);
+				if( !is_object($xml) ){
+					$commentArray[$section][$type] = preg_replace('~<[^>]+>~',' ',$comment);
+					/* .'<br/>TYPO3Mind Info: XML compilation failed. Tags not nested properly. See file: '.PATH_t3lib.'config_default.php'; */
+					/* var_dump($xml);
+					echo htmlspecialchars(var_export($xmlS,1)).'<hr>'; */
+				}
+			}
+		}
+		
 		return array($mainArray,$commentArray);
 	}
 
