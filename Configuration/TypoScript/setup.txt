@@ -11,6 +11,9 @@ module.tx_typo3mind {
 
 	settings {
 
+		# set here the system default language flag, without any file extension. only two characters long.
+		defaultLanguageFlag = de
+	
 		# Possible values: frontend, backend_list or backend_tv. This only changes the types of Links. 
 		# Frontend just for viewing.
 		# Backend_* opens the TemplaVoila editing section of a page or content element.
@@ -97,7 +100,7 @@ module.tx_typo3mind {
 		
 		# Only available for the left side of the mind map tree.
 		design {
-			# function name, color index for % count(settings->BeUsersHandleRow), as many colors as you like
+			# function name, color index for moduls count(settings->BeUsersHandleRow), as many colors as you like
 			# if not defined then there will be no color
 			BeUsersHandleRow {
 				BACKGROUND_COLOR {

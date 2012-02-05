@@ -81,13 +81,13 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @var array
 	 */
 	public $mapMode;
-	
+
 	/**
 	 * assoc array containing the ID and the name of the user
 	 * @var array
 	*/
 	public $cruser_id;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -113,7 +113,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	private function setCruserId() {
 		$this->cruser_id = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('uid,concat(realName,\'(\',username,\')\') as user','be_users','','','','','uid');
 	}
-	
+
 	/**
 	 * gets the User by Id
 	 *
@@ -269,7 +269,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 			$this->sysDomains[ $r['pid'] ] = $r['domainName'];
 		}
 	}
-	
+
 	/**
 	 * gets all Sys Languages
 	 *
@@ -280,14 +280,25 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	mod.SHARED {
 		defaultLanguageFlag = de.gif
 		defaultLanguageLabel = german
-	}	
-*/	
+	}
+*/
+		$defaultLanguageFlag = ( isset($this->settings['defaultLanguageFlag']) && strlen($this->settings['defaultLanguageFlag'])==2 ) ? $this->settings['defaultLanguageFlag'] : 'de';
+
+		/* pageUid see T3mindController.php */
 		$modSharedTSconfig = t3lib_BEfunc::getModTSconfig( $this->settings['pageUid'], 'mod.SHARED');
+
+		if( !isset($modSharedTSconfig['properties']['defaultLanguageFlag']) ){
+			$modSharedTSconfig['properties']['defaultLanguageFlag'] = $defaultLanguageFlag;
+		}
+		if( !isset($modSharedTSconfig['properties']['defaultLanguageLabel']) ){
+			$modSharedTSconfig['properties']['defaultLanguageLabel'] = $defaultLanguageFlag;
+		}
 
 		// fallback non sprite-configuration
 		if (preg_match('/\.gif$/', $modSharedTSconfig['properties']['defaultLanguageFlag'])) {
 			$modSharedTSconfig['properties']['defaultLanguageFlag'] = str_replace('.gif', '', $modSharedTSconfig['properties']['defaultLanguageFlag']);
 		}
+
 
 
 		$this->sysLanguages = array(
@@ -311,12 +322,15 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @return string
 	 */
 	public function getSysLanguageDetails($language_id,$column){
+
+
 		if( $column == 'flag' ){
 			$return = 'typo3/gfx/flags/'.$this->sysLanguages[$language_id][$column].'.gif';
 		}else{
 			$return = $this->sysLanguages[$language_id][$column];
-		
+
 		}
+
 		return $return;
 	}
 
@@ -539,7 +553,6 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		$label = $this->_getNoteTableRowLabel($tableName,$col,'Last update');
 		$htmlContent[] = $this->_getNoteTableRow($label,$this->getDateTime($row[$col]) ); unset($row[$col]);
 
-
 		if( isset($row['sys_language_uid']) ){
 			$col = 'sys_language_uid';
 			$label = $this->_getNoteTableRowLabel($tableName,$col,'Language ID');
@@ -571,23 +584,23 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 
 		/* list user defined columsn for a table listet in a sysfolder */
 		if( $tableName <> '' && count($row)>0 ){
-		
+
 			$bodyLength = isset($this->settings['SysFolderContentListTextMaxLength']) ? (int)$this->settings['SysFolderContentListTextMaxLength'] : 250;
 
 			foreach($row as $colName=>$colVal){
 				$noLtGtReplace = 0;
-			
+
 				if( $colVal <> '' ){
 					$label = $this->_getNoteTableRowLabel($tableName,$colName,$colName);
 					$tcaEval = isset($TCA[$tableName]['columns'][$colName]['config']['eval']) ? $TCA[$tableName]['columns'][$colName]['config']['eval'] : '';
 					$tcaType = isset($TCA[$tableName]['columns'][$colName]) ? strtolower($TCA[$tableName]['columns'][$colName]['config']['type']) : 'text';
-					
+
 					/*<TemplaVoila>*/
 					if( $tableName == 'tx_templavoila_tmplobj' && in_array($colName,array('fileref_md5','fileref','datastructure')) ){
-					
-						if( $colName=='fileref_md5' && isset($row['fileref_md5']) && 
+
+						if( $colName=='fileref_md5' && isset($row['fileref_md5']) &&
 							isset($row['fileref']) && file_exists(PATH_site.$row['fileref']) ){
-							
+
 							$currentMD5 = @md5_file(PATH_site.$row['fileref']);
 							if($currentMD5 <> $row['fileref_md5'] ){
 								$label .= $this->convertLTGT(' <img src="'.$this->getBEHttpHost().'typo3/sysext/t3skin/icons/gfx/icon_warning.gif"/>');
@@ -597,9 +610,9 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 							$colVal = $this->_value2ATag($colVal);
 						}
 					}/*</TemplaVoila>*/
-					
+
 					/*<Templates>*/
-					elseif( ($tableName == 'sys_template' || $tableName == 'pages' ) && 
+					elseif( ($tableName == 'sys_template' || $tableName == 'pages' ) &&
 						in_array($colName,array('include_static_file','constants','config','TSconfig')) ){
 						/* @TODO better implementing of tables which has TS column */
 						if( $colName == 'include_static_file' ){
@@ -609,12 +622,12 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 							$noLtGtReplace = 1;
 
 							/* @todo link external TS files via eID ... still to think about it ...
-							$colVal = Tx_Typo3mind_Utility_Helpers::TSReplaceFileLinkWithHref($colVal); 
+							$colVal = Tx_Typo3mind_Utility_Helpers::TSReplaceFileLinkWithHref($colVal);
 							*/
 							$colVal = $this->convertLTGT('<pre>').trim($colVal).$this->convertLTGT('</pre>');
 						}
 					}/*</Templates>*/
-					
+
 					/*<default values>*/
 					elseif( stristr($tcaEval,'date')!==false ){ $colVal = $this->getDateTime($colVal); }
 					elseif( $tcaType == 'text' || $tcaType == 'input' ){
@@ -625,7 +638,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 						$colVal = nl2br($colVal);
 					}
 					/*</default values>*/
-					 
+
 					$htmlContent[] = $this->_getNoteTableRow($label,$colVal,$noLtGtReplace );
 				}/*endif*/
 			}/*endforeach*/
@@ -636,11 +649,11 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		return implode('',$htmlContent);
 	}/*</getNoteContentFromRow>*/
 
-	
+
 	private function _value2ATag($string){
 		return '<a href="'.$this->getBEHttpHost().$string.'">'.$string.'</a> '.$this->translate('value2ATag');
 	}
-	
+
 	/**
 	 * generates a HTML table row
 	 *
@@ -649,12 +662,12 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @return	void
 	 * @see getNoteContentFromRow
 	 */
-	private function _getNoteTableRow($label,$value,$noLtGtReplace=0){	
+	private function _getNoteTableRow($label,$value,$noLtGtReplace=0){
 		$value = htmlspecialchars($value);
 		if( $noLtGtReplace == 0 ){ $value = str_replace(array('&lt;','&gt;'),array('|lt|','|gt|'),$value); }
 		return '<tr valign="top"><td>'.htmlspecialchars($label).'</td><td>'.$value.'</td></tr>';
 	}
-	
+
 	/**
 	 * generates a label for a HTML table row
 	 *
@@ -670,5 +683,5 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		if( empty($label) ){ $label = $alt; }
 		return $label;
 	}
-	
+
 }

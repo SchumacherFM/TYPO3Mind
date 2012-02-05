@@ -119,7 +119,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 
 	/**
-	 * sets the t3mind array, keys are the pageUid, for performance reasons
+	 * sets the t3mind array, keys are the page Uid, for performance reasons
 	 *
 	 * @param	array $t3MindRepositoryFindAll
 	 * @return	nothing
