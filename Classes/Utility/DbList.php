@@ -265,7 +265,8 @@ class Tx_Typo3mind_Utility_DbList {
 				'LIMIT' => '0,10'
 			);
 
-			$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts)  or die(mysql_error()."<hr>".var_export($queryParts,1));
+			$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts) or 
+				die('Please fix this error!<br>DbList.php Line '.__LINE__.":\n<br>\n".mysql_error()."<hr>".var_export($queryParts,1));
 			$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
 
 

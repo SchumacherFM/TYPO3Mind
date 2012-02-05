@@ -174,21 +174,22 @@ class Tx_Typo3mind_Export_mmExportLeftSide extends Tx_Typo3mind_Export_mmExportC
 				));
 				$this->addEdge($faLevel1,array('WIDTH'=>$this->getDesignEdgeWidth('getTYPONodeFiles'),'COLOR'=>$BACKGROUND_COLOR));
 
-				$dirLevel2 = scandir($fullPath.$vL1);
-				foreach($dirLevel2 as $k2=>$vL2){
-					$Level2Dir = $fullPath.$vL1.'/'.$vL2;
-					/* is dir and avoid .svn or .git or ... folders file starting with a . */
-					if( is_dir($Level2Dir) && preg_match('~^\..*~',$vL2)==false ){
+				$dirLevel2 = @scandir($fullPath.$vL1);
+				if( is_array($dirLevel2) ){
+					foreach($dirLevel2 as $k2=>$vL2){
+						$Level2Dir = $fullPath.$vL1.'/'.$vL2;
+						/* is dir and avoid .svn or .git or ... folders file starting with a . */
+						if( is_dir($Level2Dir) && preg_match('~^\..*~',$vL2)==false ){
 
-						$size = $this->formatBytes( $this->getDirSize($Level2Dir) );
+							$size = $this->formatBytes( $this->getDirSize($Level2Dir) );
 
-						$faLevel2 = $this->addNode($faLevel1,array(
-							'TEXT'=>xmlentities($vL2.' '.$size),
-							'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
-						));
-					}
-				}/*endforeach*/
-
+							$faLevel2 = $this->addNode($faLevel1,array(
+								'TEXT'=>xmlentities($vL2.' '.$size),
+								'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
+							));
+						}
+					}/*endforeach*/
+				} /*endif is array $dirLevel2*/
 
 			}/*endif*/
 		} /*endforeach*/
