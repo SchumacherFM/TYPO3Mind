@@ -174,37 +174,6 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		return $this->httpHosts['frontend'];
 	}
 
-
-
-	/**
-	 * Creates the attributes from a page record   MAYBE DEPRECATED
-	 *
-	 * @param	array $pageRecord
-	 * @param	Tx_Typo3mind_Domain_Model_T3mind $T3mind
-	 * @param	array $additionalAttributes  key is the name and value the value
-	 * @return	SimpleXMLElement
-	 */
-	protected function XXXgetAttrFromPage($pageRecord,$T3mind = NULL,$additionalAttributes = array() ) {
-
-		/* now we have here to the the special options from the column tx_typo3mind_data from table pages */
-
-		$attr = array(
-			'FOLDED'=>'false',
-			'ID'=>'page_'.$pageRecord['uid'],
-			'POSITION'=>'right',
-			'TEXT'=>$pageRecord['title'],
-		);
-
-
-		// mvc webrequest -> base uri to build in!
-		if( in_array($pageRecord['doktype'], array(1,4) ) && $pageRecord['uid'] > 0 ){
-			// $this->mapMode['befe']
-			$attr['LINK'] = 'http://'.$_SERVER['HTTP_HOST'].'/index.php?id='.$pageRecord['uid'];
-		}
-
-		return array_merge($attr,$additionalAttributes);
-	}
-
 	/**
 	 * Translate key from locallang.xml.
 	 *

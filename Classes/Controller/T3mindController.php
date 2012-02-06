@@ -147,7 +147,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);
 		$mmFile = $expObj->getContent();
 
-		$this->view->assign('downloadURL', '/typo3temp/'.$mmFile['file']);
+		$this->view->assign('downloadURL', $mmFile['file']);
 		$this->view->assign('filename', basename($mmFile['file']) );
 		$this->view->assign('filekb', $mmFile['filekb'] );
 		$this->view->assign('iserror', $mmFile['iserror'] );
