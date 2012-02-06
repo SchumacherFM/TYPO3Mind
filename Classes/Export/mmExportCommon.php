@@ -145,10 +145,10 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @return	string
 	 */
 	private function setHttpHosts() {
-
+		/* maybe one day define different links in setup.txt */
 		$this->httpHosts = array(
-			'frontend'=>'http://'.t3lib_div::getIndpEnv('HTTP_HOST').'/',
-			'backend'=>'http://'.t3lib_div::getIndpEnv('HTTP_HOST').'/',
+			'frontend' => t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST').'/',
+			'backend' => t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST').'/',
 		);
 	}
 
@@ -169,7 +169,8 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 */
 	public function getFEHttpHost( $page_Uid ) {
 		if( isset($this->sysDomains[$page_Uid]) ){
-			$this->httpHosts['frontend'] = 'http://'.$this->sysDomains[$page_Uid].'/';
+			$httpWhat = t3lib_div::getIndpEnv('TYPO3_SSL') ? 'https' : 'http';
+			$this->httpHosts['frontend'] = $httpWhat.'://'.$this->sysDomains[$page_Uid].'/';
 		}
 		return $this->httpHosts['frontend'];
 	}

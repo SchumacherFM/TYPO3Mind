@@ -3,7 +3,7 @@
 
 .footer {
 	border-top:1px solid #ececec;
-	width:33em;
+	width:500px;
 	margin-left:auto;
 	margin-right:auto;
 }
@@ -42,13 +42,16 @@ div.colorarea {
 	padding:1em 3em;
 	margin:0 auto;
 	width:55px; height:62px;
+	overflow:hidden;
 }
 .github {
 	padding:20px 0;
 	margin:1em auto;
 	width:155px; height:62px;
 	vertical-align:middle;
+	text-align:center;
 }
+
 
 table.error tr td, table.error tr th {
 	padding:3px;
