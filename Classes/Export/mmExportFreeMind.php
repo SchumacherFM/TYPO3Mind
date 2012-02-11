@@ -534,11 +534,15 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 
 		$fileName = '/typo3temp/'.$fileName;
 		
-		$bytesWritten = file_put_contents(PATH_site.$fileName, str_replace(
+		$md5 = md5($xml);
+		
+		$xml = str_replace(
 			array('###MD5_FILE_HASH####'),
 			array($md5),
 			$xml
-		).'<!--HiddenMD5:'.md5($xml).'-->' );
+		).'<!--HiddenMD5:'.md5($xml).'-->';
+		
+		$bytesWritten = file_put_contents(PATH_site.$fileName, $xml );
 		
 		unset($xml);
 		

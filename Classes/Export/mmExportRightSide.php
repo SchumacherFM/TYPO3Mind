@@ -277,10 +277,16 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				'LINK'=>$this->getFEHttpHost($uid).'index.php?id='.$childUids['uid'],
 			);
 
-			if( $this->mapMode['befe'] == 'backend_tv' ){
-				$attr['LINK'] = $this->getBEHttpHost().'typo3conf/ext/templavoila/mod1/index.php?id='.$childUids['uid'];
+			$backendListTemp = 0;
+			if( $this->mapMode['befe'] == 'backend_tv' ){ 
+				/* and not a shortcut! TemplaVoila does not support redirects... it will display a blank page */
+				if( (int)$record['doktype'] <> 4 ){
+					$attr['LINK'] = $this->getBEHttpHost().'typo3conf/ext/templavoila/mod1/index.php?id='.$childUids['uid'];
+				}else{
+					$backendListTemp = 1;
+				}
 			}
-			if( $this->mapMode['befe'] == 'backend_list' ){
+			if( $this->mapMode['befe'] == 'backend_list' || $backendListTemp === 1 ){
 				$attr['LINK'] = $this->getBEHttpHost().'typo3/mod.php?M=web_list&id='.$childUids['uid'];
 			}
 
