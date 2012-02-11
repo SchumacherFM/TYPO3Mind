@@ -412,10 +412,23 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 
 	}/*</getDesignEdgeWidth>*/
 
-	private function _getRssTitle($rssContent){
+	/**
+	 * gets the RSS title
+	 *
+	 * @param SimpleXMLElement $rssContent
+	 * @return string
+	 */
+	private function _getRssTitle(SimpleXMLElement $rssContent){
 		return isset($rssContent->channel->title) ? $rssContent->channel->title : $rssContent->title;
 	}
-	private function _getRssLink($rssContent){
+	
+	/**
+	 * gets the RSS link
+	 *
+	 * @param SimpleXMLElement $rssContent
+	 * @return string
+	 */
+	private function _getRssLink(SimpleXMLElement $rssContent){
 		if( isset($rssContent->channel->link) ) {
 			return $rssContent->channel->link;
 		} else{
@@ -662,7 +675,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	}
 
 	/**
-	 * generates a label for a HTML table row
+	 * generates a label for a HTML table row from the TCA array
 	 *
 	 * @param string $tableName
 	 * @param string $col the column
@@ -677,4 +690,84 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		return $label;
 	}
 
+	
+	/**
+	 * gets the whole tt content entry for a page
+	 *
+	 * @param array $pageRecord Current Page Record
+	 * @return	void
+	 */
+	public function getTTContentFromPage(SimpleXMLElement $xmlNode, $pageRecord){
+
+		$ttContentNode = $this->addNode($xmlNode,array(
+//			'FOLDED'=>'true',
+			'TEXT'=>$this->translate('Content Elements'),
+		));
+	
+	
+			$tableName = 'tt_content';
+			$pageUid = $pageRecord['uid'];
+			 
+			 /*
+			 
+			 maybe we have to list it as a NODE!
+			 
+			 */
+	
+			$orderBy = 'ORDER BY sorting';
+
+			$queryParts = array(
+				'SELECT' => '*',
+				'FROM' => $tableName,
+				'WHERE' => 'pid='.$pageUid,
+				'GROUPBY' => '',
+				'ORDERBY' => $GLOBALS['TYPO3_DB']->stripOrderBy($orderBy),
+				'LIMIT' => ''
+			);
+
+			$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts) or 
+				die('Please fix this error!<br>'.__FILE__.' Line '.__LINE__.":\n<br>\n".mysql_error()."<hr>".var_export($queryParts,1));
+			$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
+ 
+			$htmlContent = array();
+			if( $dbCount ){
+				$htmlContent[] = '<table>';
+				$htmlRow = array();
+/*
+		$value = htmlspecialchars($value);
+		if( $noLtGtReplace == 0 ){ $value = str_replace(array('&lt;','&gt;'),array('|lt|','|gt|'),$value); }
+		return '<tr valign="top"><td>'.htmlspecialchars($label).'</td><td>'.$value.'</td></tr>';
+
+*/
+				$I=0;
+				while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result))	{
+				
+
+					$aTtContentNode = $this->addNode($ttContentNode,array(
+						'TEXT'=>$row['CType'],
+					));				
+				
+					/*General info about an item*/
+					$htmlRow['UID'] = $row['uid'];
+					$htmlRow['Content Type'] = $row['CType'];
+ 					$htmlRow['Created by'] = $this->getUserById($row['cruser_id']);
+ 					$htmlRow['Created'] = $this->getDateTime($row['crdate']);
+ 					$htmlRow['Last update'] = $this->getDateTime($row['tstamp']);
+ 
+					if($i==0){
+						$htmlContent[] = '<tr><td>'.implode('</td><td>',array_keys($htmlRow) ).'</td></tr>';
+					}
+					
+					$htmlContent[] = '<tr valign="top"><td>'.implode('</td><td>',$htmlRow).'</td></tr>';
+ 
+					$i++;
+				}/* endwhile while($row */
+				$htmlContent[] = '</table>';
+				$GLOBALS['TYPO3_DB']->sql_free_result($result);
+			} /* endif $dbCount */
+
+
+	//		return ( count($htmlContent) > 0 ? '<hr size="1" color="black" noshade="noshade"/>' : '' ).implode('',$htmlContent);
+			
+	}/*</getTTContentFromPage>*/
 }

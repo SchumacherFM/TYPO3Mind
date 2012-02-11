@@ -68,7 +68,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	protected $RGBinterpolate;
 
-	
+
 	/**
 	 * __constructor
 	 *
@@ -81,7 +81,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 
 		$this->RGBinterpolate = t3lib_div::makeInstance('Tx_Typo3mind_Utility_RGBinterpolate');
 
-		
+
 		$this->tree = t3lib_div::makeInstance('Tx_Typo3mind_Utility_PageTree');
 		$this->tree->init('');
 		$this->tree->getTree(0, 999, '');
@@ -278,7 +278,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			);
 
 			$backendListTemp = 0;
-			if( $this->mapMode['befe'] == 'backend_tv' ){ 
+			if( $this->mapMode['befe'] == 'backend_tv' ){
 				/* and not a shortcut! TemplaVoila does not support redirects... it will display a blank page */
 				if( (int)$record['doktype'] <> 4 ){
 					$attr['LINK'] = $this->getBEHttpHost().'typo3conf/ext/templavoila/mod1/index.php?id='.$childUids['uid'];
@@ -341,22 +341,23 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			}
 
 
-			if( isset($childUids['subrow']) ){ 
+			if( isset($childUids['subrow']) ){
 				$attr = $this->setAttr($t3mindCurrent,'node_folded',$attr,'FOLDED');
 			}
 			$attr = $this->setAttr($t3mindCurrent,'node_style',$attr,'STYLE');
 
 			/*first 3 levels are folded */
-			if( $this->settings['nodeAutoFold'] == 1 && $depth < 3 && isset($childUids['subrow']) ){ 
-				$attr['FOLDED'] = 'true'; 
+			if( $this->settings['nodeAutoFold'] == 1 && $depth < 3 && isset($childUids['subrow']) ){
+				$attr['FOLDED'] = 'true';
 			}
 
-			
-			$ShowExtendedDetailsInPageTree = ((int)$this->settings['ShowExtendedDetailsInPageTree'] == 1 || 
+
+			$ShowExtendedDetailsInPageTree = ((int)$this->settings['ShowExtendedDetailsInPageTree'] == 1 ||
 				(
 					(int)$this->settings['ShowExtendedDetailsInPageTree'] == 0 && $t3mindCurrent['show_details_note'] == 1
 				)
-			) ? true : false;			
+			) ? true : false;
+
 
 			// if user assigns multiple images then use: addImagesNode/addImagesNote
 			if( isset($this->t3mind[$uid]) && !empty($this->t3mind[$uid]['node_user_icon']) ){
@@ -367,24 +368,30 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				foreach($uicons as $k=>$name){
 					$iconArray[] = array('path'=>$this->settings['userIconsPath'].$name);
 				}
-				
+
 				if( $ShowExtendedDetailsInPageTree === true	){
 					$htmlContent = $this->getNoteContentFromRow('pages',$record);
-					$pageParent = $this->addImagesNote($xmlNode,$attr,$iconArray,$htmlContent);
+					$pageParent = $this->addImagesNote($xmlNode,$attr,$iconArray, $htmlContent );
 				}else{
 					$pageParent = $this->addImagesNode($xmlNode,$attr,$iconArray);
 				}
-				
-				
+
+
 			} else {
 				if( $ShowExtendedDetailsInPageTree === true	){
 					$htmlContent = $this->getNoteContentFromRow('pages',$record);
-					$pageParent = $this->addImgNote($xmlNode,$attr,$iconDokType,'',$htmlContent);
+					$pageParent = $this->addImgNote($xmlNode,$attr,$iconDokType,'', $htmlContent  );
 				}else{
 					$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
 				}
 			}
 
+			/* tt content listing */
+			if( $record['doktype'] == 1 ){
+				$this->getTTContentFromPage($pageParent,$record);						
+			}			
+			
+			
 			if( is_array($t3mindCurrent) ){
 
 				/*<add cloud>*/
