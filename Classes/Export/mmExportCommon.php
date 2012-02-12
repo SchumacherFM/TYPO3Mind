@@ -421,7 +421,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	private function _getRssTitle(SimpleXMLElement $rssContent){
 		return isset($rssContent->channel->title) ? $rssContent->channel->title : $rssContent->title;
 	}
-	
+
 	/**
 	 * gets the RSS link
 	 *
@@ -690,45 +690,87 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		return $label;
 	}
 
-	
+
 	/**
 	 * gets the whole tt content entry for a page
 	 *
 	 * @param array $pageRecord Current Page Record
 	 * @return	void
 	 */
-	public function getTTContentFromPage(SimpleXMLElement $xmlNode, $pageRecord){
+	public function getTTContentFromPage(SimpleXMLElement $xmlNode, $pageRecord, $isLastPageNode=0){
 
-		$ttContentNode = $this->addNode($xmlNode,array(
-//			'FOLDED'=>'true',
-			'TEXT'=>$this->translate('Content Elements'),
-		));
-	
-	
-			$tableName = 'tt_content';
-			$pageUid = $pageRecord['uid'];
-			 
-			 /*
-			 
-			 maybe we have to list it as a NODE!
-			 
-			 */
-	
+		$ttContentNode = $xmlNode;
+		if( $isLastPageNode == 0 ){
+			$ttContentNode = NULL;
+			$ttContentNode = $this->addNode($xmlNode,array(
+				'FOLDED'=>'true',
+				'TEXT'=>'Content Elements', // $this->translate('Content Elements'),
+			));
+		}
+
+		$orderBy = 'ORDER BY cCType desc,CType asc';
+
+		$queryParts = array(
+			'SELECT' => 'CType,count(*) cCType',
+			'FROM' => 'tt_content',
+			'WHERE' => 'pid='.intval($pageRecord['uid']),
+			'GROUPBY' => 'CType',
+			'ORDERBY' => $GLOBALS['TYPO3_DB']->stripOrderBy($orderBy),
+			'LIMIT' => ''
+		);
+
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts) or
+			die('Please fix this error!<br>'.__FILE__.' Line '.__LINE__.":\n<br>\n".mysql_error()."<hr>".var_export($queryParts,1));
+		$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
+
+		while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result)){
+
+			$cTypeInfo = $this->_ttcGetCTypeInfo($row['CType'] );
+
+			/* group the elements .. */
+			$isGrouped = 0;
+			if( $row['cCType'] > 1 ){
+				$attr = array(
+					'TEXT'=>'(C:'.$row['cCType'].') '.$cTypeInfo['txt'],
+				);
+				$ttContentNodeGrouped = $this->addImgNode($ttContentNode,$attr,$cTypeInfo['icon'],'');
+				$isGrouped = 1;
+				$this->_getTTContentGroup($ttContentNodeGrouped,$pageRecord,$row['CType'],$isGrouped);
+
+			}else{
+				/* this only works with an if/else contruct */
+				$this->_getTTContentGroup($ttContentNode,$pageRecord,$row['CType'],$isGrouped);
+			}
+
+
+		}
+
+	}
+	/**
+	 * gets the whole tt content group entry for a page
+	 *
+	 * @param array $pageRecord Current Page Record
+	 * @return	void
+	 */
+	private function _getTTContentGroup(SimpleXMLElement $xmlNode, $pageRecord, $CType, $isGrouped = 0){
+		GLOBAL $TCA;
+
+
 			$orderBy = 'ORDER BY sorting';
 
 			$queryParts = array(
 				'SELECT' => '*',
-				'FROM' => $tableName,
-				'WHERE' => 'pid='.$pageUid,
+				'FROM' => 'tt_content',
+				'WHERE' => 'pid='.intval($pageRecord['uid']).' and CType=\''.addslashes($CType).'\'',
 				'GROUPBY' => '',
 				'ORDERBY' => $GLOBALS['TYPO3_DB']->stripOrderBy($orderBy),
 				'LIMIT' => ''
 			);
 
-			$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts) or 
+			$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts) or
 				die('Please fix this error!<br>'.__FILE__.' Line '.__LINE__.":\n<br>\n".mysql_error()."<hr>".var_export($queryParts,1));
 			$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
- 
+
 			$htmlContent = array();
 			if( $dbCount ){
 				$htmlContent[] = '<table>';
@@ -738,36 +780,107 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		if( $noLtGtReplace == 0 ){ $value = str_replace(array('&lt;','&gt;'),array('|lt|','|gt|'),$value); }
 		return '<tr valign="top"><td>'.htmlspecialchars($label).'</td><td>'.$value.'</td></tr>';
 
+
+		if DAM is installed get different image infos from DAM table
+
 */
 				$I=0;
 				while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result))	{
-				
 
-					$aTtContentNode = $this->addNode($ttContentNode,array(
-						'TEXT'=>$row['CType'],
-					));				
-				
+					$cTypeInfo = $this->_ttcGetCTypeInfo($row['CType'],$row);
+
+
+					$attr = array(
+						'TEXT'=>'('.$row['uid'].') ',
+						'LINK'=> $this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[tt_content]['.$row['uid'].']=edit' : '',
+
+					);
+					if( $isGrouped == 0 ){
+						$attr['TEXT'] .= $cTypeInfo['txt'].': ';
+					
+					}
+
+					if( !empty($row['header']) ){
+						$attr['TEXT'] .= htmlspecialchars( strip_tags($row['header']));
+					}
+					elseif( !empty($row['bodytext']) ){
+						$attr['TEXT'] .= htmlspecialchars( substr( strip_tags($row['bodytext']),0,50)).'...';
+					}
+
+					/* print full HTML into the NOTE! nice formatting */
+					if( !empty($row['bodytext']) ){
+						$syntaxCheck = @simplexml_load_string('<?xml version="1.0"?>'.$row['bodytext']);
+						if( $syntaxCheck && is_object($syntaxCheck) ){
+						/*
+							@TODO parse bodytext for: <link 100 - - QuickTour>zurück zur Tour</link>
+							not valid XML
+						*/
+
+							$htmlContent = htmlspecialchars(str_replace(array('&lt;','&gt;','<','>'),array('|lt|','|gt|','|lt|','|gt|'),$row['bodytext']));
+						}else{
+							/* not valid HTML! */
+							$htmlContent = htmlspecialchars($row['bodytext']);
+						
+						}
+					}
+
+
+					if( $isGrouped == 0 ){
+						$aTtContentNode = $this->addImgNote($xmlNode,$attr,$cTypeInfo['icon'],'', $htmlContent  );
+					}else{
+						$aTtContentNode = $this->addNote($xmlNode,$attr, $htmlContent  );
+					}
+
 					/*General info about an item*/
 					$htmlRow['UID'] = $row['uid'];
 					$htmlRow['Content Type'] = $row['CType'];
  					$htmlRow['Created by'] = $this->getUserById($row['cruser_id']);
  					$htmlRow['Created'] = $this->getDateTime($row['crdate']);
  					$htmlRow['Last update'] = $this->getDateTime($row['tstamp']);
- 
+/*
 					if($i==0){
 						$htmlContent[] = '<tr><td>'.implode('</td><td>',array_keys($htmlRow) ).'</td></tr>';
 					}
-					
+
 					$htmlContent[] = '<tr valign="top"><td>'.implode('</td><td>',$htmlRow).'</td></tr>';
- 
+*/
 					$i++;
 				}/* endwhile while($row */
-				$htmlContent[] = '</table>';
+		//		$htmlContent[] = '</table>';
 				$GLOBALS['TYPO3_DB']->sql_free_result($result);
 			} /* endif $dbCount */
 
 
 	//		return ( count($htmlContent) > 0 ? '<hr size="1" color="black" noshade="noshade"/>' : '' ).implode('',$htmlContent);
-			
+
 	}/*</getTTContentFromPage>*/
+
+	private function _ttcGetCTypeInfo($ctype,&$ttContentElementRow = NULL){
+		GLOBAL $TCA;
+
+		foreach($TCA['tt_content']['columns']['CType']['config']['items'] as $ct){
+			if( $ct[1] == $ctype ){
+
+				$icon = 'typo3/sysext/t3skin/icons/gfx/'.$ct[2];
+				if( stristr($ct[2],'EXT:') !== false ){
+					/* @todo resolve ext path better ... instead of quick and dirty ... */
+					$icon = str_replace('EXT:','typo3conf/ext/',$ct[2]);
+				}
+
+				$return = array(
+					'icon'=>$icon,
+					'txt'=>$GLOBALS['LANG']->sL( $ct[0] ),
+				);
+				break;
+			}
+		}
+
+		/* @todo if set starttime, endtime or hidden or deleted ... change icon ...
+			see folder /typo3/sysext/t3skin/icons/gfx/i/ for more icons
+		*/
+		return $return;
+
+	}
+
+
 }

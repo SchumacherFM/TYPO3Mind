@@ -134,6 +134,7 @@ class Tx_Typo3mind_Utility_PageTree {
 	public $tree = array(); // Tree is accumulated in this variable
 	public $recs = array(); // Accumulates the displayed records.
 
+	public $hasTTContent = array();
 
 	/**
 	 * Initialize the tree class. Needs to be overwritten
@@ -161,8 +162,28 @@ class Tx_Typo3mind_Utility_PageTree {
 			t3lib_div::loadTCA($this->table);
 		}
 
+		$this->_setHasTTContent();
+		
 	}
 
+	private function _setHasTTContent(){
+		
+		$queryParts = array(
+			'SELECT' => 'pid,count(*) cpid',
+			'FROM' => 'tt_content',
+			'WHERE' => '', // all! even the deleted
+			'GROUPBY' => 'pid',
+			'ORDERBY' => '',
+			'LIMIT' => ''
+		);
+
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts) or
+			die('Please fix this error!<br>'.__FILE__.' Line '.__LINE__.":\n<br>\n".mysql_error()."<hr>".var_export($queryParts,1));
+
+		while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result)){
+			$this->hasTTContent[ $row['pid'] ] = $row['cpid'];
+		}
+	}
 
 	/**
 	 * Adds a fieldname to the internal array ->fieldArray

@@ -346,11 +346,17 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			}
 			$attr = $this->setAttr($t3mindCurrent,'node_style',$attr,'STYLE');
 
-			/*first 3 levels are folded */
-			if( $this->settings['nodeAutoFold'] == 1 && $depth < 3 && isset($childUids['subrow']) ){
+			/*first 4 levels are folded */
+			if( $this->settings['nodeAutoFold'] == 1 && $depth < 4 && isset($childUids['subrow']) ){
 				$attr['FOLDED'] = 'true';
 			}
-
+			
+			/* if no child and has TTContent, then remove node 'Content Element' and print it directly */
+			$isLastPageNode = 0;
+			if( !isset($childUids['subrow']) && isset($this->tree->hasTTContent[$uid]) ){
+				$attr['FOLDED'] = 'true';
+				$isLastPageNode = 1;
+			}
 
 			$ShowExtendedDetailsInPageTree = ((int)$this->settings['ShowExtendedDetailsInPageTree'] == 1 ||
 				(
@@ -385,11 +391,6 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 					$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
 				}
 			}
-
-			/* tt content listing */
-			if( $record['doktype'] == 1 ){
-				$this->getTTContentFromPage($pageParent,$record);						
-			}			
 			
 			
 			if( is_array($t3mindCurrent) ){
@@ -470,9 +471,17 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				$this->getTreeRecursive($pageParent,$childUids['subrow'],$depth,$subT3mindCurrent);
 
 			}
+			
+			/* tt content listing */
+			if( isset($this->tree->hasTTContent[$uid]) && $this->tree->hasTTContent[$uid] > 0 ){
+				$this->getTTContentFromPage($pageParent, $record, $isLastPageNode);						
+			}			
+			
+			
+			
 			/* IF we have a sysfolder .. then list it's content */
 			if( $record['doktype'] == 254 ){
-				$this->dbList->getTRsysFolderContent($pageParent,$uid,$depth,$t3mindCurrent);
+				$this->dbList->getTRsysFolderContent($pageParent, $uid, $depth, $t3mindCurrent);
 			}
 		} /*endforeach*/
 

@@ -150,6 +150,18 @@ class Tx_Typo3mind_Export_mmExportFreeMind /* extends SimpleXMLElement */ {
 	}
 
 	/**
+	 * adds a note
+	 *
+	 * @param	SimpleXMLElement $xmlNode
+	 * @param	array $attributes  key is the name and value the value
+	 * @param	string html content
+	 * @return	SimpleXMLElement
+	 */
+	public function addNote(SimpleXMLElement $xmlNode,$attributes,$html) {
+		return $this->addRichContentNote($xmlNode,$attributes,$html,array(),array(), 'NOTE' );	
+	}
+	
+	/**
 	 * adds an edge
 	 *
 	 * @param	SimpleXMLElement $xmlNode
