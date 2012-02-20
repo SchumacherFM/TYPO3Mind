@@ -76,14 +76,14 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 * @var Tx_Typo3mind_Utility_Helpers
 	 */
 	protected $helpers;
-	
+
 	/**
 	 * time track
 	 *
 	 * @var t3lib_timetrack
 	 */
 	protected $tt;
-	
+
 	/**
 	 * initializeAction
 	 *
@@ -155,7 +155,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 		$this->view->assign('duration', ($this->tt->getDifferenceToStarttime() /1000) );
 	}
 
-	
+
 	/*************************************************************************************************
 		NOT USED, but keept for later ....
 	*************************************************************************************************/
@@ -169,7 +169,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	public function editPagesAction(Tx_Typo3mind_Domain_Model_T3mind $T3mind = NULL) {
 
 		die('<h1>Use a TYPO3 Sysfolder and edit there the TYPO3Mind node properties for a page!</h1>');
-	
+
 		/*TODO: */
 		if ($T3mind == NULL) {
 
@@ -201,9 +201,9 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 * @return void
 	 */
 	public function editPagesSaveAction(Tx_Typo3mind_Domain_Model_T3mind $T3mind, $options ) {
-	
+
 		die('<h1>Use a TYPO3 Sysfolder and edit there the TYPO3Mind node properties for a page!</h1>');
-	
+
 		/*TODO: */
 
 		foreach($options as $k=>$v){
@@ -256,7 +256,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 		return '';
 
 	}
-	 
+
 	/**
 	 * Translate key from locallang.xml.
 	 *

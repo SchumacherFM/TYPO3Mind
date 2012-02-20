@@ -142,5 +142,20 @@ class Tx_Typo3mind_Utility_Helpers {
 			return $includedFiles;
 
 	}
+	public static function convertT3Tags($htmlString){
+		
+		
+		$htmlString = str_replace( array('&nbsp;','</br>','<br>'), array('','<br/>','<br/>'), $htmlString);
+
+		$htmlString = preg_replace('~<(media|link)[^>]+>~i','<\\1>',$htmlString);
+		
+		$xmlString = '<?xml version="1.0"?><html>'.$htmlString.'</html>';
+		
+		if( !simplexml_load_string($xmlString) ){
+			return false;
+		}
+		
+		return $htmlString;
+	}
 
 }

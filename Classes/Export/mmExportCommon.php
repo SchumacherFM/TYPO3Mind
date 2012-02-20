@@ -809,18 +809,11 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 
 					/* print full HTML into the NOTE! nice formatting */
 					if( !empty($row['bodytext']) ){
-						$syntaxCheck = @simplexml_load_string('<?xml version="1.0"?>'.$row['bodytext']);
-						if( $syntaxCheck && is_object($syntaxCheck) ){
-						/*
-							@TODO parse bodytext for: <link 100 - - QuickTour>zurück zur Tour</link>
-							not valid XML
-						*/
-
-							$htmlContent = htmlspecialchars(str_replace(array('&lt;','&gt;','<','>'),array('|lt|','|gt|','|lt|','|gt|'),$row['bodytext']));
+						$bodytext = Tx_Typo3mind_Utility_Helpers::convertT3Tags($row['bodytext']);
+						if( $bodytext ){
+							$htmlContent = htmlspecialchars(str_replace(array('&lt;','&gt;','<','>'),array('|lt|','|gt|','|lt|','|gt|'),$bodytext));
 						}else{
-							/* not valid HTML! */
 							$htmlContent = htmlspecialchars($row['bodytext']);
-						
 						}
 					}
 
