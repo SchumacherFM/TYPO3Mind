@@ -69,7 +69,6 @@ class tx_fmItemsProcFunc {
 	public function getFromTS(&$params, &$pObj) {
 		// global $TCA, $LANG;
 		// http://typo3.toaster-schwerin.de/typo3_dev/2011_11/msg00089.html
-
 		$typoscriptInclude = '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:typo3mind/Configuration/TypoScript/setup.txt">';
 
 		$TSparserObject = t3lib_div::makeInstance('t3lib_tsparser');
@@ -89,7 +88,7 @@ class tx_fmItemsProcFunc {
 		){
 
 			$params['items'] = $this->_getFiles( $tsValue );
-
+			
 		}else{
 
 
@@ -128,7 +127,13 @@ class tx_fmItemsProcFunc {
 	 */
 	private function _getFiles( $path ) {
 			$subA = $fileArray = array();
+			
+			if( preg_match('~(\.svn|\.git)~i',$path) ){
+				return array();
+			}
+			
 			$pics = scandir(PATH_site.$path);
+			
 			foreach($pics as $k=>$v){
 				$subPath = $path.$v.'/';
 				if( $v!='.' && $v != '..' && is_dir(PATH_site.$subPath) ){
@@ -140,7 +145,9 @@ class tx_fmItemsProcFunc {
 				}
 			}
 
-
+			if( count($fileArray) == 0 ){
+					$fileArray[] = array('No files found! Bad permissions? '.$path,false,'bad permissions!' );			
+			}
 		return $fileArray;
 	}
 

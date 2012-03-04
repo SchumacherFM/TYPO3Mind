@@ -707,7 +707,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 				'TEXT'=>'Content Elements', // $this->translate('Content Elements'),
 			));
 		}
-
+		
 		$orderBy = 'ORDER BY cCType desc,CType asc';
 
 		$queryParts = array(
@@ -745,7 +745,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 
 		}
 
-	}
+	}/*</getTTContentFromPage>*/
 	/**
 	 * gets the whole tt content group entry for a page
 	 *
@@ -788,6 +788,14 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 				while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result))	{
 
 					$cTypeInfo = $this->_ttcGetCTypeInfo($row['CType'],$row);
+					
+if( $pageRecord['uid'] == 427 && $CType == 'text'){
+	echo '<pre>';
+	var_dump($pageRecord);
+	var_dump($cTypeInfo);
+	var_dump($isGrouped);
+	die('</pre>');
+}		
 
 
 					$attr = array(
@@ -846,7 +854,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 
 	//		return ( count($htmlContent) > 0 ? '<hr size="1" color="black" noshade="noshade"/>' : '' ).implode('',$htmlContent);
 
-	}/*</getTTContentFromPage>*/
+	}/*</_getTTContentGroup>*/
 
 	private function _ttcGetCTypeInfo($ctype,&$ttContentElementRow = NULL){
 		GLOBAL $TCA;
@@ -873,7 +881,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		*/
 		return $return;
 
-	}
+	}/*</_ttcGetCTypeInfo>*/
 
 
 }
