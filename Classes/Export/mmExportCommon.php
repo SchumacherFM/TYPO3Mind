@@ -88,6 +88,12 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	*/
 	public $cruser_id;
 
+	/*
+	 * contains all entries from a table in the database
+	 * @var array
+	 **/
+	protected $dbTables;
+
 	/**
 	 * Constructor
 	 *
@@ -699,6 +705,8 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 */
 	public function getTTContentFromPage(SimpleXMLElement $xmlNode, $pageRecord, $isLastPageNode=0){
 
+		$this->loadDatabaseTable('tx_templavoila_tmplobj',array('title') );
+
 		$ttContentNode = $xmlNode;
 		if( $isLastPageNode == 0 ){
 			$ttContentNode = NULL;
@@ -707,7 +715,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 				'TEXT'=>'Content Elements', // $this->translate('Content Elements'),
 			));
 		}
-		
+
 		$orderBy = 'ORDER BY cCType desc,CType asc';
 
 		$queryParts = array(
@@ -771,10 +779,8 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 				die('Please fix this error!<br>'.__FILE__.' Line '.__LINE__.":\n<br>\n".mysql_error()."<hr>".var_export($queryParts,1));
 			$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
 
-			$htmlContent = array();
 			if( $dbCount ){
-				$htmlContent[] = '<table>';
-				$htmlRow = array();
+
 /*
 		$value = htmlspecialchars($value);
 		if( $noLtGtReplace == 0 ){ $value = str_replace(array('&lt;','&gt;'),array('|lt|','|gt|'),$value); }
@@ -786,46 +792,76 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 */
 				$I=0;
 				while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result))	{
+					$htmlContent = $htmlRow = array();
 
 					$cTypeInfo = $this->_ttcGetCTypeInfo($row);
 
 					$attr = array(
-						'TEXT'=>'('.$row['uid'].') ',
+						'TEXT'=>array( '('.$row['uid'].')' ),
 						'LINK'=> $this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[tt_content]['.$row['uid'].']=edit' : '',
 
 					);
 					if( $isGrouped == 0 ){
-						$attr['TEXT'] .= $cTypeInfo['txt'].' ';
-						
-						if( isset( $cTypeInfo['pluginTxt'] ) ){
-							$attr['TEXT'] .= '('.$cTypeInfo['pluginTxt'].') ';
-						}
+						$attr['TEXT'][] = $cTypeInfo['txt'];
 					}
 
+					if( isset( $cTypeInfo['pluginTxt'] ) ){
+						$attr['TEXT'][] = '('.$cTypeInfo['pluginTxt'].')';
+					}
+
+					if( $CType=='templavoila_pi1' && isset( $this->dbTables['tx_templavoila_tmplobj'] ) &&
+						isset($row['tx_templavoila_to']) && !empty($row['tx_templavoila_to'])
+					){
+						$attr['TEXT'][] = $this->dbTables['tx_templavoila_tmplobj'][ $row['tx_templavoila_to'] ]['title'].':';
+					}
+
+
+
+
 					if( !empty($row['header']) ){
-						$attr['TEXT'] .= htmlspecialchars( strip_tags($row['header']));
+						$attr['TEXT'][] = htmlspecialchars( strip_tags($row['header']));
 					}
 					elseif( !empty($row['bodytext']) ){
-						$attr['TEXT'] .= htmlspecialchars( substr( strip_tags($row['bodytext']),0,50)).'...';
+						$attr['TEXT'][] = htmlspecialchars( substr( strip_tags($row['bodytext']),0,50)).'...';
 					}
+
+					/*General info about an item*/
+					$htmlContent[] = '<table>';
+ 					$htmlRow['Created by'] = $this->getUserById($row['cruser_id']);
+ 					$htmlRow['Created'] = $this->getDateTime($row['crdate']);
+ 					$htmlRow['Last update'] = $this->getDateTime($row['tstamp']);
+
+					foreach( $htmlRow as $rowCol1 => $rowCol2 ){
+						$htmlContent[] = '<tr valign="top"><td><b>'.$rowCol1.'</b></td><td>'.$rowCol2.'</td></tr>';
+					}
+					$htmlContent[] = '</table>';
+
+
+
 
 					/* print full HTML into the NOTE! nice formatting */
 					if( !empty($row['bodytext']) ){
+						$htmlContent[] = '<hr/>';
 						$bodytext = Tx_Typo3mind_Utility_Helpers::convertT3Tags($row['bodytext']);
 						if( $bodytext ){
-							$htmlContent = htmlspecialchars(str_replace(array('&lt;','&gt;','<','>'),array('|lt|','|gt|','|lt|','|gt|'),$bodytext));
+							$htmlContent[] = htmlspecialchars(str_replace(array('&lt;','&gt;','<','>'),array('|lt|','|gt|','|lt|','|gt|'),$bodytext));
 						}else{
-							$htmlContent = htmlspecialchars($row['bodytext']);
+							$htmlContent[] = htmlspecialchars($row['bodytext']);
 						}
 					}
-if( $row['uid'] == 118000000000 && $CType == 'list'){
+					
+					$htmlContent = implode('',$htmlContent);
+					
+if( $row['uid'] == 167300000 ){
 	echo '<pre>';
 	var_dump($pageRecord);
 	var_dump($cTypeInfo);
 	var_dump($isGrouped);
 	var_dump($attr);
+	var_dump($this->dbTables);
 	die('</pre>');
-}		
+}
+					$attr['TEXT'] = implode(' ',$attr['TEXT']);
 
 					if( $isGrouped == 0 ){
 						$aTtContentNode = $this->addImgNote($xmlNode,$attr,$cTypeInfo['icon'],'', $htmlContent  );
@@ -835,37 +871,21 @@ if( $row['uid'] == 118000000000 && $CType == 'list'){
 					}
 
 					/* icons for deleted and hidden */
-					// if( isset($row['deleted']) && $row['deleted'] == 1 ){
-						// $this->addIcon($aTtContentNode,'button_cancel');
-					// }
-					// if( isset($row['hidden']) && $row['hidden'] == 1 ){
-						// $this->addIcon($aTtContentNode,'closed');
-					// }
-					
-					
-					/*General info about an item*/
-					$htmlRow['UID'] = $row['uid'];
-					$htmlRow['Content Type'] = $row['CType'];
- 					$htmlRow['Created by'] = $this->getUserById($row['cruser_id']);
- 					$htmlRow['Created'] = $this->getDateTime($row['crdate']);
- 					$htmlRow['Last update'] = $this->getDateTime($row['tstamp']);
-/*
-					if($i==0){
-						$htmlContent[] = '<tr><td>'.implode('</td><td>',array_keys($htmlRow) ).'</td></tr>';
+					if( isset($row['deleted']) && $row['deleted'] == 1 ){
+						$this->addIcon($aTtContentNode,'button_cancel');
+					}
+					if( isset($row['hidden']) && $row['hidden'] == 1 ){
+						$this->addIcon($aTtContentNode,'closed');
 					}
 
-					$htmlContent[] = '<tr valign="top"><td>'.implode('</td><td>',$htmlRow).'</td></tr>';
-*/
 					$i++;
 				}/* endwhile while($row */
-		//		$htmlContent[] = '</table>';
 				$GLOBALS['TYPO3_DB']->sql_free_result($result);
 			} /* endif $dbCount */
 
 
-	//		return ( count($htmlContent) > 0 ? '<hr size="1" color="black" noshade="noshade"/>' : '' ).implode('',$htmlContent);
-
 	}/*</_getTTContentGroup>*/
+
 
 	/*
 	 * @param array $ttContentElementRow
@@ -891,12 +911,12 @@ if( $row['uid'] == 118000000000 && $CType == 'list'){
 				break;
 			}
 		}
-		
+
 		/* change icon if hidden */
 		$imgFileExt = '.gif';
 		$hasTime = (!empty($ttContentElementRow['starttime']) && $ttContentElementRow['starttime'] >= $time) || !empty($ttContentElementRow['endtime']);
 		$hasFeGroup = !empty( $ttContentElementRow['fe_group'] );
-		
+
 		if( $hasTime && !$hasFeGroup ){
 			$return['icon'] = str_replace($imgFileExt,'__f'.$imgFileExt,$return['icon']);
 		}
@@ -906,17 +926,17 @@ if( $row['uid'] == 118000000000 && $CType == 'list'){
 		elseif( $hasTime && $hasFeGroup ){
 			$return['icon'] = str_replace($imgFileExt,'__hfu'.$imgFileExt,$return['icon']);
 		}
-		
+
 		/* if hidden, then other options are unnecessary */
 		if( $ttContentElementRow['hidden'] == 1 || $ttContentElementRow['deleted'] == 1 ){
 			$return['icon'] = str_replace($imgFileExt,'__h'.$imgFileExt,$return['icon']);
 		}
-		
-		
+
+
 
 		foreach($TCA['tt_content']['columns']['list_type']['config']['items'] as $ct){
 			if( !empty($ct[0]) && $ct[1] == $ttContentElementRow['list_type'] ){
-			
+
 				$icon = str_replace('../','',$ct[2]);
 				$return['icon'] = $icon;
 				$return['pluginTxt'] = $GLOBALS['LANG']->sL( $ct[0] );
@@ -929,9 +949,9 @@ if( 1==2 &&  isset($ttContentElementRow['list_type']) && !empty($ttContentElemen
 	var_dump($return);
 	var_dump($TCA['tt_content']['columns']['list_type']['config']['items']);
 	var_dump($ttContentElementRow);
-	die('</pre>');		
-}		
-		
+	die('</pre>');
+}
+
 		/* @todo if set starttime, endtime or hidden or deleted ... change icon ...
 			see folder /typo3/sysext/t3skin/icons/gfx/i/ for more icons
 		*/
@@ -939,5 +959,36 @@ if( 1==2 &&  isset($ttContentElementRow['list_type']) && !empty($ttContentElemen
 
 	}/*</_ttcGetCTypeInfo>*/
 
+	/*
+	 * loads some basic infos from table tx_templavoila_tmplobj
+	 * @param none
+	 * @return false if already loaded and true if just loaded
+	*/
+	private function loadDatabaseTable($tablename,$columns=array() ){
 
+		if( count($this->dbTables[$tablename])>0 ){
+			return false;
+		}
+
+		$columns = array_merge( $columns,array('uid') );
+
+		$queryParts = array(
+			'SELECT' => implode(',',$columns),
+			'FROM' => $tablename,
+			'WHERE' => '',
+			'GROUPBY' => '',
+			'ORDERBY' => '',
+			'LIMIT' => ''
+		);
+
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts) or
+			die('Please fix this error!<br>'.__FILE__.' Line '.__LINE__.":\n<br>\n".mysql_error()."<hr>".var_export($queryParts,1));
+		$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
+
+		while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result)){
+			$this->dbTables[$tablename][ $row['uid'] ] = $row;
+		}
+		return true;
+
+	}/*</loadTemplavoilaTmplobj>*/
 }
