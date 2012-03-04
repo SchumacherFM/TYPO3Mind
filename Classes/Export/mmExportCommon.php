@@ -725,7 +725,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 
 		while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result)){
 
-			$cTypeInfo = $this->_ttcGetCTypeInfo($row['CType'] );
+			$cTypeInfo = $this->_ttcGetCTypeInfo($row);
 
 			/* group the elements .. */
 			$isGrouped = 0;
@@ -787,16 +787,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 				$I=0;
 				while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result))	{
 
-					$cTypeInfo = $this->_ttcGetCTypeInfo($row['CType'],$row);
-					
-if( $pageRecord['uid'] == 427 && $CType == 'text'){
-	echo '<pre>';
-	var_dump($pageRecord);
-	var_dump($cTypeInfo);
-	var_dump($isGrouped);
-	die('</pre>');
-}		
-
+					$cTypeInfo = $this->_ttcGetCTypeInfo($row);
 
 					$attr = array(
 						'TEXT'=>'('.$row['uid'].') ',
@@ -804,8 +795,11 @@ if( $pageRecord['uid'] == 427 && $CType == 'text'){
 
 					);
 					if( $isGrouped == 0 ){
-						$attr['TEXT'] .= $cTypeInfo['txt'].': ';
-					
+						$attr['TEXT'] .= $cTypeInfo['txt'].' ';
+						
+						if( isset( $cTypeInfo['pluginTxt'] ) ){
+							$attr['TEXT'] .= '('.$cTypeInfo['pluginTxt'].') ';
+						}
 					}
 
 					if( !empty($row['header']) ){
@@ -824,14 +818,31 @@ if( $pageRecord['uid'] == 427 && $CType == 'text'){
 							$htmlContent = htmlspecialchars($row['bodytext']);
 						}
 					}
-
+if( $row['uid'] == 118000000000 && $CType == 'list'){
+	echo '<pre>';
+	var_dump($pageRecord);
+	var_dump($cTypeInfo);
+	var_dump($isGrouped);
+	var_dump($attr);
+	die('</pre>');
+}		
 
 					if( $isGrouped == 0 ){
 						$aTtContentNode = $this->addImgNote($xmlNode,$attr,$cTypeInfo['icon'],'', $htmlContent  );
 					}else{
+						/* avoid duplicated icons */
 						$aTtContentNode = $this->addNote($xmlNode,$attr, $htmlContent  );
 					}
 
+					/* icons for deleted and hidden */
+					// if( isset($row['deleted']) && $row['deleted'] == 1 ){
+						// $this->addIcon($aTtContentNode,'button_cancel');
+					// }
+					// if( isset($row['hidden']) && $row['hidden'] == 1 ){
+						// $this->addIcon($aTtContentNode,'closed');
+					// }
+					
+					
 					/*General info about an item*/
 					$htmlRow['UID'] = $row['uid'];
 					$htmlRow['Content Type'] = $row['CType'];
@@ -856,13 +867,18 @@ if( $pageRecord['uid'] == 427 && $CType == 'text'){
 
 	}/*</_getTTContentGroup>*/
 
-	private function _ttcGetCTypeInfo($ctype,&$ttContentElementRow = NULL){
+	/*
+	 * @param array $ttContentElementRow
+	 **/
+	private function _ttcGetCTypeInfo( $ttContentElementRow ){
 		GLOBAL $TCA;
 
+		$time = time();
+		$systemIconPrefixPath = 'typo3/sysext/t3skin/icons/gfx/';
 		foreach($TCA['tt_content']['columns']['CType']['config']['items'] as $ct){
-			if( $ct[1] == $ctype ){
+			if( $ct[1] == $ttContentElementRow['CType'] ){
 
-				$icon = 'typo3/sysext/t3skin/icons/gfx/'.$ct[2];
+				$icon = $systemIconPrefixPath.$ct[2];
 				if( stristr($ct[2],'EXT:') !== false ){
 					/* @todo resolve ext path better ... instead of quick and dirty ... */
 					$icon = str_replace('EXT:','typo3conf/ext/',$ct[2]);
@@ -875,7 +891,47 @@ if( $pageRecord['uid'] == 427 && $CType == 'text'){
 				break;
 			}
 		}
+		
+		/* change icon if hidden */
+		$imgFileExt = '.gif';
+		$hasTime = (!empty($ttContentElementRow['starttime']) && $ttContentElementRow['starttime'] >= $time) || !empty($ttContentElementRow['endtime']);
+		$hasFeGroup = !empty( $ttContentElementRow['fe_group'] );
+		
+		if( $hasTime && !$hasFeGroup ){
+			$return['icon'] = str_replace($imgFileExt,'__f'.$imgFileExt,$return['icon']);
+		}
+		elseif( !$hasTime && $hasFeGroup ){
+			$return['icon'] = str_replace($imgFileExt,'__u'.$imgFileExt,$return['icon']);
+		}
+		elseif( $hasTime && $hasFeGroup ){
+			$return['icon'] = str_replace($imgFileExt,'__hfu'.$imgFileExt,$return['icon']);
+		}
+		
+		/* if hidden, then other options are unnecessary */
+		if( $ttContentElementRow['hidden'] == 1 || $ttContentElementRow['deleted'] == 1 ){
+			$return['icon'] = str_replace($imgFileExt,'__h'.$imgFileExt,$return['icon']);
+		}
+		
+		
 
+		foreach($TCA['tt_content']['columns']['list_type']['config']['items'] as $ct){
+			if( !empty($ct[0]) && $ct[1] == $ttContentElementRow['list_type'] ){
+			
+				$icon = str_replace('../','',$ct[2]);
+				$return['icon'] = $icon;
+				$return['pluginTxt'] = $GLOBALS['LANG']->sL( $ct[0] );
+				break;
+			}
+		}
+
+if( 1==2 &&  isset($ttContentElementRow['list_type']) && !empty($ttContentElementRow['list_type']) ){
+	echo '<pre>';
+	var_dump($return);
+	var_dump($TCA['tt_content']['columns']['list_type']['config']['items']);
+	var_dump($ttContentElementRow);
+	die('</pre>');		
+}		
+		
 		/* @todo if set starttime, endtime or hidden or deleted ... change icon ...
 			see folder /typo3/sysext/t3skin/icons/gfx/i/ for more icons
 		*/
