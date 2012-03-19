@@ -27,17 +27,17 @@
 			<label index="html.export.header">TYPO3Mind Export</label>
 			<label index="html.export.header.error">Errors in file %s</label>
 			<label index="html.export.header.error.text">Check the XML encoding settings or remove invalid characters or improper nested HTML tags.</label>
-			
+
 			<label index="html.export.Filesize">Filesize: %s KB</label>
 			<label index="html.export.Duration">Duration: %s secs</label>
 
 			<label index="UserNotFound">User not found</label>
 			<label index="value2ATag">(Hint: CTRL+Click!)</label>
-			
-			
-			
+
+
+
 			<label index="tree.security">Security</label>
-			
+
 			<label index="tree.fileInfo">About this file</label>
 			<label index="tree.extensions">Extensions</label>
 			<label index="tree.extensions.selectable">Selectable active FE plugins</label>
@@ -45,7 +45,7 @@
 			<label index="tree.extensions.updates.last">Last updated: </label>
 			<label index="tree.extensions.updates.number">Number of Extensions: </label>
 			<label index="tree.extensions.allext">All Extensions</label>
-			
+
 			<label index="tree.extensions.byState">Extensions by State</label>
 			<label index="tree.version">Version</label>
 			<label index="tree.linkName2TER">T3 Ext. Repository</label>
@@ -67,8 +67,8 @@
 			<label index="tree.server._server">$_SERVER</label>
 			<label index="tree.server._env">$_ENV</label>
 			<label index="tree.server.phpModules">PHP Modules</label>
-			
-			
+
+
 
 			<label index="tree.typo3">TYPO3</label>
 			<label index="tree.typo3logs">Logs</label>
@@ -80,7 +80,7 @@
 			<label index="tree.typo3.SysLog">System Log</label>
 			<label index="tree.typo3.typo3_conf_vars">TYPO3_CONF_VARS</label>
 			<label index="tree.typo3.typo3_conf_vars.value">Value</label>
-			
+
 			<label index="tree.typo3.typo3_conf_vars.GFX">Graphic (GFX)</label>
 			<label index="tree.typo3.typo3_conf_vars.SYS">System (SYS)</label>
 			<label index="tree.typo3.typo3_conf_vars.EXT">Extensions (EXT)</label>
@@ -92,24 +92,25 @@
 			<label index="tree.typo3.typo3_conf_vars.EXTCONF">Extension Config (EXTCONF)</label>
 			<label index="tree.typo3.typo3_conf_vars.SVCONF">Services Config (SVCONF)</label>
 
-			
+
 			<label index="tree.typo3.checkDirs">Directory Check</label>
-			
-			
+
+			<label index="tree.typo3.EditNodeProperties">Edit node properties</label>
+
 			<label index="tree.typo3.SuccessfullBackendLogins">Successfull Backend Logins</label>
-			
+
 			<label index="tree.typo3.useradmin">Administrators</label>
 			<label index="tree.typo3.users">Backend Users</label>
 			<label index="tree.typo3.groups">Backend Groups</label>
 			<label index="tree.typo3.groups.tables_modify">Tables (modify)</label>
 			<label index="tree.typo3.groups.tables_select">Tables (listing)</label>
 			<label index="tree.typo3.groups.groupMods">Modules</label>
-			
-			
+
+
 			<label index="tree.sysdomains">System Domains</label>
 			<label index="tree.syslanguage">Website Language</label>
-			
-			
+
+
 			</languageKey>
 	</data>
 </T3locallang>

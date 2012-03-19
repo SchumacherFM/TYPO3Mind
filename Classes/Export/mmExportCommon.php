@@ -555,12 +555,12 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 
 //hier die edit option einbauen, damit man direkt ins typo3mind edit view kommt, um z.b. eine node zu aendern
 /*
-http://quickline.local/typo3/mod.php?M=web_Typo3mindFm2be&tx_typo3mind_web_typo3mindfm2be[action]=dispatch&tx_typo3mind_web_typo3mindfm2be[controller]=T3mind&id=148
+    http://xxx.local/typo3/mod.php?M=web_Typo3mindFm2be&tx_typo3mind_web_typo3mindfm2be[action]=dispatch&tx_typo3mind_web_typo3mindfm2be[controller]=T3mind&id=46
 */
 		if( $this->mapMode['isbe'] ){
 			$htmlContent[] = '<tr valign="top"><td colspan="2"><a href="'.
-				$this->getBEHttpHost().'typo3/alt_doc.php?edit[tt_content]['.$row['uid'].']=edit'
-			.'">Edit this node</a></td></tr>';
+				$this->getBEHttpHost().'typo3/mod.php?M=web_Typo3mindFm2be&tx_typo3mind_web_typo3mindfm2be[action]=dispatch&tx_typo3mind_web_typo3mindfm2be[controller]=T3mind&id='.$row['uid']
+			.'">Edit this node properties'.$this->translate('tree.typo3.EditNodeProperties').'</a></td></tr>';
 		}
 
 
