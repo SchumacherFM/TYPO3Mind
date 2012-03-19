@@ -98,6 +98,10 @@ module.tx_typo3mind {
 		# To keep the mind map file size down set this to 0.
 		ShowExtendedDetailsInPageTree = 1
 		
+		# Set to 1 if you want to see all tt_content Elements also to be listet.
+		# File size will increase immense
+		ListTTContentElements = 0
+		
 		# Only available for the left side of the mind map tree.
 		design {
 			# function name, color index for moduls count(settings->BeUsersHandleRow), as many colors as you like

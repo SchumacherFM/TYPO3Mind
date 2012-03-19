@@ -551,6 +551,19 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		global $TCA;
 
 		$htmlContent = array('<table>');
+
+
+//hier die edit option einbauen, damit man direkt ins typo3mind edit view kommt, um z.b. eine node zu aendern
+/*
+http://quickline.local/typo3/mod.php?M=web_Typo3mindFm2be&tx_typo3mind_web_typo3mindfm2be[action]=dispatch&tx_typo3mind_web_typo3mindfm2be[controller]=T3mind&id=148
+*/
+		if( $this->mapMode['isbe'] ){
+			$htmlContent[] = '<tr valign="top"><td colspan="2"><a href="'.
+				$this->getBEHttpHost().'typo3/alt_doc.php?edit[tt_content]['.$row['uid'].']=edit'
+			.'">Edit this node</a></td></tr>';
+		}
+
+
 		$htmlContent[] = $this->_getNoteTableRow('UID',$row['uid']); unset($row['uid']);
 
 		$col = 'crdate';
@@ -705,6 +718,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 */
 	public function getTTContentFromPage(SimpleXMLElement $xmlNode, $pageRecord, $isLastPageNode=0){
 
+
 		$this->loadDatabaseTable('tx_templavoila_tmplobj',array('title') );
 
 		$ttContentNode = $xmlNode;
@@ -729,7 +743,6 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts) or
 			die('Please fix this error!<br>'.__FILE__.' Line '.__LINE__.":\n<br>\n".mysql_error()."<hr>".var_export($queryParts,1));
-		$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
 
 		while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result)){
 
@@ -761,8 +774,6 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 	 * @return	void
 	 */
 	private function _getTTContentGroup(SimpleXMLElement $xmlNode, $pageRecord, $CType, $isGrouped = 0){
-		GLOBAL $TCA;
-
 
 			$orderBy = 'ORDER BY sorting';
 
@@ -790,9 +801,9 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		if DAM is installed get different image infos from DAM table
 
 */
-				$I=0;
+				$htmlContent = $htmlRow = array();
 				while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result))	{
-					$htmlContent = $htmlRow = array();
+					$htmlContent = $htmlRow = array(); // that's important
 
 					$cTypeInfo = $this->_ttcGetCTypeInfo($row);
 
@@ -827,10 +838,11 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 
 					/*General info about an item*/
 					$htmlContent[] = '<table>';
- 					$htmlRow['Created by'] = $this->getUserById($row['cruser_id']);
- 					$htmlRow['Created'] = $this->getDateTime($row['crdate']);
- 					$htmlRow['Last update'] = $this->getDateTime($row['tstamp']);
+					$htmlRow['Created by'] = $this->getUserById($row['cruser_id']);
+					$htmlRow['Created'] = $this->getDateTime($row['crdate']);
+					$htmlRow['Last update'] = $this->getDateTime($row['tstamp']);
 
+					// Now build the array into a table row
 					foreach( $htmlRow as $rowCol1 => $rowCol2 ){
 						$htmlContent[] = '<tr valign="top"><td><b>'.$rowCol1.'</b></td><td>'.$rowCol2.'</td></tr>';
 					}
@@ -849,10 +861,11 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 							$htmlContent[] = htmlspecialchars($row['bodytext']);
 						}
 					}
-					
+
 					$htmlContent = implode('',$htmlContent);
-					
+
 if( $row['uid'] == 167300000 ){
+	// @todo remove this
 	echo '<pre>';
 	var_dump($pageRecord);
 	var_dump($cTypeInfo);
@@ -878,7 +891,6 @@ if( $row['uid'] == 167300000 ){
 						$this->addIcon($aTtContentNode,'closed');
 					}
 
-					$i++;
 				}/* endwhile while($row */
 				$GLOBALS['TYPO3_DB']->sql_free_result($result);
 			} /* endif $dbCount */
@@ -894,6 +906,7 @@ if( $row['uid'] == 167300000 ){
 		GLOBAL $TCA;
 
 		$time = time();
+		$return = array();
 		$systemIconPrefixPath = 'typo3/sysext/t3skin/icons/gfx/';
 		foreach($TCA['tt_content']['columns']['CType']['config']['items'] as $ct){
 			if( $ct[1] == $ttContentElementRow['CType'] ){
@@ -912,6 +925,7 @@ if( $row['uid'] == 167300000 ){
 			}
 		}
 
+//		@todo bug for the variable $return
 		/* change icon if hidden */
 		$imgFileExt = '.gif';
 		$hasTime = (!empty($ttContentElementRow['starttime']) && $ttContentElementRow['starttime'] >= $time) || !empty($ttContentElementRow['endtime']);
@@ -944,13 +958,13 @@ if( $row['uid'] == 167300000 ){
 			}
 		}
 
-if( 1==2 &&  isset($ttContentElementRow['list_type']) && !empty($ttContentElementRow['list_type']) ){
-	echo '<pre>';
-	var_dump($return);
-	var_dump($TCA['tt_content']['columns']['list_type']['config']['items']);
-	var_dump($ttContentElementRow);
-	die('</pre>');
-}
+//if( 1==2 &&  isset($ttContentElementRow['list_type']) && !empty($ttContentElementRow['list_type']) ){
+//	echo '<pre>';
+//	var_dump($return);
+//	var_dump($TCA['tt_content']['columns']['list_type']['config']['items']);
+//	var_dump($ttContentElementRow);
+//	die('</pre>');
+//}
 
 		/* @todo if set starttime, endtime or hidden or deleted ... change icon ...
 			see folder /typo3/sysext/t3skin/icons/gfx/i/ for more icons
@@ -983,7 +997,7 @@ if( 1==2 &&  isset($ttContentElementRow['list_type']) && !empty($ttContentElemen
 
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts) or
 			die('Please fix this error!<br>'.__FILE__.' Line '.__LINE__.":\n<br>\n".mysql_error()."<hr>".var_export($queryParts,1));
-		$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
+//		$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
 
 		while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result)){
 			$this->dbTables[$tablename][ $row['uid'] ] = $row;

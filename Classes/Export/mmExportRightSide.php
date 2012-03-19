@@ -126,7 +126,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 	 */
 	public function sett3mind($t3MindRepositoryFindAll) {
 
-		foreach($t3MindRepositoryFindAll as $k=>$v){
+		foreach($t3MindRepositoryFindAll as $v){
 			unset($v['l10n_parent']);
 			unset($v['l10n_diffsource']);
 			$v['node_folded'] = ($v['node_folded']==1 ? 'true' : 'false'); /*must be a string*/
@@ -350,10 +350,10 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 			if( $this->settings['nodeAutoFold'] == 1 && $depth < 4 && isset($childUids['subrow']) ){
 				$attr['FOLDED'] = 'true';
 			}
-			
+
 			/* if no child and has TTContent, then remove node 'Content Element' and print it directly */
 			$isLastPageNode = 0;
-			if( !isset($childUids['subrow']) && isset($this->tree->hasTTContent[$uid]) ){
+			if(intval($this->settings['ListTTContentElements']) == 1 && !isset($childUids['subrow']) && isset($this->tree->hasTTContent[$uid]) ){
 				$attr['FOLDED'] = 'true';
 				$isLastPageNode = 1;
 			}
@@ -371,7 +371,7 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				$ui = $this->t3mind[$uid]['node_user_icon'];
 				$iconArray = array( array('path'=>$iconDokType) );
 				$uicons = t3lib_div::trimExplode(',',$ui,1);
-				foreach($uicons as $k=>$name){
+				foreach($uicons as $name){
 					$iconArray[] = array('path'=>$this->settings['userIconsPath'].$name);
 				}
 
@@ -391,8 +391,8 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 					$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
 				}
 			}
-			
-			
+
+
 			if( is_array($t3mindCurrent) ){
 
 				/*<add cloud>*/
@@ -471,14 +471,12 @@ class Tx_Typo3mind_Export_mmExportRightSide extends Tx_Typo3mind_Export_mmExport
 				$this->getTreeRecursive($pageParent,$childUids['subrow'],$depth,$subT3mindCurrent);
 
 			}
-			
+
 			/* tt content listing */
-			if( isset($this->tree->hasTTContent[$uid]) && $this->tree->hasTTContent[$uid] > 0 ){
-				$this->getTTContentFromPage($pageParent, $record, $isLastPageNode);						
-			}			
-			
-			
-			
+			if( intval($this->settings['ListTTContentElements']) == 1 && isset($this->tree->hasTTContent[$uid]) && $this->tree->hasTTContent[$uid] > 0 ){
+				$this->getTTContentFromPage($pageParent, $record, $isLastPageNode);
+			}
+
 			/* IF we have a sysfolder .. then list it's content */
 			if( $record['doktype'] == 254 ){
 				$this->dbList->getTRsysFolderContent($pageParent, $uid, $depth, $t3mindCurrent);
