@@ -125,7 +125,6 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 				$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
 			}
 
-
 		$T3_THIS_LOCATION = urlencode('mod.php?M=web_list&id='.$this->pageUid);
 		$this->view->assign('redirect','alt_doc.php?returnUrl='.$T3_THIS_LOCATION.'&edit[tx_typo3mind_domain_model_t3mind]['.$T3mind->getUid().']=edit');
 		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'uid,title' ) );
@@ -157,7 +156,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 
 
 	/*************************************************************************************************
-		NOT USED, but keept for later ....
+		NOT USED, but kept for later ....
 	*************************************************************************************************/
 	/**
 	 * action editPages

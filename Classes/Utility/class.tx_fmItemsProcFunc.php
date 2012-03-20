@@ -41,7 +41,7 @@ class tx_fmItemsProcFunc {
 	 */
 	public function arrayKeysEqualValues($array) {
 		$a = array();
-		foreach($array as $k=>$v){
+		foreach($array as $v){
 			$a[ $v ] = $v;
 		}
 		return $a;
@@ -88,13 +88,13 @@ class tx_fmItemsProcFunc {
 		){
 
 			$params['items'] = $this->_getFiles( $tsValue );
-			
+
 		}else{
 
 
 			$tsValarray = $this->trimExplodeVK(',',$tsValue);
 
-			foreach($tsValarray as $k=>$v){
+			foreach($tsValarray as $v){
 				$vk = $v;
 				$vv = $v;
 
@@ -127,14 +127,14 @@ class tx_fmItemsProcFunc {
 	 */
 	private function _getFiles( $path ) {
 			$subA = $fileArray = array();
-			
+
 			if( preg_match('~(\.svn|\.git)~i',$path) ){
 				return array();
 			}
-			
+
 			$pics = scandir(PATH_site.$path);
-			
-			foreach($pics as $k=>$v){
+
+			foreach($pics as $v){
 				$subPath = $path.$v.'/';
 				if( $v!='.' && $v != '..' && is_dir(PATH_site.$subPath) ){
 					$subA = $this->_getFiles( $subPath );
@@ -146,7 +146,7 @@ class tx_fmItemsProcFunc {
 			}
 
 			if( count($fileArray) == 0 ){
-					$fileArray[] = array('No files found! Bad permissions? '.$path,false,'bad permissions!' );			
+					$fileArray[] = array('No files found! Bad permissions? '.$path,false,'bad permissions!' );
 			}
 		return $fileArray;
 	}

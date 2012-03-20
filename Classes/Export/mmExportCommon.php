@@ -540,6 +540,36 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 		return date($dateFormat . ', ' . $timeFormat,$unixTimeStamp);
 	}
 
+	/*
+	 * @param int $uid
+	 */
+	private function _getNodePropertyEditUrl($uid){
+
+//		if( !isset($GLOBALS['TBE_MODULES']['_configuration']['web_Typo3mindFm2be']) ){
+//			$moduleConfig = $GLOBALS['TBE_MODULES']['_configuration']['web_Typo3mindFm2be'];
+//
+//		} else {
+//			/* we have workspaces */
+			echo '<pre>';
+
+			foreach($GLOBALS['TBE_MODULES']['_configuration'] as $modName=>$config){
+				if( stristr($modName,'typo3mind')!==false ){
+					$moduleConfig = $config;
+					break;
+				}
+			}
+//		}
+//
+//		$urlEdit = $this->getBEHttpHost().
+//		'typo3/mod.php?M=web_Typo3mindFm2be&tx_typo3mind_web_typo3mindfm2be[action]=dispatch&tx_typo3mind_web_typo3mindfm2be[controller]=T3mind&id='.
+//					$uid;
+
+
+			var_dump( $moduleConfig );
+			die('</pre>');
+
+	}
+
 	/**
 	 * gets the note content from a DB row
 	 *
@@ -558,9 +588,12 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
     http://xxx.local/typo3/mod.php?M=web_Typo3mindFm2be&tx_typo3mind_web_typo3mindfm2be[action]=dispatch&tx_typo3mind_web_typo3mindfm2be[controller]=T3mind&id=46
 */
 		if( $this->mapMode['isbe'] ){
+
+			$urlEdit = $this->_getNodePropertyEditUrl($row['uid']);
+
 			$htmlContent[] = '<tr valign="top"><td colspan="2"><a href="'.
-				$this->getBEHttpHost().'typo3/mod.php?M=web_Typo3mindFm2be&tx_typo3mind_web_typo3mindfm2be[action]=dispatch&tx_typo3mind_web_typo3mindfm2be[controller]=T3mind&id='.$row['uid']
-			.'">Edit this node properties'.$this->translate('tree.typo3.EditNodeProperties').'</a></td></tr>';
+				$urlEdit
+			.'">Edit this node properties / '.$this->translate('tree.typo3.EditNodeProperties').'</a></td></tr>';
 		}
 
 

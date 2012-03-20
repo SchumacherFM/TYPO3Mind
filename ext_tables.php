@@ -53,7 +53,7 @@ if(TYPO3_MODE === 'BE') {
 			'labels' => 'LLL:EXT:typo3mind/Resources/Private/Language/locallang_fm2be.xml',
 		)
 	);
-	
+
 	$GLOBALS['TYPO3_CONF_VARS']['BE']['defaultUserTSconfig'] .= "\n".'options.contextMenu.table.pages.items {
 			755 = ITEM
 			755 {
