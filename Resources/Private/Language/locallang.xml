@@ -95,7 +95,7 @@
 
 			<label index="tree.typo3.checkDirs">Directory Check</label>
 
-			<label index="tree.typo3.EditNodeProperties">Edit node properties</label>
+			<label index="tree.typo3.EditNodeProperties">Edit node properties (CRTL+Click)</label>
 
 			<label index="tree.typo3.SuccessfullBackendLogins">Successfull Backend Logins</label>
 

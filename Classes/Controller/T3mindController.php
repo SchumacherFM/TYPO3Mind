@@ -131,7 +131,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	}
 	/**
 	 * action export
-	 *
+	 * @param none
 	 * @return void
 	 */
 	public function exportAction() {

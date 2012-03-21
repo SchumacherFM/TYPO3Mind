@@ -550,7 +550,7 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 //
 //		} else {
 //			/* we have workspaces */
-			echo '<pre>';
+//			echo '<pre>';
 
 			foreach($GLOBALS['TBE_MODULES']['_configuration'] as $modName=>$config){
 				if( stristr($modName,'typo3mind')!==false ){
@@ -560,14 +560,22 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 			}
 //		}
 //
-//		$urlEdit = $this->getBEHttpHost().
-//		'typo3/mod.php?M=web_Typo3mindFm2be&tx_typo3mind_web_typo3mindfm2be[action]=dispatch&tx_typo3mind_web_typo3mindfm2be[controller]=T3mind&id='.
-//					$uid;
 
+		$name = $moduleConfig['name'];
+		$nameLower = strtolower($moduleConfig['name']);
+		$extName = strtolower($moduleConfig['extensionName']);
 
-			var_dump( $moduleConfig );
-			die('</pre>');
+		$urlEdit = $this->getBEHttpHost().
+			'typo3/mod.php?M='.
+			$name
+			.'&tx_'.$extName.'_'. $nameLower .'[action]=dispatch&tx_'.$extName.'_'.$nameLower.'[controller]=T3mind&id='.$uid;
 
+//			var_dump( $urlEdit );
+//
+//			var_dump( $moduleConfig );
+//			die('</pre>');
+			$urlEdit = str_replace('&', '&amp;', $urlEdit);
+			return $urlEdit;
 	}
 
 	/**
@@ -582,20 +590,14 @@ class Tx_Typo3mind_Export_mmExportCommon extends Tx_Typo3mind_Export_mmExportFre
 
 		$htmlContent = array('<table>');
 
-
-//hier die edit option einbauen, damit man direkt ins typo3mind edit view kommt, um z.b. eine node zu aendern
-/*
-    http://xxx.local/typo3/mod.php?M=web_Typo3mindFm2be&tx_typo3mind_web_typo3mindfm2be[action]=dispatch&tx_typo3mind_web_typo3mindfm2be[controller]=T3mind&id=46
-*/
 		if( $this->mapMode['isbe'] ){
 
 			$urlEdit = $this->_getNodePropertyEditUrl($row['uid']);
 
 			$htmlContent[] = '<tr valign="top"><td colspan="2"><a href="'.
 				$urlEdit
-			.'">Edit this node properties / '.$this->translate('tree.typo3.EditNodeProperties').'</a></td></tr>';
+			.'">'.$this->translate('tree.typo3.EditNodeProperties').'</a></td></tr>';
 		}
-
 
 		$htmlContent[] = $this->_getNoteTableRow('UID',$row['uid']); unset($row['uid']);
 
