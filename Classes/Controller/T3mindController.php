@@ -243,7 +243,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 			die('API Keys does not match!');
 		}
 
-		die('Still not supported');
+		throw new Exception('Still not supported');
 
 		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);
 		$typo3tempFilename = $expObj->getContent();
