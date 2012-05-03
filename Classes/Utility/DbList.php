@@ -182,8 +182,8 @@ class Tx_Typo3mind_Utility_DbList {
 
 				$attr = array('ID'=>'tISF139v','TEXT'=>(isset($row['titInt0']) ? $row['titInt0'] : 'No internal title set @ DbList.php '.__LINE__)
 						/* we'll have it in the note: .' (ID:'.$row['uid'].')' */ );
-						
-						
+
+
 				$attr = $this->parentObject->setAttr($t3mind,'font_color',$attr,'COLOR');
 				$attr = $this->parentObject->setAttr($t3mind,'node_color',$attr,'BACKGROUND_COLOR');
 
@@ -252,7 +252,7 @@ class Tx_Typo3mind_Utility_DbList {
 				foreach($fields as $kcol=>$vcol){
 					/* remove SQL column alias ... */
 					$vcol = preg_replace('~\s+as\s+\S+~','',$vcol);
-				
+
 					if( !isset( $this->tableColumns[$tableName][$vcol] ) ){
 						unset($fields[$kcol]);
 					}
@@ -260,7 +260,8 @@ class Tx_Typo3mind_Utility_DbList {
 
 			}/*endif SysFolderContentListAdditionalColumns*/
 
-			$orderBy = isset($value['ctrl']['sortby']) ? 'ORDER BY '.$value['ctrl']['sortby'] : ( isset($value['ctrl']['default_sortby']) ? $value['ctrl']['default_sortby'] : 'ORDER BY uid desc' );
+			$orderBy = (isset($value['ctrl']['sortby']) && !empty($value['ctrl']['sortby'])) ? 'ORDER BY '.$value['ctrl']['sortby'] :
+					( isset($value['ctrl']['default_sortby']) ? $value['ctrl']['default_sortby'] : 'ORDER BY uid desc' );
 
 			$queryParts = array(
 				'SELECT' => implode(',',$fields),
@@ -271,8 +272,13 @@ class Tx_Typo3mind_Utility_DbList {
 				'LIMIT' => '0,10'
 			);
 
-			$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts) or 
+
+			$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
+
+			if( !$result ) {
+				// @todo better error handling
 				die('Please fix this error!<br>DbList.php Line '.__LINE__.":\n<br>\n".mysql_error()."<hr>".var_export($queryParts,1));
+			}
 			$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
 
 
