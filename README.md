@@ -34,4 +34,5 @@ How to install:
 
 @Todo:
 ====
-- Show details for table tx_powermail_mails
+Please see http://forge.typo3.org/projects/extension-typo3mind/issues
+

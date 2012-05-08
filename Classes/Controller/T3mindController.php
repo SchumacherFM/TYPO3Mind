@@ -97,9 +97,8 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 		$this->tt = t3lib_div::makeInstance('t3lib_timetrack');
 		$this->tt->start();
 
-		// todo: better error handling
 		if( !isset($this->extConfSettings['apikey']) || trim($this->extConfSettings['apikey'])=='' ){
-			die('<h1>Please set an API Key in the Extension Manager.</h1>');
+			throw new Exception('Please set an API Key in the Extension Manager. 1336458461');
 		}
 
 	}
@@ -111,8 +110,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 */
 	public function dispatchAction() {
 		if( $this->pageUid == 0 ){
-			// todo better error messages .... 8-)
-			die('no page uid specified');
+			throw new Exception('No page UID specified. 1336458548');
 		}
 			$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
 
