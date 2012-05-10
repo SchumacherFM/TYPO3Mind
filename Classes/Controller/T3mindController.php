@@ -97,11 +97,12 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	public function initializeAction() {
 		$this->pageUid = (int)t3lib_div::_GET('id');
 		$this->apikey = md5(t3lib_div::_GET('apikey'));
-		$this->helpers = t3lib_div::makeInstance('Tx_Typo3mind_Utility_Helpers');
+		$this->helpers = new Tx_Typo3mind_Utility_Helpers();
         $this->extConfSettings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['typo3mind']);
 		$this->tt = t3lib_div::makeInstance('t3lib_timetrack');
 		$this->tt->start();
-		$this->t3mmExport = new Tx_Typo3mind_Domain_Export_mmMain();
+		$this->t3mmExport = new Tx_Typo3mind_Domain_Export_mmMain($this->settings,$this->t3MindRepository);
+
 
 		if( !isset($this->extConfSettings['apikey']) || trim($this->extConfSettings['apikey'])=='' ){
 			throw new Exception('Please set an API Key in the Extension Manager. 1336458461');
@@ -149,10 +150,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 		/*TODO export via ajax ...*/
 		// $expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);
 
-		implement these functions into the class
-		$this->t3mmExport->setSettings($this->settings);
-		$this->t3mmExport->sett3MindRepository($this->t3MindRepository);
-		$mmFile = $expObj->getContent();
+		$mmFile = $this->t3mmExport->getContent();
 
 		$this->view->assign('downloadURL', $mmFile['file']);
 		$this->view->assign('filename', basename($mmFile['file']) );
