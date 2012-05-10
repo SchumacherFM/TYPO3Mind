@@ -115,7 +115,7 @@ class Tx_Typo3mind_Domain_Export_mmCommon extends Tx_Typo3mind_Domain_Export_For
 		$this->setHttpHosts();
 		$this->setCruserId();
 
-		$tsFormat = !empty($this->settings['exportFormat']) ? $this->settings['exportFormat'] : 'Freeminddd';
+		$tsFormat = !empty($this->settings['exportFormatClass']) ? $this->settings['exportFormatClass'] : 'Freeminddd';
 		$makeInstance = 'Tx_Typo3mind_Domain_Export_Formats_'.$tsFormat;
 
 		if( !class_exists($makeInstance) ){

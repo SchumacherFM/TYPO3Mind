@@ -13,8 +13,8 @@ module.tx_typo3mind {
 
 		# set here the system default language flag, without any file extension. only two characters long.
 		defaultLanguageFlag = de
-	
-		# Possible values: frontend, backend_list or backend_tv. This only changes the types of Links. 
+
+		# Possible values: frontend, backend_list or backend_tv. This only changes the types of Links.
 		# Frontend just for viewing.
 		# Backend_* opens the TemplaVoila editing section of a page or content element.
 		# For backend mode you have to be logged in into it, in your default browser.
@@ -46,9 +46,9 @@ module.tx_typo3mind {
 		edgeStyles = ,bezier, linear, sharp_bezier, sharp_linear
 
 		nodeStyles = default,bubble,fork
-		
-		# Autofolding of nodes: 1 for intelligent folding and 0 for folding from your config; 
-		# If you have a huge T3 page tree and you set AutoFold to zero then it takes some time 
+
+		# Autofolding of nodes: 1 for intelligent folding and 0 for folding from your config;
+		# If you have a huge T3 page tree and you set AutoFold to zero then it takes some time
 		# until the tree is rendered in FreeMind ...
 		nodeAutoFold = 1
 
@@ -61,47 +61,53 @@ module.tx_typo3mind {
 		TerURL2Ext = http://typo3.org/extensions/repository/view/###extname###/current/
 
 		TYPO3SecurityGuideURL = http://typo3.org/documentation/document-library/extension-manuals/doc_guide_security/current/
-		
-		# RSS Reader: As many feeds as you like! If none is defined, then no rss feed will be 
+
+		# RSS Reader: As many feeds as you like! If none is defined, then no rss feed will be
 		# added to the mind map. RSS feed must be in format RSS 2.0
 		TYPO3SecurityRssFeeds {
 			0 = http://news.typo3.org/news/teams/security/rss.xml
 			1 = http://news.typo3.org/rss.xml
 		}
-		
+
 		# Which source of rainbow table would you like to use to crack md5 passwords.
 		# Later implementations can use a web service. Just stick with the value internal
 		# to use the internal database of top 500 favorite passwords. Changing this now will disable
 		# the hash cracking service. If enabled: You can see in the mind map unsecure passwords.
 		# Still no salt support.
 		MD5HashCrackSource = internal
-		
+
 		# For each record in a SysFolder you can define here which additional columns will be listed.
 		# Table name = Columns as csv
 		# Only column names [a-z0-9_]i are supported
 		SysFolderContentListAdditionalColumns {
 			tt_news = datetime,short,bodytext
 			tt_products = subtitle,itemnumber
-			
-			
+
+
 			# if these three columns are set, they show you additional infos for TemplaVoila
 			tx_templavoila_tmplobj = datastructure,fileref,fileref_md5
 			sys_template = root,clear,include_static,include_static_file,constants,config
 		}
-		
+
 		# Max length of text elements, e.g. avoiding to display huge tt_news news.
 		SysFolderContentListTextMaxLength = 250
-		
+
 		# Display extended infos in nodes note? Hover with the mouse and you will see it.
 		# if set to 1 then each page shows create date, create user, storage_pid and many more things
 		# if set to 0 then only these pages will show extended details which have set the flag in the backend.
 		# To keep the mind map file size down set this to 0.
 		ShowExtendedDetailsInPageTree = 1
-		
+
 		# Set to 1 if you want to see all tt_content Elements also to be listet.
 		# File size will increase immense
 		ListTTContentElements = 0
-		
+
+		# Name of the Class which provides the format, factory method
+		# do not touch or nothing will work
+		# new export format classes must be provided in the directory
+		# Tx_Typo3mind_Domain_Export_Formats_[Format Name]
+		exportFormatClass = Freemind
+
 		# Only available for the left side of the mind map tree.
 		design {
 			# function name, color index for moduls count(settings->BeUsersHandleRow), as many colors as you like
@@ -144,7 +150,7 @@ module.tx_typo3mind {
 				# nodePositions = right,left
 
 			}
- 
+
 			getTYPONodeCheckDirs {
 				BACKGROUND_COLOR {
 		#			0 = #ffcc99
