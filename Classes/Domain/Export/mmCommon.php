@@ -115,11 +115,11 @@ class Tx_Typo3mind_Domain_Export_mmCommon extends Tx_Typo3mind_Domain_Export_For
 		$this->setHttpHosts();
 		$this->setCruserId();
 
-		$tsFormat = !empty($this->settings['exportFormatClass']) ? $this->settings['exportFormatClass'] : 'Freeminddd';
+		$tsFormat = !empty($this->settings['exportFormatClass']) ? $this->settings['exportFormatClass'] : 'Freemind';
 		$makeInstance = 'Tx_Typo3mind_Domain_Export_Formats_'.$tsFormat;
 
 		if( !class_exists($makeInstance) ){
-			throw new Exception('Couldnt find class '.$makeInstance.' Error Number: 1336631312');
+			throw new Exception('Couldn\'t find class '.$makeInstance.'. Maybe you have a miss configuration in your TypoScript Setting exportFormatClass / Error Number: 1336631312');
 		}
 		$this->mmFormat = t3lib_div::makeInstance($makeInstance);
 	}
@@ -332,13 +332,13 @@ class Tx_Typo3mind_Domain_Export_mmCommon extends Tx_Typo3mind_Domain_Export_For
 	protected function formatBytes($bytes){
 		$bytes = (int)$bytes;
 
-		if ($size == 0) {
+		if ($bytes == 0) {
 			 $return = 'n/a';
 		}else{
 
 			$sizes = array('  B', ' KB', ' MB', ' GB', ' TB', ' PB', ' EB', ' ZB', ' YB');
 			$return = '';
-			$return = ( round($size/pow(1024, ($i = floor(log($size, 1024)))), 2) . $sizes[$i]);
+			$return = ( round($bytes/pow(1024, ($i = floor(log($bytes, 1024)))), 2) . $sizes[$i]);
 		}
 //		if( $bytes < 1024 ){ $return = sprintf('%.2f',$bytes).'  B'; }
 //		elseif( $bytes < 1024*1000 ){ $return = sprintf('%.2f',$bytes/1024).' KB'; }
