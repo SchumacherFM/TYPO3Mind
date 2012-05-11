@@ -514,7 +514,7 @@ abstract class Tx_Typo3mind_Domain_Export_mmCommon /*
 			$rssContent = simplexml_load_string($this->getURLcache($feedURL));
 			if( $rssContent ){
 
-				$rssHeadNode = $this->addNode($xmlNode,array(
+				$rssHeadNode = $this->mmFormat->addNode($xmlNode,array(
 					'FOLDED'=>'true',
 					'TEXT'=>htmlspecialchars( $this->_getRssTitle($rssContent) ),
 					'LINK'=>$this->_getRssLink($rssContent)
@@ -529,12 +529,12 @@ abstract class Tx_Typo3mind_Domain_Export_mmCommon /*
 						$htmlContent[] = '<p>'.htmlspecialchars($item->pubDate).'</p>';
 						$htmlContent[] = '<p>'.$item->description.'</p>';
 
-						$rssItemNode = $this->addRichContentNote($rssHeadNode,array('TEXT'=>htmlspecialchars($item->title),'LINK'=>$item->link),implode('',$htmlContent));
+						$this->mmFormat->addRichContentNote($rssHeadNode,array('TEXT'=>htmlspecialchars($item->title),'LINK'=>$item->link),implode('',$htmlContent));
 
 					}/*endforeach*/
 				}/*endif rss 2.0*/
 				else {
-					$this->addNode($xmlNode,array(
+					$this->mmFormat->addNode($xmlNode,array(
 						'TEXT'=>'RSS Feed not readable',
 					));
 				}/*endif rss atom*/
@@ -813,7 +813,7 @@ abstract class Tx_Typo3mind_Domain_Export_mmCommon /*
 		$ttContentNode = $xmlNode;
 		if( $isLastPageNode == 0 ){
 			$ttContentNode = NULL;
-			$ttContentNode = $this->addNode($xmlNode,array(
+			$ttContentNode = $this->mmFormat->addNode($xmlNode,array(
 				'FOLDED'=>'true',
 				'TEXT'=>'Content Elements', // $this->translate('Content Elements'),
 			));
@@ -843,7 +843,7 @@ abstract class Tx_Typo3mind_Domain_Export_mmCommon /*
 				$attr = array(
 					'TEXT'=>'(C:'.$row['cCType'].') '.$cTypeInfo['txt'],
 				);
-				$ttContentNodeGrouped = $this->addImgNode($ttContentNode,$attr,$cTypeInfo['icon'],'');
+				$ttContentNodeGrouped = $this->mmFormat->addImgNode($ttContentNode,$attr,$cTypeInfo['icon'],'');
 				$isGrouped = 1;
 				$this->_getTTContentGroup($ttContentNodeGrouped,$pageRecord,$row['CType'],$isGrouped);
 
@@ -952,7 +952,7 @@ abstract class Tx_Typo3mind_Domain_Export_mmCommon /*
 					}
 
 					$htmlContent = implode('',$htmlContent);
-
+/*
 if( $row['uid'] == 167300000 ){
 	// @todo remove this
 	echo '<pre>';
@@ -962,22 +962,22 @@ if( $row['uid'] == 167300000 ){
 	var_dump($attr);
 	var_dump($this->dbTables);
 	die('</pre>');
-}
+} */
 					$attr['TEXT'] = implode(' ',$attr['TEXT']);
 
 					if( $isGrouped == 0 ){
-						$aTtContentNode = $this->addImgNote($xmlNode,$attr,$cTypeInfo['icon'],'', $htmlContent  );
+						$aTtContentNode = $this->mmFormat->addImgNote($xmlNode,$attr,$cTypeInfo['icon'],'', $htmlContent  );
 					}else{
 						/* avoid duplicated icons */
-						$aTtContentNode = $this->addNote($xmlNode,$attr, $htmlContent  );
+						$aTtContentNode = $this->mmFormat->addNote($xmlNode,$attr, $htmlContent  );
 					}
 
 					/* icons for deleted and hidden */
 					if( isset($row['deleted']) && $row['deleted'] == 1 ){
-						$this->addIcon($aTtContentNode,'button_cancel');
+						$this->mmFormat->addIcon($aTtContentNode,'button_cancel');
 					}
 					if( isset($row['hidden']) && $row['hidden'] == 1 ){
-						$this->addIcon($aTtContentNode,'closed');
+						$this->mmFormat->addIcon($aTtContentNode,'closed');
 					}
 
 				}/* endwhile while($row */
