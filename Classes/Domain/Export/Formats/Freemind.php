@@ -37,10 +37,34 @@ class Tx_Typo3mind_Domain_Export_Formats_Freemind implements Tx_Typo3mind_Domain
      */
     protected $mapXmlRoot;
 
-    /**
+	/**
+	 *
+	 * @var stdClass $parentObject
+	 */
+	protected $parentObject;
+
+	/**
+	 * passes the parent object (used for additional functions)
+	 *
+	 * @param stdClass $that
+	 */
+	public function __construct($that) {
+		$this->parentObject = $that;
+	}
+
+	/**
      * @var string
      */
     protected $mmVersion = '0.9.0';
+
+	/**
+	 * returns the whole map, must be called at the end.
+	 *
+	 * @return SimpleXMLElement
+	 */
+	public function getMapXmlRoot(){
+		return $this->mapXmlRoot;
+	}
 
     /**
      * gets the root map element and creates the map
@@ -57,7 +81,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Freemind implements Tx_Typo3mind_Domain
             'COLOR'=>'#993300',
         );
 
-        $html = '<center><img src="'.$this->getBEHttpHost().'typo3/sysext/t3skin/icons/gfx/loginlogo_transp.gif" alt="TYPO3 Logo" />
+        $html = '<center><img src="'.$this->parentObject->getBEHttpHost().'typo3/sysext/t3skin/icons/gfx/loginlogo_transp.gif" alt="TYPO3 Logo" />
         <h2>'.$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'].'</h2>
         <p style="font-size:10px;">TYPO3: '.TYPO3_version.'</p></center>';
         $rootNode = $this->addRichContentNode($this->mapXmlRoot,$attributes,$html);
@@ -65,13 +89,13 @@ class Tx_Typo3mind_Domain_Export_Formats_Freemind implements Tx_Typo3mind_Domain
         $ThisFileInfoNode = $this->addImgNode($rootNode,array(
             'POSITION'=>'left',
 //            'FOLDED'=>'false',
-            'TEXT'=>$this->translate('tree.fileInfo'),
+            'TEXT'=>$this->parentObject->translate('tree.fileInfo'),
         ), 'typo3/sysext/about/ext_icon.gif' );
 
 
 
         $this->addNode($ThisFileInfoNode,array(
-            'TEXT'=>'Backend HTTP Address: '.$this->getBEHttpHost(),
+            'TEXT'=>'Backend HTTP Address: '.$this->parentObject->getBEHttpHost(),
         ));
         $this->addNode($ThisFileInfoNode,array(
             'TEXT'=>'Created: '.date('Y-m-d H:i:s'),
@@ -80,7 +104,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Freemind implements Tx_Typo3mind_Domain
             'TEXT'=>'MD5 Hash: ###MD5_FILE_HASH####',
         ));
         $this->addNode($ThisFileInfoNode,array(
-            'TEXT'=>'Map Mode: '.$this->settings['mapMode'],
+            'TEXT'=>'Map Mode: '.$this->parentObject->settings['mapMode'],
         ));
 
         return $rootNode;
@@ -333,7 +357,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Freemind implements Tx_Typo3mind_Domain
             $attributes['TEXT'] = 'No Text set!';
         }
 
-        $attributes['TEXT'] = htmlentities($this->strip_tags( $attributes['TEXT'] ) ,ENT_XML1 | ENT_IGNORE,'UTF-8' );
+        $attributes['TEXT'] = htmlentities($this->parentObject->strip_tags( $attributes['TEXT'] ) ,ENT_XML1 | ENT_IGNORE,'UTF-8' );
 
         if( isset($attributes['LINK']) && empty($attributes['LINK']) ){
             unset($attributes['LINK']);
@@ -348,7 +372,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Freemind implements Tx_Typo3mind_Domain
      * @param    array $attributes
      * @return    nothing
      */
-    protected function createTLFattr($text,$link='',$folded='') {
+    public function createTLFattr($text,$link='',$folded='') {
         $a = array();
         if( !empty($text) ){ $a['TEXT'] = $text; }
         if( !empty($link) ){ $a['LINK'] = $link; }
@@ -373,7 +397,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Freemind implements Tx_Typo3mind_Domain
 
         if( is_file(PATH_site.$iconLocal)  ){
 
-            $nodeHTML = '<img '.$imgHTML.' src="'.$this->getBEHttpHost().$iconLocal.'"/>'.
+            $nodeHTML = '<img '.$imgHTML.' src="'.$this->parentObject->getBEHttpHost().$iconLocal.'"/>'.
                         '@#160;@#160;'.htmlspecialchars( $attributes['TEXT'] );
             $childNode = $this->addRichContentNode($xmlNode, $attributes ,$nodeHTML);
 
@@ -402,7 +426,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Freemind implements Tx_Typo3mind_Domain
 
         $img = '';
         if( is_file(PATH_site.$iconLocal)  ){
-            $img = '<img '.$imgHTML.' src="'.$this->getBEHttpHost().$iconLocal.'"/>@#160;@#160;';
+            $img = '<img '.$imgHTML.' src="'.$this->parentObject->getBEHttpHost().$iconLocal.'"/>@#160;@#160;';
         }
 
         $htmlContent = array(
@@ -434,9 +458,9 @@ class Tx_Typo3mind_Domain_Export_Formats_Freemind implements Tx_Typo3mind_Domain
 
                 if( isset($img['link']) ){
                     $img['link'] = str_replace('&','&amp;',$img['link']);
-                    $html[] = '<a href="'.$img['link'].'"><img border="0" '.$img['html'].' src="'.$this->getBEHttpHost().$iconLocal.'"/></a>';
+                    $html[] = '<a href="'.$img['link'].'"><img border="0" '.$img['html'].' src="'.$this->parentObject->getBEHttpHost().$iconLocal.'"/></a>';
                 }else{
-                    $html[] = '<img '.$img['html'].' src="'.$this->getBEHttpHost().$iconLocal.'"/>';
+                    $html[] = '<img '.$img['html'].' src="'.$this->parentObject->getBEHttpHost().$iconLocal.'"/>';
                 }
 
             }
@@ -474,9 +498,9 @@ class Tx_Typo3mind_Domain_Export_Formats_Freemind implements Tx_Typo3mind_Domain
 
                 if( isset($img['link']) ){
                     $img['link'] = str_replace('&','&amp;',$img['link']);
-                    $html[] = '<a href="'.$img['link'].'"><img border="0" '.$img['html'].' src="'.$this->getBEHttpHost().$iconLocal.'"/></a>';
+                    $html[] = '<a href="'.$img['link'].'"><img border="0" '.$img['html'].' src="'.$this->parentObject->getBEHttpHost().$iconLocal.'"/></a>';
                 }else{
-                    $html[] = '<img '.$img['html'].' src="'.$this->getBEHttpHost().$iconLocal.'"/>';
+                    $html[] = '<img '.$img['html'].' src="'.$this->parentObject->getBEHttpHost().$iconLocal.'"/>';
                 }
 
             }
@@ -527,11 +551,11 @@ class Tx_Typo3mind_Domain_Export_Formats_Freemind implements Tx_Typo3mind_Domain
      * @param    array $attributes  key is the name and value the value
      * @return    array
      */
-    protected function finalOutputFile(SimpleXMLElement $xml) {
+    public function finalOutputFile(SimpleXMLElement $xml) {
 
         $fileName = str_replace('[sitename]',
             preg_replace('~[^a-z0-9]+~i','',$GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']),
-            $this->settings['outputFileName']);
+            $this->parentObject->settings['outputFileName']);
 
         $fileName = preg_replace('~\[([a-z_\-]+)\]~ie','date(\'\\1\')',$fileName);
         $fileName = empty($fileName) ? 'TYPO3Mind_'.mt_rand().'.mm' : $fileName;

@@ -162,19 +162,19 @@ class Tx_Typo3mind_Utility_DbList {
 			if( count($values) > 1 ){
 				$attr['FOLDED'] = 'true';
 			}
-			if( $this->parentObject->mapMode['isbe'] ) {
+			if( $this->parentObject->isMapModeBE() ) {
 				$attr['LINK'] = $this->parentObject->getBEHttpHost().'typo3/mod.php?M=web_list&id='.$uid.'&table='.$tableName;
 			}
 
-			$attr = $this->parentObject->setAttr($t3mind,'font_color',$attr,'COLOR');
-			$attr = $this->parentObject->setAttr($t3mind,'node_color',$attr,'BACKGROUND_COLOR');
+			$attr = $this->parentObject->getmmFormat()->setAttr($t3mind,'font_color',$attr,'COLOR');
+			$attr = $this->parentObject->getmmFormat()->setAttr($t3mind,'node_color',$attr,'BACKGROUND_COLOR');
 
 			// table icon?
 			$icon = $TCA[$tableName]['ctrl']['iconfile'];
-			$tableNode = $this->parentObject->addImgNode($xmlNode,$attr,$icon);
+			$tableNode = $this->parentObject->getmmFormat()->addImgNode($xmlNode,$attr,$icon);
 
 			/*<add font>*/
-			$this->parentObject->setNodeFont($tableNode,$t3mind);
+			$this->parentObject->getmmFormat()->setNodeFont($tableNode,$t3mind);
 			/*</add font>*/
 
 			/*<list the entries in a sysfolder node>*/
@@ -184,24 +184,24 @@ class Tx_Typo3mind_Utility_DbList {
 						/* we'll have it in the note: .' (ID:'.$row['uid'].')' */ );
 
 
-				$attr = $this->parentObject->setAttr($t3mind,'font_color',$attr,'COLOR');
-				$attr = $this->parentObject->setAttr($t3mind,'node_color',$attr,'BACKGROUND_COLOR');
+				$attr = $this->parentObject->getmmFormat()->setAttr($t3mind,'font_color',$attr,'COLOR');
+				$attr = $this->parentObject->getmmFormat()->setAttr($t3mind,'node_color',$attr,'BACKGROUND_COLOR');
 
-				if( $this->parentObject->mapMode['isbe'] ) {
+				if( $this->parentObject->isMapModeBE() ) {
 					$attr['LINK'] = $this->parentObject->getBEHttpHost().'typo3/alt_doc.php?edit['.$tableName.']['.$row['uid'].']=edit';
 				}
 
 				$htmlContent = $this->parentObject->getNoteContentFromRow($tableName,$row);
-				$rowNode = $this->parentObject->addRichContentNote($tableNode,$attr,$htmlContent);
+				$rowNode = $this->parentObject->getmmFormat()->addRichContentNote($tableNode,$attr,$htmlContent);
 
 
 				if( isset($row['deleted']) && $row['deleted'] == 1 ){
-					$this->parentObject->addIcon($rowNode,'button_cancel');
+					$this->parentObject->getmmFormat()->addIcon($rowNode,'button_cancel');
 				}
 				if( isset($row['hidden']) && $row['hidden'] == 1 ){
-					$this->parentObject->addIcon($rowNode,'closed');
+					$this->parentObject->getmmFormat()->addIcon($rowNode,'closed');
 				}
-				$this->parentObject->setNodeFont($rowNode,$t3mind);
+				$this->parentObject->getmmFormat()->setNodeFont($rowNode,$t3mind);
 
 
 			}/*endforeach*/

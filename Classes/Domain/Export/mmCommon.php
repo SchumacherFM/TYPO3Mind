@@ -28,7 +28,12 @@
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *
  */
-class Tx_Typo3mind_Domain_Export_mmCommon extends Tx_Typo3mind_Domain_Export_Formats_Freemind /* extends SimpleXMLElement */ {
+abstract class Tx_Typo3mind_Domain_Export_mmCommon /*
+
+	this has been put into the object $mmFormat which is a factory object
+	extends Tx_Typo3mind_Domain_Export_Formats_Freemind
+
+ */ {
 	/* is there a way to dynamically extend from different classes? i think not ... :-( */
 
 	/**
@@ -79,7 +84,7 @@ class Tx_Typo3mind_Domain_Export_mmCommon extends Tx_Typo3mind_Domain_Export_For
 	 *
 	 * @var array
 	 */
-	public $mapMode;
+	protected $mapMode;
 
 	/**
 	 * assoc array containing the ID and the name of the user
@@ -121,8 +126,17 @@ class Tx_Typo3mind_Domain_Export_mmCommon extends Tx_Typo3mind_Domain_Export_For
 		if( !class_exists($makeInstance) ){
 			throw new Exception('Couldn\'t find class '.$makeInstance.'. Maybe you have a miss configuration in your TypoScript Setting exportFormatClass / Error Number: 1336631312');
 		}
-		$this->mmFormat = t3lib_div::makeInstance($makeInstance);
+		$this->mmFormat = t3lib_div::makeInstance($makeInstance,$this);
 	}
+
+	/**
+	 *
+	 * @return Tx_Typo3mind_Domain_Export_Formats_[The Format]
+	 */
+	public function getmmFormat(){
+		return $this->mmFormat;
+	}
+
 	/**
 	 * sets the CruserId
 	 *
@@ -155,6 +169,24 @@ class Tx_Typo3mind_Domain_Export_mmCommon extends Tx_Typo3mind_Domain_Export_For
 			'befe'=>	$this->settings['mapMode'], /* bad content from outside ... so use properly */
 			'isbe'=>	stristr($this->settings['mapMode'],'backend') !== false,
 		);
+	}
+
+	/**
+	 * checks if map mode is set to backend mode
+	 *
+	 * @return boolean
+	 */
+	public function isMapModeBE(){
+		return $this->mapMode['isbe'];
+	}
+
+	/**
+	 * checks if map mode is set to FE mode, gets the value from typoscript
+	 *
+	 * @return string
+	 */
+	public function getMapModeBEFE(){
+		return $this->mapMode['befe'];
 	}
 
 	/**
@@ -202,7 +234,7 @@ class Tx_Typo3mind_Domain_Export_mmCommon extends Tx_Typo3mind_Domain_Export_For
 	 * @param array $arguments Array of arguments to be used with vsprintf on the translated item.
 	 * @return string Translation output.
 	 */
-	protected function translate($key, $arguments = null) {
+	public function translate($key, $arguments = null) {
 		return Tx_Extbase_Utility_Localization::translate($key, 'Typo3mind', $arguments);
 	}
 
@@ -222,7 +254,7 @@ class Tx_Typo3mind_Domain_Export_mmCommon extends Tx_Typo3mind_Domain_Export_For
 	 * @param string $string
 	 * @return string
 	 */
-	protected function strip_tags($string ){
+	public function strip_tags($string ){
 		return preg_replace('~\s+~',' ',strip_tags($string));
 	}
 
@@ -231,7 +263,7 @@ class Tx_Typo3mind_Domain_Export_mmCommon extends Tx_Typo3mind_Domain_Export_For
 	 *
 	 * @return string
 	 */
-	protected function array2Html2ColTable($array,$width=300  ){
+	public function array2Html2ColTable($array,$width=300  ){
 		$nodeHTML = array('<table width="'.$width.'" border="0" cellpadding="3" cellspacing="0">');
 		$i=0;
 		foreach( $array as $k=>$v ){
@@ -685,7 +717,7 @@ class Tx_Typo3mind_Domain_Export_mmCommon extends Tx_Typo3mind_Domain_Export_For
 
 							$currentMD5 = @md5_file(PATH_site.$row['fileref']);
 							if($currentMD5 <> $row['fileref_md5'] ){
-								$label .= $this->convertLTGT(' <img src="'.$this->getBEHttpHost().'typo3/sysext/t3skin/icons/gfx/icon_warning.gif"/>');
+								$label .= $this->mmFormat->convertLTGT(' <img src="'.$this->getBEHttpHost().'typo3/sysext/t3skin/icons/gfx/icon_warning.gif"/>');
 								$colVal = ' New: '.$currentMD5.'<br />Old: '.$colVal;
 							}
 						}elseif($colName=='datastructure' || $colName=='fileref'){
@@ -706,7 +738,7 @@ class Tx_Typo3mind_Domain_Export_mmCommon extends Tx_Typo3mind_Domain_Export_For
 							/* @todo link external TS files via eID ... still to think about it ...
 							$colVal = Tx_Typo3mind_Utility_Helpers::TSReplaceFileLinkWithHref($colVal);
 							*/
-							$colVal = $this->convertLTGT('<pre>').trim($colVal).$this->convertLTGT('</pre>');
+							$colVal = $this->mmFormat->convertLTGT('<pre>').trim($colVal).$this->mmFormat->convertLTGT('</pre>');
 						}
 					}/*</Templates>*/
 

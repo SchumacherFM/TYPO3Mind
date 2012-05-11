@@ -125,12 +125,12 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	 */
 	private function _getTYPONodeFiles(SimpleXMLElement $xmlNode) {
 
-		$MainNode = $this->addImgNode($xmlNode,array(
+		$MainNode = $this->mmFormat->addImgNode($xmlNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3filesandfolders'),
 		), 'typo3/sysext/t3skin/images/icons/apps/pagetree-folder-default.png', 'height="16"' );
 
-		$nodeFileadmin = $this->addNode($MainNode,array(
+		$nodeFileadmin = $this->mmFormat->addNode($MainNode,array(
 			'TEXT'=>'fileadmin',
 			'FOLDED'=>'true',
 		));
@@ -138,7 +138,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 
 
 
-		$nodeUpload = $this->addNode($MainNode,array(
+		$nodeUpload = $this->mmFormat->addNode($MainNode,array(
 			'TEXT'=>'uploads',
 			'FOLDED'=>'true',
 		));
@@ -166,11 +166,11 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 
 				$size = $this->formatBytes( $this->getDirSize($fullPath.$vL1) );
 
-				$faLevel1 = $this->addNode($xmlNode,array(
+				$faLevel1 = $this->mmFormat->addNode($xmlNode,array(
 					'TEXT'=>$vL1.' '.$size,
 					'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
 				));
-				$this->addEdge($faLevel1,array('WIDTH'=>$this->getDesignEdgeWidth('getTYPONodeFiles'),'COLOR'=>$BACKGROUND_COLOR));
+				$this->mmFormat->addEdge($faLevel1,array('WIDTH'=>$this->getDesignEdgeWidth('getTYPONodeFiles'),'COLOR'=>$BACKGROUND_COLOR));
 
 				$dirLevel2 = @scandir($fullPath.$vL1);
 				if( is_array($dirLevel2) ){
@@ -181,7 +181,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 
 							$size = $this->formatBytes( $this->getDirSize($Level2Dir) );
 
-							$faLevel2 = $this->addNode($faLevel1,array(
+							$faLevel2 = $this->mmFormat->addNode($faLevel1,array(
 								'TEXT'=>xmlentities($vL2.' '.$size),
 								'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
 							));
@@ -201,7 +201,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	 */
 	private function _getTYPONodeLogs(SimpleXMLElement $xmlNode) {
 		// logs
-		$LogsNode = $this->addImgNode($xmlNode,array(
+		$LogsNode = $this->mmFormat->addImgNode($xmlNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3logs'),
 		), 'typo3/sysext/t3skin/icons/module_tools_log.gif', 'height="16"' );
@@ -214,7 +214,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 			$nodeHTML[ $r['LoggedDate'] ] = implode(' / ',unserialize($r['log_data']));
 		}
 
-		$this->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.SuccessfullBackendLogins') ),
+		$this->mmFormat->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.SuccessfullBackendLogins') ),
 			'<h3>'.$this->translate('tree.typo3.SuccessfullBackendLogins').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 		/*</LOGS successfull backend logins>*/
 
@@ -226,7 +226,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 		while ($r = $GLOBALS['TYPO3_DB']->sql_fetch_assoc ($result)) {
 			$nodeHTML[ $r['LoggedDate'] ] = implode(' / ',unserialize($r['log_data']));
 		}
-		$this->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.FailedBackendLogins')),
+		$this->mmFormat->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.FailedBackendLogins')),
 			'<h3>'.$this->translate('tree.typo3.FailedBackendLogins').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 		/*</LOGS failed backend logins>*/
 
@@ -239,7 +239,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 			$nodeHTML[ $r['LoggedDate'] ] = strip_tags(str_replace('|',' ',$r['details']));
 		}
 
-		$this->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.ErrorLog')),
+		$this->mmFormat->addRichContentNote($LogsNode, array('TEXT'=>$this->translate('tree.typo3.ErrorLog')),
 			'<h3>'.$this->translate('tree.typo3.ErrorLog').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 		/*</LOGS error logs>*/
 
@@ -254,7 +254,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	private function _getTYPONodeBackendUsers(SimpleXMLElement $xmlNode) {
 
 
-		$UsersNode = $this->addImgNode($xmlNode,array(
+		$UsersNode = $this->mmFormat->addImgNode($xmlNode,array(
 			'LINK'=>$this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/mod.php?M=tools_beuser' : '',
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3users'),
@@ -262,11 +262,11 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 
 
 		/*<show all admins>*/
-		$UserAdminNode = $this->addNode($UsersNode,array(
+		$UserAdminNode = $this->mmFormat->addNode($UsersNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3.useradmin'),
 		));
-		$this->addIcon($UserAdminNode,'penguin');
+		$this->mmFormat->addIcon($UserAdminNode,'penguin');
 
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,username,password,email,realname,lastlogin,disable,deleted', 'be_users', 'admin=1', '', 'username'  );
 		$i=0;
@@ -279,11 +279,11 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 
 		// @TODO: to which group belongs a user?
 		/*<show all non admins>*/
-		$UserUserNode = $this->addNode($UsersNode,array(
+		$UserUserNode = $this->mmFormat->addNode($UsersNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3.users'),
 		));
-		$this->addIcon($UserUserNode,'male1');
+		$this->mmFormat->addIcon($UserUserNode,'male1');
 
 
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,username,password,email,realname,lastlogin,disable,deleted,userMods', 'be_users', 'admin=0', '', 'username' /* , (int)$this->settings['numberOfLogRows'] */ );
@@ -296,11 +296,11 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 
 
 		/*<show all groups>*/
-		$UserGroupNode = $this->addNode($UsersNode,array(
+		$UserGroupNode = $this->mmFormat->addNode($UsersNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3.groups'),
 		));
-		$this->addIcon($UserGroupNode,'group');
+		$this->mmFormat->addIcon($UserGroupNode,'group');
 
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( 'uid,title,hidden,deleted,crdate,tables_select,tables_modify,groupMods', 'be_groups', '', '', 'title' /* , (int)$this->settings['numberOfLogRows'] */ );
 		$i=0;
@@ -324,24 +324,24 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 
 
 		$BACKGROUND_COLOR = $this->getDesignAlternatingColor('BeUsersHandleRow',$rowCounter);
-		$aUserNode = $this->addNode($xmlNode,array(
+		$aUserNode = $this->mmFormat->addNode($xmlNode,array(
 				// not possible due to the ampersand returnUrl=%2Ftypo3%2Fmod.php%3FM%3Dtools_beuser&
 				'LINK'=>$this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[be_users]['.$row['uid'].']=edit' : '',
 				// 'FOLDED'=>'true',
 				'TEXT'=>$row['username'],
 				'BACKGROUND_COLOR'=> $BACKGROUND_COLOR,
 			));
-			$this->addEdge($aUserNode,array('WIDTH'=>$this->getDesignEdgeWidth('BeUsersHandleRow'),'COLOR'=>$BACKGROUND_COLOR));
+			$this->mmFormat->addEdge($aUserNode,array('WIDTH'=>$this->getDesignEdgeWidth('BeUsersHandleRow'),'COLOR'=>$BACKGROUND_COLOR));
 
-			if( $row['deleted'] == 1 ) {	$this->addIcon($aUserNode,'button_cancel'); }
-			elseif( $row['disable'] == 1 ) {	$this->addIcon($aUserNode,'encrypted'); }
-			if( ($row['lastlogin']+(3600*24*9)) < time() ) {	$this->addIcon($aUserNode,'hourglass'); }
+			if( $row['deleted'] == 1 ) {	$this->mmFormat->addIcon($aUserNode,'button_cancel'); }
+			elseif( $row['disable'] == 1 ) {	$this->mmFormat->addIcon($aUserNode,'encrypted'); }
+			if( ($row['lastlogin']+(3600*24*9)) < time() ) {	$this->mmFormat->addIcon($aUserNode,'hourglass'); }
 
 			if( !empty($row['realname']) ){
-				$this->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$row['realname']));
+				$this->mmFormat->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$row['realname']));
 			}
 			if( !empty($row['email']) ){
-				$this->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$row['email']));
+				$this->mmFormat->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$row['email']));
 			}
 			if( !empty($row['password']) ){
 					/*<check for unsecure installtool password!>*/
@@ -355,15 +355,15 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 						);
 						$attrPW['COLOR'] = '#D60035';
 						$attrPW['LINK'] = 'http://www.tmto.org/pages/passwordtools/hashcracker/';
-						$nodePW = $this->addNode($aUserNode,$attrPW);
-						$this->addIcon($nodePW,'messagebox_warning');
+						$nodePW = $this->mmFormat->addNode($aUserNode,$attrPW);
+						$this->mmFormat->addIcon($nodePW,'messagebox_warning');
 
 					}
 
 					/*</check for unsecure installtool password!>*/
 			}
 			if( isset($row['userMods']) && !empty($row['userMods']) ){
-				$nodeUserMods = $this->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
+				$nodeUserMods = $this->mmFormat->addNode($aUserNode,array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
 				$this->_BeUserGroupsGetModList($nodeUserMods,'modListUser',$row['userMods'],array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR));
 			}/*endif*/
 
@@ -386,7 +386,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 			}
 
 			if( count($nodeHTML) > 0 ){
-				$this->addRichContentNote($aUserNode, array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$this->translate('tree.typo3.SysLog')),
+				$this->mmFormat->addRichContentNote($aUserNode, array('BACKGROUND_COLOR'=> $BACKGROUND_COLOR,'TEXT'=>$this->translate('tree.typo3.SysLog')),
 					'<h3>'.$this->translate('tree.typo3.SysLog').'</h3>'. $this->array2Html2ColTable($nodeHTML) );
 			}
 			/*</LOGS user logs>*/
@@ -405,19 +405,19 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	private function _BeGroupsHandleRow(SimpleXMLElement $xmlNode,$row,$rowCounter){
 
 		$BACKGROUND_COLOR = $this->getDesignAlternatingColor('BeGroupsHandleRow',$rowCounter);
-		$aGroupNode = $this->addNode($xmlNode,array(
+		$aGroupNode = $this->mmFormat->addNode($xmlNode,array(
 			'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
 			'TEXT'=>$row['title'],
 			'LINK' => $this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[be_groups]['.$row['uid'].']=edit' : ''
 		));
 
-		$this->addEdge($aGroupNode,array('WIDTH'=>$this->getDesignEdgeWidth('BeGroupsHandleRow'),'COLOR'=> $BACKGROUND_COLOR ));
+		$this->mmFormat->addEdge($aGroupNode,array('WIDTH'=>$this->getDesignEdgeWidth('BeGroupsHandleRow'),'COLOR'=> $BACKGROUND_COLOR ));
 
-			if( $row['deleted'] == 1 ) {	$this->addIcon($aGroupNode,'button_cancel'); }
-			elseif( $row['hidden'] == 1 ) {	$this->addIcon($aGroupNode,'closed'); }
+			if( $row['deleted'] == 1 ) {	$this->mmFormat->addIcon($aGroupNode,'button_cancel'); }
+			elseif( $row['hidden'] == 1 ) {	$this->mmFormat->addIcon($aGroupNode,'closed'); }
 
 			if( !empty($row['groupMods']) ){
-				$nodeGroupMods = $this->addNode($aGroupNode,array('BACKGROUND_COLOR'=>$BACKGROUND_COLOR,'TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
+				$nodeGroupMods = $this->mmFormat->addNode($aGroupNode,array('BACKGROUND_COLOR'=>$BACKGROUND_COLOR,'TEXT'=>$this->translate('tree.typo3.groups.groupMods')));
 				$this->_BeUserGroupsGetModList($nodeGroupMods,'modListGroup',$row['groupMods'],array('BACKGROUND_COLOR'=>$BACKGROUND_COLOR));
 			}/*endif*/
 
@@ -439,12 +439,12 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 		GLOBAL $TCA;
 
 		if( !empty($tables) ){
-			$nodeTables = $this->addNode($xmlNode,array_merge($attr,array('FOLDED'=>'true','TEXT'=>$this->translate($translateKey))));
+			$nodeTables = $this->mmFormat->addNode($xmlNode,array_merge($attr,array('FOLDED'=>'true','TEXT'=>$this->translate($translateKey))));
 			$exploded = t3lib_div::trimExplode(',', $tables ,1 );
 			ksort($exploded);
 			foreach($exploded as $k=>$table){
 				$text = isset($TCA[$table]) ? $GLOBALS['LANG']->sL( $TCA[$table]['ctrl']['title'] ) : $table;
-				$this->addNode($nodeTables,array_merge($attr,array('TEXT'=>'['.$table.'] '.$text) ));
+				$this->mmFormat->addNode($nodeTables,array_merge($attr,array('TEXT'=>'['.$table.'] '.$text) ));
 			}
 		}
 
@@ -478,7 +478,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 
 						$modLabel = $this->_TCEforms->addSelectOptionsToItemArray_makeModuleData($theMod);
 						$attri = array_merge(array('TEXT'=>$modLabel),$attr);
-						$this->addNode($xmlNode,$attri);
+						$this->mmFormat->addNode($xmlNode,$attri);
 					}/*endif isset $groupModsExploded*/
 				}
 			}/*endif is array*/
@@ -494,7 +494,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	 */
 	private function _getTYPONodeConfVars(SimpleXMLElement $xmlNode) {
 
-		$t3ConfVarNode = $this->addNode($xmlNode,array(
+		$t3ConfVarNode = $this->mmFormat->addNode($xmlNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3.typo3_conf_vars'),
 		));
@@ -538,7 +538,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 		);
 		$installToolPlainPassword = false;
 		foreach($tcv as $section=>$seccfg){
-			$NodeSection = $this->addNode($t3ConfVarNode,array(
+			$NodeSection = $this->mmFormat->addNode($t3ConfVarNode,array(
 				'FOLDED'=>count($seccfg) > 0 ? 'true' : 'false',
 				'TEXT'=>$this->translate('tree.typo3.typo3_conf_vars.'.$section),
 			));
@@ -551,10 +551,10 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 						'TEXT'=>$confName,
 						'FOLDED'=>'true',
 					);
-					$NodeSectionValue = $this->addNode($NodeSection,$attr);
+					$NodeSectionValue = $this->mmFormat->addNode($NodeSection,$attr);
 
 					if( $confName == 'eID_include' ){
-						$this->addIcon($NodeSectionValue,'messagebox_warning');
+						$this->mmFormat->addIcon($NodeSectionValue,'messagebox_warning');
 					}
 
 					foreach($v as $extName=>$extConf){
@@ -567,7 +567,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 						}else{
 							$htmlContent[] = htmlspecialchars($extConf);
 						}
-						$NodeExtName = $this->addRichContentNote($NodeSectionValue,array(
+						$NodeExtName = $this->mmFormat->addRichContentNote($NodeSectionValue,array(
 						//	'FOLDED'=>count($seccfg) > 0 ? 'true' : 'false',
 							'TEXT'=>$extName,
 							'LINK'=> $confName=='extConf' ? $this->getTerURL($extName) : '',
@@ -602,11 +602,11 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 					/*bug in typo3 default config file, improper closed html @see getDefaultConfigArrayComments */
 					$htmlContent = str_replace('<dd><dt>','</dd><dt>',implode('<br/>',$htmlContent));
 
-					$NodeSectionValue = $this->addRichContentNote($NodeSection,$attr,$htmlContent /*,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' */ );
+					$NodeSectionValue = $this->mmFormat->addRichContentNote($NodeSection,$attr,$htmlContent /*,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' */ );
 
 					if( $installToolPlainPassword !== false ){
-							$this->addFont($NodeSectionValue,array('SIZE'=>14,'BOLD'=>'true','COLOR'=>'#fff'));
-							$this->addIcon($NodeSectionValue,'messagebox_warning');
+							$this->mmFormat->addFont($NodeSectionValue,array('SIZE'=>14,'BOLD'=>'true','COLOR'=>'#fff'));
+							$this->mmFormat->addIcon($NodeSectionValue,'messagebox_warning');
 							$installToolPlainPassword = false;
 					}
 
@@ -625,7 +625,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	 */
 	private function _getTYPONodeCheckDirs(SimpleXMLElement $xmlNode) {
 
-		$checkDirNode = $this->addNode($xmlNode,array(
+		$checkDirNode = $this->mmFormat->addNode($xmlNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3.checkDirs'),
 		));
@@ -642,12 +642,12 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 
 			if( !empty($message['long']) ){
 				$htmlContent = $message['long'];
-				$messageNode = $this->addRichContentNote($checkDirNode,$attr,$htmlContent /*,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' */ );
+				$messageNode = $this->mmFormat->addRichContentNote($checkDirNode,$attr,$htmlContent /*,$addEdgeAttr = array(),$addFontAttr = array(), $type = 'NOTE' */ );
 
 			}else{
-				$messageNode = $this->addNode($checkDirNode,$attr);
+				$messageNode = $this->mmFormat->addNode($checkDirNode,$attr);
 			}
-			$this->addIcon($messageNode,$message['icon']);
+			$this->mmFormat->addIcon($messageNode,$message['icon']);
 		}/*endforeach*/
 
 	}/*</_getTYPONodeCheckDirs>*/
@@ -660,7 +660,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	 */
 	public function getTYPONode(SimpleXMLElement $xmlNode) {
 
-		$MainNode = $this->addImgNode($xmlNode,array(
+		$MainNode = $this->mmFormat->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
 	//		'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.typo3'),
@@ -694,19 +694,19 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	 */
 	public function getSecurityNode(SimpleXMLElement $xmlNode) {
 
-		$secMainNode = $this->addImgNode($xmlNode,array(
+		$secMainNode = $this->mmFormat->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.security'),
 		), 'typo3conf/ext/typo3mind/Resources/Public/Icons/System-Security-Warning-icon.png', 'height="16"' );
 
-		$this->addNode($secMainNode,array('TEXT'=>'TYPO3 Security Guide ','LINK'=>$this->settings['TYPO3SecurityGuideURL']));
+		$this->mmFormat->addNode($secMainNode,array('TEXT'=>'TYPO3 Security Guide ','LINK'=>$this->settings['TYPO3SecurityGuideURL']));
 
 
 		$this->RssFeeds2Node($secMainNode);
 
 
-		$this->addNode($secMainNode,array('TEXT'=>'more to follow','LINK'=>'https://github.com/SchumacherFM/TYPO3Mind/issues/12'));
+		$this->mmFormat->addNode($secMainNode,array('TEXT'=>'more to follow','LINK'=>'https://github.com/SchumacherFM/TYPO3Mind/issues/12'));
 
 	}/*</getSecurityNode>*/
 
@@ -719,7 +719,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	 */
 	public function getServerNode(SimpleXMLElement $xmlNode) {
 
-		$MainNode = $this->addImgNode($xmlNode,array(
+		$MainNode = $this->mmFormat->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.server'),
@@ -727,16 +727,16 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 
 
 		$_SERVER['PHP_VERSION'] = phpversion();
-		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.server._server')),  $this->array2Html2ColTable($_SERVER) );
+		$this->mmFormat->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.server._server')),  $this->array2Html2ColTable($_SERVER) );
 
-		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.server._env')),  $this->array2Html2ColTable($_ENV) );
+		$this->mmFormat->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.server._env')),  $this->array2Html2ColTable($_ENV) );
 
 		/* nice, but needs deep reformatting ...
 		ob_start() ;
 		phpinfo(INFO_MODULES) ;
 		$pinfo = ob_get_contents () ;
 		ob_end_clean () ;
-		$this->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.server.phpModules')),  $pinfo );
+		$this->mmFormat->addRichContentNote($MainNode, array('TEXT'=>$this->translate('tree.server.phpModules')),  $pinfo );
 		*/
 
 	}
@@ -748,14 +748,14 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	 */
 	public function getDatabaseNode(SimpleXMLElement $xmlNode) {
 
-		$MainNode = $this->addImgNode($xmlNode,array(
+		$MainNode = $this->mmFormat->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.database'),
 		), 'typo3/sysext/t3skin/icons/module_tools_dbint.gif', 'height="16"' );
 
 		// general mysql infos
-		$mysqlNode = $this->addNode($MainNode,array(
+		$mysqlNode = $this->mmFormat->addNode($MainNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.mysql'),
 		));
@@ -766,7 +766,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 			$nodeHTML[$r['Variable_name']] = $r['Value'];
 		}
 
-		$this->addRichContentNode($mysqlNode, array(),$this->array2Html2ColTable($nodeHTML) );
+		$this->mmFormat->addRichContentNode($mysqlNode, array(),$this->array2Html2ColTable($nodeHTML) );
 
 
 
@@ -786,25 +786,25 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 			$tGroup = $this->translate('tree.database.'.$group);
 			$BACKGROUND_COLOR = $this->getDesignAlternatingColor('getDatabaseNode',$i);
 
-			$GroupTableNode = $this->addNode($MainNode,array(
+			$GroupTableNode = $this->mmFormat->addNode($MainNode,array(
 				'FOLDED'=>'true',
 				'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
 				'TEXT'=> $tGroup == '' ? $group : $tGroup,
 			));
-			$this->addEdge($GroupTableNode,array('WIDTH'=>$this->getDesignEdgeWidth('getDatabaseNode'),'COLOR'=>$BACKGROUND_COLOR));
+			$this->mmFormat->addEdge($GroupTableNode,array('WIDTH'=>$this->getDesignEdgeWidth('getDatabaseNode'),'COLOR'=>$BACKGROUND_COLOR));
 
 			foreach ($tables as $tkey => $tinfo){
 
 				$size = sprintf('%.2f',($tinfo['Data_length']+$tinfo['Index_length'])/1024);
 
-				$ATableNode = $this->addNode($GroupTableNode,array(
+				$ATableNode = $this->mmFormat->addNode($GroupTableNode,array(
 				//	'FOLDED'=>'true',
 					'BACKGROUND_COLOR'=>$BACKGROUND_COLOR,
 					'TEXT'=>$tkey.' ('.$tinfo['Rows'].') '.$size.' KB',
 				));
 
 				/*
-				$ATableNode = $this->addNode($GroupTableNode,array(
+				$ATableNode = $this->mmFormat->addNode($GroupTableNode,array(
 					'FOLDED'=>'true',
 					'TEXT'=>$tkey,
 				));
@@ -816,7 +816,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 				$nodeHTML[] = '<tr><td>Index</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Index_length']/1024).'KiB</td></tr>';
 				if( $tinfo['Data_free']>0 ){ $nodeHTML[] = '<tr><td>Overhead</td><td style="text-align: right">'.sprintf('%.2f',$tinfo['Data_free']/1024).'KiB</td></tr>'; }
 				$nodeHTML[] = '</table>';
-				$tinfoNode = $this->addRichContentNode($ATableNode, array(),implode('',$nodeHTML) );
+				$tinfoNode = $this->mmFormat->addRichContentNode($ATableNode, array(),implode('',$nodeHTML) );
 				*/
 			}
 		$i++;
@@ -862,14 +862,14 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 		$extensionManager = new Tx_Typo3mind_Utility_ExtensionManager();
 
 
-		$ChildFirst_Extensions = $this->addImgNode($xmlNode,array(
+		$ChildFirst_Extensions = $this->mmFormat->addImgNode($xmlNode,array(
 			'POSITION'=>'left',
 			'TEXT'=>$this->translate('tree.extensions'),
 		), 'typo3/sysext/t3skin/icons/module_tools_em.png' );
 
 
 		/*<frontend plugins which you can choose in the backend>*/
-		$selectableExtensions = $this->addNode($ChildFirst_Extensions,array(
+		$selectableExtensions = $this->mmFormat->addNode($ChildFirst_Extensions,array(
 			'TEXT'=>$this->translate('tree.extensions.selectable'),
 			'FOLDED'=>'true',
 		));
@@ -884,7 +884,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 
 				$extKey = isset($extName[1]) ? $extName[1] : '';
 
-				$this->addImgNode($selectableExtensions,array(
+				$this->mmFormat->addImgNode($selectableExtensions,array(
 					'TEXT'=> '('.$extA[1].') '.$extA[0],
 					'LINK'=> '#LSext'.$extKey,
 				),$extA[2] );
@@ -896,7 +896,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 
 
 		/*<check for extension updates!>*/
-		$updateExtensions = $this->addNode($ChildFirst_Extensions,array(
+		$updateExtensions = $this->mmFormat->addNode($ChildFirst_Extensions,array(
 			'TEXT'=>$this->translate('tree.extensions.updates'),
 			'FOLDED'=>'true',
 		));
@@ -909,7 +909,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 							filemtime(PATH_site . 'typo3temp/extensions.xml.gz')
 						).'<br/>'.$this->translate('tree.extensions.updates.number').
 						tx_em_Database::getExtensionCountFromRepository();
-					$this->addRichContentNode($updateExtensions,array(), $content );
+					$this->mmFormat->addRichContentNode($updateExtensions,array(), $content );
 				}
 			$showExtensionsToUpdate = $extensionManager->showExtensionsToUpdate();
 
@@ -926,7 +926,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 						$this->_isExtUpdateAvailable[$extName] = 1;
 						$attr = array('ID'=>'LSupdate'.$extName,'LINK'=>'#LSext'.$extName);
 
-						$extRCNode = $this->addRichContentNote($updateExtensions,$attr,$htmlContent,array(),array(), 'BOTH' );
+						$extRCNode = $this->mmFormat->addRichContentNote($updateExtensions,$attr,$htmlContent,array(),array(), 'BOTH' );
 
 						$this->addArrowlink($extRCNode,array('DESTINATION'=>'LSext'.$extName));
 
@@ -939,7 +939,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	//	echo '<pre>'; var_dump($installedExt[0]); die('</pre>');
 
 		/*<Simple list all extensions and link them>*/
-		$ListAllExtensionsNode = $this->addNode($ChildFirst_Extensions,array(
+		$ListAllExtensionsNode = $this->mmFormat->addNode($ChildFirst_Extensions,array(
 			'TEXT'=>$this->translate('tree.extensions.allext').' ('.count($installedExt[0]).')',
 			'FOLDED'=>'true',
 		));
@@ -949,14 +949,14 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 			// ext icon
 			$ico = $this->_getExtensionNodeIcon($extKey,$extArray['type']);
 
-			$extNode = $this->addImgNode($ListAllExtensionsNode,array(
+			$extNode = $this->mmFormat->addImgNode($ListAllExtensionsNode,array(
 				'TEXT'=> $extArray['EM_CONF']['title'],
 				'LINK'=> '#LSext'.$extKey,
 			), $ico['extIcon'] );
 
 			// installed or not icon
 			$icon = $extArray['installed'] ? 'button_ok' : 'button_cancel';
-			$this->addIcon($extNode,$icon);
+			$this->mmFormat->addIcon($extNode,$icon);
 		}
 		/*</Simple list all extensions and link them>*/
 
@@ -982,7 +982,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 		/* extension by category = normal view */
 		foreach( $installedExt as $catName => $catArray ){
 
-			$catNode = $this->addNode($ChildFirst_Extensions, array(
+			$catNode = $this->mmFormat->addNode($ChildFirst_Extensions, array(
 				'FOLDED'=>'true',
 				'TEXT'=>$this->categories[$catName],
 			) );
@@ -996,17 +996,17 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 						'BACKGROUND_COLOR' => $this->stateColors[ $statek ],
 						'COLOR' => '#ffffff'
 					);
-					$aStateNode = $this->addNode($catNode,$attr);
-					$this->addFont($aStateNode,array('BOLD'=>'true','SIZE'=>14));
+					$aStateNode = $this->mmFormat->addNode($catNode,$attr);
+					$this->mmFormat->addFont($aStateNode,array('BOLD'=>'true','SIZE'=>14));
 
-					$this->addCloud($aStateNode,array('COLOR'=>$this->stateColors[ $statek ]));
+					$this->mmFormat->addCloud($aStateNode,array('COLOR'=>$this->stateColors[ $statek ]));
 
 					$extI = 0;
 					foreach($stateArray as $extKey=>$extArray ){
 
 						$ico = $this->_getExtensionNodeIcon($extKey,$extArray['type']);
 
-						$extNode = $this->addImgNode($aStateNode,array(
+						$extNode = $this->mmFormat->addImgNode($aStateNode,array(
 							'ID'=>'LSext'.$extKey,
 							'FOLDED'=>'true',
 							'TEXT'=> $extArray['EM_CONF']['title'],
@@ -1015,25 +1015,25 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 						), $ico['extIcon'] );
 
 						$color = $this->getDesignAlternatingColor('getExtensionNode',$extI,'CLOUD_COLOR');
-						$this->addCloud($extNode,array('COLOR'=>$color ));
+						$this->mmFormat->addCloud($extNode,array('COLOR'=>$color ));
 
 
 						// installed or not icon
 						$icon = $extArray['installed'] ? 'button_ok' : 'button_cancel';
-						$this->addIcon($extNode,$icon);
+						$this->mmFormat->addIcon($extNode,$icon);
 
 						// node for system global or local ext
-						$this->addNode($extNode, array(
+						$this->mmFormat->addNode($extNode, array(
 							'TEXT'=>$this->types[ $extArray['type'] ],
 						) );
 
-						$this->addNode($extNode, array(
+						$this->mmFormat->addNode($extNode, array(
 							'TEXT'=>'Key: '.$extKey,
 						) );
 
 						// link to TER
 						if( $ico['addTERLink'] == 1 ){
-							$this->addNode($extNode, array(
+							$this->mmFormat->addNode($extNode, array(
 								'TEXT'=>$this->translate('tree.linkName2TER'),
 								'LINK'=>$this->getTerURL($extKey),
 							) );
@@ -1065,7 +1065,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 									$attr['TEXT']  = $this->states[$ev];
 								}
 
-								$this->addNode($extNode, $attr );
+								$this->mmFormat->addNode($extNode, $attr );
 							}
 						}
 						$extI++;

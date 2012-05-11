@@ -50,15 +50,15 @@ class Tx_Typo3mind_Domain_Export_mmMain extends Tx_Typo3mind_Domain_Export_mmCom
 	 */
 	public function getContent() {
 
-		$rootNode = $this->getMap();
+		$rootNode = $this->mmFormat->getMap();
 
 		$mmExportLeftSide = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Export_mmLeftSide', $this->settings, $this->t3MindRepository);
+		/* @var $mmExportLeftSide Tx_Typo3mind_Domain_Export_mmLeftSide */
 		$mmExportLeftSide->getSecurityNode($rootNode);
 		$mmExportLeftSide->getTYPONode($rootNode);
 		$mmExportLeftSide->getExtensionNode($rootNode);
 		$mmExportLeftSide->getDatabaseNode($rootNode);
 		$mmExportLeftSide->getServerNode($rootNode);
-
 
 		$mmExportRightSide = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Export_mmRightSide', $this->settings, $this->t3MindRepository);
 		$mmExportRightSide->getSysLanguages($rootNode);
@@ -66,6 +66,6 @@ class Tx_Typo3mind_Domain_Export_mmMain extends Tx_Typo3mind_Domain_Export_mmCom
 		$mmExportRightSide->sett3mind($this->t3MindRepository->findAll());
 		$mmExportRightSide->getTree($rootNode);
 
-		return $this->finalOutputFile($this->mapXmlRoot);
+		return $this->getmmFormat()->finalOutputFile( $this->getmmFormat()->getMapXmlRoot() );
 	} /* end fnc getContent */
 }

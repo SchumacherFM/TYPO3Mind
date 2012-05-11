@@ -146,12 +146,12 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 	 */
 	public function getSysLanguages(SimpleXMLElement $xmlNode) {
 
-		$MainNode = $this->addImgNode($xmlNode,array(
+		$MainNode = $this->mmFormat->addImgNode($xmlNode,array(
 			'FOLDED'=>'true',
 			'TEXT'=>$this->translate('tree.syslanguage'),
 		), 'typo3/sysext/t3skin/images/icons/mimetypes/x-sys_language.gif'  );
 
-		$domainNode = $this->addImgNode($MainNode,	$this->createTLFattr('(0) '.$this->getSysLanguageDetails(0,'title'),''),
+		$domainNode = $this->mmFormat->addImgNode($MainNode,	$this->mmFormat->createTLFattr('(0) '.$this->getSysLanguageDetails(0,'title'),''),
 			$this->getSysLanguageDetails(0,'flag')
 		);
 
@@ -162,12 +162,12 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 
 			$link = $this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[sys_language]['.$r['uid'].']=edit' : '';
 
-			$domainNode = $this->addImgNode($MainNode,	$this->createTLFattr('('.$r['uid'].') '.$r['title'],$link),
+			$domainNode = $this->mmFormat->addImgNode($MainNode,	$this->mmFormat->createTLFattr('('.$r['uid'].') '.$r['title'],$link),
 				'typo3/sysext/t3skin/images/flags/'.$r['flag'].'.png'
 			);
 
 			if( $r['hidden'] == 1 ){
-				$this->addIcon($domainNode, 'closed' );
+				$this->mmFormat->addIcon($domainNode, 'closed' );
 			}
 		}
 
@@ -193,7 +193,7 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 		}
 
 		if( count($pageDomains) > 0 ){
-			$MainNode = $this->addImgNode($xmlNode,array(
+			$MainNode = $this->mmFormat->addImgNode($xmlNode,array(
 				'FOLDED'=>'true',
 				'TEXT'=>$this->translate('tree.sysdomains'),
 			), 'typo3/sysext/t3skin/images/icons/mimetypes/x-content-domain.png'  );
@@ -203,14 +203,14 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 				$ktEx = explode('~#',$kt);
 				$ktlink = $this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/mod.php?&M=web_list&id='.$ktEx[1].'&table=sys_domain' : '';
 
-				$titleNode = $this->addNode($MainNode,$this->createTLFattr($ktEx[0],$ktlink) );
+				$titleNode = $this->mmFormat->addNode($MainNode,$this->mmFormat->createTLFattr($ktEx[0],$ktlink) );
 				foreach($domains as $kd=>$vd){
 
 					$link = $this->mapMode['isbe'] ? $this->getBEHttpHost().'typo3/alt_doc.php?edit[sys_domain]['.$kd.']=edit' : 'http://'.$vd['domainName'];
 
-					$domainNode = $this->addNode($titleNode,$this->createTLFattr($vd['domainName'],$link) );
+					$domainNode = $this->mmFormat->addNode($titleNode,$this->mmFormat->createTLFattr($vd['domainName'],$link) );
 
-					$this->addIcon($domainNode, $vd['hidden'] == 1 ? 'closed' : 'button_ok' );
+					$this->mmFormat->addIcon($domainNode, $vd['hidden'] == 1 ? 'closed' : 'button_ok' );
 
 				}
 			}
@@ -319,7 +319,7 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 			}
 
 			// isRecursive, the color of the node name, not the bg color.
-			$attr = $this->setAttr($t3mindCurrent,'font_color',$attr,'COLOR');
+			$attr = $this->mmFormat->setAttr($t3mindCurrent,'font_color',$attr,'COLOR');
 
 			/*
 				TESTING:
@@ -331,7 +331,7 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 
 			if( isset($t3mindCurrent['node_color']) && $t3mindCurrent['node_color'] <> '' ){
 
-				$attr = $this->setAttr($t3mindCurrent,'node_color',$attr,'BACKGROUND_COLOR');
+				$attr = $this->mmFormat->setAttr($t3mindCurrent,'node_color',$attr,'BACKGROUND_COLOR');
 
 				if($isRecursive && !empty($alternatingColors['node'])){
 					$attr['BACKGROUND_COLOR'] = $alternatingColors['node'] = $this->RGBinterpolate->interpolate(
@@ -343,9 +343,9 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 
 
 			if( isset($childUids['subrow']) ){
-				$attr = $this->setAttr($t3mindCurrent,'node_folded',$attr,'FOLDED');
+				$attr = $this->mmFormat->setAttr($t3mindCurrent,'node_folded',$attr,'FOLDED');
 			}
-			$attr = $this->setAttr($t3mindCurrent,'node_style',$attr,'STYLE');
+			$attr = $this->mmFormat->setAttr($t3mindCurrent,'node_style',$attr,'STYLE');
 
 			/*first 4 levels are folded */
 			if( $this->settings['nodeAutoFold'] == 1 && $depth < 4 && isset($childUids['subrow']) ){
@@ -378,7 +378,7 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 
 				if( $ShowExtendedDetailsInPageTree === true	){
 					$htmlContent = $this->getNoteContentFromRow('pages',$record);
-					$pageParent = $this->addImagesNote($xmlNode,$attr,$iconArray, $htmlContent );
+					$pageParent = $this->mmFormat->addImagesNote($xmlNode,$attr,$iconArray, $htmlContent );
 				}else{
 					$pageParent = $this->addImagesNode($xmlNode,$attr,$iconArray);
 				}
@@ -387,9 +387,9 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 			} else {
 				if( $ShowExtendedDetailsInPageTree === true	){
 					$htmlContent = $this->getNoteContentFromRow('pages',$record);
-					$pageParent = $this->addImgNote($xmlNode,$attr,$iconDokType,'', $htmlContent  );
+					$pageParent = $this->mmFormat->addImgNote($xmlNode,$attr,$iconDokType,'', $htmlContent  );
 				}else{
-					$pageParent = $this->addImgNode($xmlNode,$attr,$iconDokType);
+					$pageParent = $this->mmFormat->addImgNode($xmlNode,$attr,$iconDokType);
 				}
 			}
 
@@ -406,7 +406,7 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 						// $this->RGBinterpolate->getColor();
 					}
 
-					$this->addCloud($pageParent,array('COLOR'=>$color));
+					$this->mmFormat->addCloud($pageParent,array('COLOR'=>$color));
 				}
 				/*</add cloud>*/
 
@@ -414,9 +414,9 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 				/*<add Edge>*/
 				$subNodeAttr = array();
 				// array('#FFFF00','STYLE'=>'sharp_bezier', 'WIDTH'=>'thin')
-				$subNodeAttr = $this->setAttr($t3mindCurrent,'edge_color',$subNodeAttr,'COLOR');
-				$subNodeAttr = $this->setAttr($t3mindCurrent,'edge_style',$subNodeAttr,'STYLE');
-				$subNodeAttr = $this->setAttr($t3mindCurrent,'edge_width',$subNodeAttr,'WIDTH');
+				$subNodeAttr = $this->mmFormat->setAttr($t3mindCurrent,'edge_color',$subNodeAttr,'COLOR');
+				$subNodeAttr = $this->mmFormat->setAttr($t3mindCurrent,'edge_style',$subNodeAttr,'STYLE');
+				$subNodeAttr = $this->mmFormat->setAttr($t3mindCurrent,'edge_width',$subNodeAttr,'WIDTH');
 
 				if($isRecursive &&  !empty($subNodeAttr['COLOR']) && !empty($alternatingColors['edge']) ){
 					$subNodeAttr['COLOR'] = $alternatingColors['edge'] = $this->RGBinterpolate->interpolate( $alternatingColors['edge'], '#ffffff', 0.075 );
@@ -436,12 +436,12 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 					// $this->RGBinterpolate->getColor();
 				} */
 
-				$this->setNodeFont($pageParent,$t3mindCurrent);
+				$this->mmFormat->setNodeFont($pageParent,$t3mindCurrent);
 				/*</add font>*/
 
 				/*<add node icon> not recursive*/
 				if( isset($this->t3mind[$uid]) && !empty($this->t3mind[$uid]['node_icon']) ){
-					$this->addIcon($pageParent,$t3mindCurrent['node_icon']);
+					$this->mmFormat->addIcon($pageParent,$t3mindCurrent['node_icon']);
 				}
 
 				/*</add node icon>*/
@@ -451,7 +451,7 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 
 			// add hidden icon
 			if( $record['hidden'] == 1 ){
-				$this->addIcon($pageParent,'closed');
+				$this->mmFormat->addIcon($pageParent,'closed');
 			}
 
 
