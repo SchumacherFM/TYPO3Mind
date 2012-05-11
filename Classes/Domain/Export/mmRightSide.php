@@ -424,7 +424,7 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 				}
 
 				if( count($subNodeAttr)>0 ){
-					$this->addEdge($pageParent,$subNodeAttr);
+					$this->mmFormat->addEdge($pageParent,$subNodeAttr);
 				}
 				/*</add Edge>*/
 

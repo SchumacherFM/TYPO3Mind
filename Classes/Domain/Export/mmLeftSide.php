@@ -921,14 +921,14 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 							'NODE' => '<img src="'.$extIcon.'"/>@#160;@#160;'.$extData['nicename'],
 							'NOTE'=> '<p>Version local: '.$extData['version_local'].'</p>'.
 								'<p>Version remote: '.$extData['version_remote'].'</p>'.
-								'<p>'.htmlspecialchars($this->convertLTGT($extData['comment'])).'</p>',
+								'<p>'.htmlspecialchars($this->mmFormat->convertLTGT($extData['comment'])).'</p>',
 						);
 						$this->_isExtUpdateAvailable[$extName] = 1;
 						$attr = array('ID'=>'LSupdate'.$extName,'LINK'=>'#LSext'.$extName);
 
 						$extRCNode = $this->mmFormat->addRichContentNote($updateExtensions,$attr,$htmlContent,array(),array(), 'BOTH' );
 
-						$this->addArrowlink($extRCNode,array('DESTINATION'=>'LSext'.$extName));
+						$this->mmFormat->addArrowlink($extRCNode,array('DESTINATION'=>'LSext'.$extName));
 
 			}/*endforeach*/
 		/*</check for extension updates!>*/
