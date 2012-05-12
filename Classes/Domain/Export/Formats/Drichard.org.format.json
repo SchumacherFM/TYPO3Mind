@@ -1,12 +1,12 @@
 {
-	"id":"12118536-df41-4974-a0f8-9461ae6730a3",
+	"id":"d5b3cdd0-3d40-45c9-8bf3-f0e2de6fa783",
 	"title":"New Document",
 	"mindmap":{
 		"root":{
-			"id":"8837267a-64dc-463a-8408-696dea28d0be",
+			"id":"639b8ae8-e3f2-4841-9bce-d7dcd12be174",
 			"parentId":null,
 			"text":{
-				"caption":"Central Idea",
+				"caption":"TYPO3 Website",
 				"font":{
 					"style":"normal",
 					"weight":"bold",
@@ -22,10 +22,10 @@
 		"foldChildren":false,
 		"branchColor":"#000000",
 		"children":[{
-			"id":"d2908141-33e7-4731-a5e1-9a902538434b",
-			"parentId":"8837267a-64dc-463a-8408-696dea28d0be",
+			"id":"2c7e2649-524e-43af-8444-b17de269fff6",
+			"parentId":"639b8ae8-e3f2-4841-9bce-d7dcd12be174",
 			"text":{
-				"caption":"New Idea 1",
+				"caption":"Database",
 				"font":{
 					"style":"normal",
 					"weight":"normal",
@@ -35,36 +35,17 @@
 				}
 			},
 		"offset":{
-			"x":53,
-			"y":-102
+			"x":-125,
+			"y":222
 		},
 		"foldChildren":false,
-		"branchColor":"#4074ad",
-		"children":[{
-			"id":"57f3e66e-6505-4a56-9c0b-18a6da2a4bef",
-			"parentId":"d2908141-33e7-4731-a5e1-9a902538434b",
-			"text":{
-				"caption":"New Idea 2",
-				"font":{
-					"style":"italic",
-					"weight":"bold",
-					"decoration":"underline",
-					"size":15,
-					"color":"#ba5454"
-				}
-			},
-		"offset":{
-			"x":92,
-			"y":-131
-		},
-		"foldChildren":false,
-		"branchColor":"#ba51d4",
+		"branchColor":"#b4bd44",
 		"children":[]
 	},{
-		"id":"7946c837-04fd-477f-a560-57f8e13ca97f",
-		"parentId":"d2908141-33e7-4731-a5e1-9a902538434b",
+		"id":"9328ea16-ad98-4664-a77c-5681f5f75ab7",
+		"parentId":"639b8ae8-e3f2-4841-9bce-d7dcd12be174",
 		"text":{
-			"caption":"New Idea 2a",
+			"caption":"Extensions",
 			"font":{
 				"style":"normal",
 				"weight":"normal",
@@ -74,16 +55,16 @@
 			}
 		},
 	"offset":{
-		"x":176,
-		"y":48
+		"x":-131,
+		"y":44
 	},
 	"foldChildren":false,
-	"branchColor":"#4074ad",
+	"branchColor":"#157e0b",
 	"children":[{
-		"id":"a5a6a27f-26a4-4e28-8a00-ed0b8933f34e",
-		"parentId":"7946c837-04fd-477f-a560-57f8e13ca97f",
+		"id":"596ee3af-2bd0-4fad-8bae-b88abef7c63e",
+		"parentId":"9328ea16-ad98-4664-a77c-5681f5f75ab7",
 		"text":{
-			"caption":"New Idea 3",
+			"caption":"Backend",
 			"font":{
 				"style":"normal",
 				"weight":"normal",
@@ -93,19 +74,17 @@
 			}
 		},
 	"offset":{
-		"x":133,
-		"y":118
+		"x":-103,
+		"y":-46
 	},
 	"foldChildren":false,
-	"branchColor":"#4074ad",
+	"branchColor":"#157e0b",
 	"children":[]
-}]
-}]
 },{
-	"id":"6d5d6465-c4e9-402b-a1f1-707481fe5a29",
-	"parentId":"8837267a-64dc-463a-8408-696dea28d0be",
+	"id":"3407bdeb-9b41-4c70-93ed-89c1d81dae7d",
+	"parentId":"9328ea16-ad98-4664-a77c-5681f5f75ab7",
 	"text":{
-		"caption":"New Idea",
+		"caption":"Frontend",
 		"font":{
 			"style":"normal",
 			"weight":"normal",
@@ -115,16 +94,56 @@
 		}
 	},
 "offset":{
-	"x":-125,
-	"y":-91
+	"x":-105,
+	"y":39
 },
 "foldChildren":false,
-"branchColor":"#3f8fee",
+"branchColor":"#157e0b",
+"children":[]
+},{
+	"id":"120ed20c-b5f1-4500-b97a-1abbcb75fbca",
+	"parentId":"9328ea16-ad98-4664-a77c-5681f5f75ab7",
+	"text":{
+		"caption":"Service",
+		"font":{
+			"style":"normal",
+			"weight":"normal",
+			"decoration":"none",
+			"size":15,
+			"color":"#000000"
+		}
+	},
+"offset":{
+	"x":-107,
+	"y":108
+},
+"foldChildren":false,
+"branchColor":"#157e0b",
+"children":[]
+},{
+	"id":"709835fc-8cea-4697-a942-7877d391736d",
+	"parentId":"9328ea16-ad98-4664-a77c-5681f5f75ab7",
+	"text":{
+		"caption":"Backend Modules",
+		"font":{
+			"style":"normal",
+			"weight":"normal",
+			"decoration":"none",
+			"size":15,
+			"color":"#000000"
+		}
+	},
+"offset":{
+	"x":-130,
+	"y":-105
+},
+"foldChildren":false,
+"branchColor":"#157e0b",
 "children":[{
-	"id":"11f52f6c-6b00-4ec1-81ad-4be22a922272",
-	"parentId":"6d5d6465-c4e9-402b-a1f1-707481fe5a29",
+	"id":"eee143b3-c059-405c-b39e-ec4ae47bd596",
+	"parentId":"709835fc-8cea-4697-a942-7877d391736d",
 	"text":{
-		"caption":"New Idea",
+		"caption":"Stable",
 		"font":{
 			"style":"normal",
 			"weight":"normal",
@@ -134,16 +153,17 @@
 		}
 	},
 "offset":{
-	"x":-128,
-	"y":97
+	"x":-93,
+	"y":-40
 },
 "foldChildren":false,
-"branchColor":"#3f8fee",
-"children":[{
-	"id":"374e5bab-8b5f-4eba-a22e-ccb7d2772d6f",
-	"parentId":"11f52f6c-6b00-4ec1-81ad-4be22a922272",
+"branchColor":"#157e0b",
+"children":[]
+},{
+	"id":"b9891294-3b93-4e3b-978f-abaf02fe5939",
+	"parentId":"709835fc-8cea-4697-a942-7877d391736d",
 	"text":{
-		"caption":"New Idea",
+		"caption":"Beta",
 		"font":{
 			"style":"normal",
 			"weight":"normal",
@@ -153,20 +173,160 @@
 		}
 	},
 "offset":{
-	"x":-82,
-	"y":-74
+	"x":-108,
+	"y":35
 },
 "foldChildren":false,
-"branchColor":"#3f8fee",
+"branchColor":"#157e0b",
+"children":[]
+},{
+	"id":"e0380e12-6da4-4cb4-8222-9541dffee041",
+	"parentId":"709835fc-8cea-4697-a942-7877d391736d",
+	"text":{
+		"caption":"Alpha",
+		"font":{
+			"style":"normal",
+			"weight":"normal",
+			"decoration":"none",
+			"size":15,
+			"color":"#000000"
+		}
+	},
+"offset":{
+	"x":-103,
+	"y":101
+},
+"foldChildren":false,
+"branchColor":"#157e0b",
 "children":[]
 }]
 }]
+},{
+	"id":"28037628-cda6-43f1-94c6-35d573417386",
+	"parentId":"639b8ae8-e3f2-4841-9bce-d7dcd12be174",
+	"text":{
+		"caption":"Security",
+		"font":{
+			"style":"normal",
+			"weight":"normal",
+			"decoration":"none",
+			"size":19,
+			"color":"#000000"
+		}
+	},
+"offset":{
+	"x":-176,
+	"y":-154
+},
+"foldChildren":false,
+"branchColor":"#61ab49",
+"children":[{
+	"id":"1e1a7c79-2035-4a11-8007-58a1ad21438b",
+	"parentId":"28037628-cda6-43f1-94c6-35d573417386",
+	"text":{
+		"caption":"RSS Feed 1",
+		"font":{
+			"style":"normal",
+			"weight":"normal",
+			"decoration":"none",
+			"size":15,
+			"color":"#000000"
+		}
+	},
+"offset":{
+	"x":-134,
+	"y":-24
+},
+"foldChildren":false,
+"branchColor":"#61ab49",
+"children":[]
+}]
+},{
+	"id":"c5015e6e-dcae-425f-a1ea-34d395aaad55",
+	"parentId":"639b8ae8-e3f2-4841-9bce-d7dcd12be174",
+	"text":{
+		"caption":"Website Language",
+		"font":{
+			"style":"normal",
+			"weight":"bold",
+			"decoration":"none",
+			"size":15,
+			"color":"#000000"
+		}
+	},
+"offset":{
+	"x":144,
+	"y":-150
+},
+"foldChildren":false,
+"branchColor":"#4bed54",
+"children":[]
+},{
+	"id":"41fbaadb-d576-42e1-9064-446af9662339",
+	"parentId":"639b8ae8-e3f2-4841-9bce-d7dcd12be174",
+	"text":{
+		"caption":"Sysfolder 1",
+		"font":{
+			"style":"italic",
+			"weight":"bold",
+			"decoration":"none",
+			"size":15,
+			"color":"#000000"
+		}
+	},
+"offset":{
+	"x":155,
+	"y":-55
+},
+"foldChildren":false,
+"branchColor":"#238574",
+"children":[]
+},{
+	"id":"6c496937-3768-4f6f-a389-ca03f217b5b2",
+	"parentId":"639b8ae8-e3f2-4841-9bce-d7dcd12be174",
+	"text":{
+		"caption":"Sysfolder 2",
+		"font":{
+			"style":"normal",
+			"weight":"normal",
+			"decoration":"none",
+			"size":15,
+			"color":"#e00404"
+		}
+	},
+"offset":{
+	"x":150,
+	"y":10
+},
+"foldChildren":false,
+"branchColor":"#b0793b",
+"children":[]
+},{
+	"id":"8156ab94-9b59-416e-899f-8c4da11cddcc",
+	"parentId":"639b8ae8-e3f2-4841-9bce-d7dcd12be174",
+	"text":{
+		"caption":"Website",
+		"font":{
+			"style":"normal",
+			"weight":"normal",
+			"decoration":"none",
+			"size":15,
+			"color":"#000000"
+		}
+	},
+"offset":{
+	"x":150,
+	"y":80
+},
+"foldChildren":false,
+"branchColor":"#88ff26",
+"children":[]
 }]
 }
 },
 "dates":{
-	"created":1336451308641,
-	"modified":1336451417107
+	"created":1336831246991,
+	"modified":1336831543025
 },
 "dimensions":{
 	"x":4000,

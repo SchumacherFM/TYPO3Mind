@@ -1,4 +1,5 @@
 <?php
+
 /* * *************************************************************
  *  Copyright notice
  *
@@ -57,11 +58,6 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	}
 
 	/**
-	 * @var string
-	 */
-	protected $mmVersion = '0.9.0';
-
-	/**
 	 * returns the whole map, must be called at the end.
 	 *
 	 * @return SimpleXMLElement
@@ -80,25 +76,22 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	public function getMap()
 	{
 		$this->mapXmlRoot = new SimpleXMLElement('<map></map>', LIBXML_NOXMLDECL | LIBXML_PARSEHUGE);
-		$this->mapXmlRoot->addAttribute('version', $this->mmVersion);
-
 
 		$attributes = array(
-			'COLOR' => '#993300',
+			'TEXT' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']
 		);
 
-		$html = '<center><img src="' . $this->parentObject->getBEHttpHost() . 'typo3/sysext/t3skin/icons/gfx/loginlogo_transp.gif" alt="TYPO3 Logo" />
-        <h2>' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'] . '</h2>
-        <p style="font-size:10px;">TYPO3: ' . TYPO3_version . '</p></center>';
-		$rootNode = $this->addRichContentNode($this->mapXmlRoot, $attributes, $html);
+		$rootNode = $this->addNode($this->mapXmlRoot, $attributes);
 
 		$ThisFileInfoNode = $this->addImgNode($rootNode, array(
-			'POSITION' => 'left',
-//            'FOLDED'=>'false',
 			'TEXT' => $this->parentObject->translate('tree.fileInfo'),
-				), 'typo3/sysext/about/ext_icon.gif');
+				)
+		);
 
 
+		$this->addNode($ThisFileInfoNode, array(
+			'TEXT' => 'TYPO3: ' . TYPO3_version,
+		));
 
 		$this->addNode($ThisFileInfoNode, array(
 			'TEXT' => 'Backend HTTP Address: ' . $this->parentObject->getBEHttpHost(),
@@ -153,17 +146,6 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	public function addIcon(SimpleXMLElement $xmlNode, $iconName)
 	{
 
-		$iconName = preg_replace('~\.[a-z]{3,4}~i', '', $iconName);
-		if (stristr($iconName, ',') !== false) {
-			$icons = t3lib_div::trimExplode(',', $iconName, 1);
-			foreach ($icons as $name) {
-				$icon = $xmlNode->addChild('icon', '');
-				$this->addAttributes($icon, array('BUILTIN' => $name));
-			}
-		} else {
-			$icon = $xmlNode->addChild('icon', '');
-			$this->addAttributes($icon, array('BUILTIN' => $iconName));
-		}
 	}
 
 	/**
@@ -203,16 +185,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	 */
 	public function addEdge(SimpleXMLElement $xmlNode, $attributes)
 	{
-		$edge = $xmlNode->addChild('edge', '');
 
-		if (!isset($attributes['STYLE'])) {
-			$attributes['STYLE'] = 'bezier';
-		}
-		if (!isset($attributes['WIDTH'])) {
-			$attributes['WIDTH'] = 'thin';
-		}
-
-		$this->addAttributes($edge, $attributes);
 	}
 
 	/**
@@ -224,8 +197,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	 */
 	public function addCloud(SimpleXMLElement $xmlNode, $attributes)
 	{
-		$cloud = $xmlNode->addChild('cloud', '');
-		$this->addAttributes($cloud, $attributes);
+
 	}
 
 	/**
@@ -239,11 +211,11 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	{
 		$font = $xmlNode->addChild('font', '');
 
-		if (!isset($attributes['NAME'])) {
-			$attributes['NAME'] = 'SansSerif';
+		if (isset($attributes['NAME'])) {
+			unset($attributes['NAME']);
 		}
-		if (!isset($attributes['SIZE'])) {
-			$attributes['SIZE'] = 12;
+		if (!isset($attributes['size'])) {
+			$attributes['size'] = 15;
 		}
 
 		$this->addAttributes($font, $attributes);
@@ -279,41 +251,9 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	public function addRichContentNote(SimpleXMLElement $xml, $attributes, $htmlContent, $addEdgeAttr = array(), $addFontAttr = array(), $type = 'NOTE')
 	{
 
-		$htmlContent = str_replace(array('<', '>'), array('|lt|', '|gt|'), $htmlContent);
-
-		$css = '';
-
 		$node = $xml->addChild('node', '');
 		$attributes = $this->checkNodeAttr($attributes);
 		$this->addAttributes($node, $attributes);
-
-		$realType = $type;
-		if ($type == 'BOTH') {
-
-			$rc = $node->addChild('richcontent', '');
-			$rc->addAttribute('TYPE', 'NOTE');
-			$html = $rc->addChild('html', '');
-			$html->addChild('head', $css);
-			$body = $html->addChild('body', $htmlContent['NOTE']);
-
-			$htmlContent = $htmlContent['NODE'];
-			$realType = 'NODE';
-		}
-
-		$rc = $node->addChild('richcontent', '');
-		$rc->addAttribute('TYPE', $realType);
-		$html = $rc->addChild('html', '');
-		$html->addChild('head', $css);
-		$body = $html->addChild('body', $htmlContent);
-
-
-
-		if (count($addEdgeAttr) > 0) {
-			$this->addEdge($node, $addEdgeAttr);
-		}
-		if (count($addFontAttr) > 0) {
-			$this->addFont($node, $addFontAttr);
-		}
 
 		return $node;
 	}
@@ -345,11 +285,13 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	 */
 	public function setNodeFont(SimpleXMLElement $xmlNode, $t3mind)
 	{
+
 		$attributes = array();
-		$attributes = $this->setAttr($t3mind, 'font_face', $attributes, 'NAME');
-		$attributes = $this->setAttr($t3mind, 'font_size', $attributes, 'SIZE');
-		$attributes = $this->setAttr($t3mind, 'font_bold', $attributes, 'BOLD');
-		$attributes = $this->setAttr($t3mind, 'font_italic', $attributes, 'ITALIC');
+		$attributes = $this->setAttr($t3mind, 'style', $attributes, 'ITALIC');
+		$attributes = $this->setAttr($t3mind, 'weight', $attributes, 'BOLD');
+//		$attributes = $this->setAttr($t3mind, 'decoration', $attributes, 'SIZE');
+		$attributes = $this->setAttr($t3mind, 'size', $attributes, 'SIZE');
+		$attributes = $this->setAttr($t3mind, 'color', $attributes, 'COLOR');
 
 		if (count($attributes) > 0) {
 			$this->addFont($xmlNode, $attributes);
@@ -415,19 +357,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	 */
 	public function addImgNode(SimpleXMLElement $xmlNode, $attributes, $imgRelPath, $imgHTML = '')
 	{
-
-		$iconLocal = str_replace('../', '', $imgRelPath);
-
-		if (is_file(PATH_site . $iconLocal)) {
-
-			$nodeHTML = '<img ' . $imgHTML . ' src="' . $this->parentObject->getBEHttpHost() . $iconLocal . '"/>' .
-					'@#160;@#160;' . htmlspecialchars($attributes['TEXT']);
-			$childNode = $this->addRichContentNode($xmlNode, $attributes, $nodeHTML);
-		} else {
-			$childNode = $this->addNode($xmlNode, $attributes);
-		}
-
-		return $childNode;
+		return $this->addNode($xmlNode, $attributes);
 	}
 
 	/**
@@ -474,33 +404,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	 */
 	public function addImagesNote(SimpleXMLElement $xmlNode, $attributes, $images, $noteHTML)
 	{
-
-		$html = array();
-
-		foreach ($images as $img) {
-			$iconLocal = str_replace('../', '', $img['path']);
-			if (is_file(PATH_site . $iconLocal)) {
-
-				if (isset($img['link'])) {
-					$img['link'] = str_replace('&', '&amp;', $img['link']);
-					$html[] = '<a href="' . $img['link'] . '"><img border="0" ' . $img['html'] . ' src="' . $this->parentObject->getBEHttpHost() . $iconLocal . '"/></a>';
-				} else {
-					$html[] = '<img ' . $img['html'] . ' src="' . $this->parentObject->getBEHttpHost() . $iconLocal . '"/>';
-				}
-			}
-		}
-		$htmlContent = array(
-			'NODE' => implode('@#160;@#160;', $html) . '@#160;@#160;' . htmlspecialchars($attributes['TEXT']),
-			'NOTE' => $noteHTML,
-		);
-
-		if (count($html) > 0) {
-
-			$childNode = $this->addRichContentNote($xmlNode, $attributes, $htmlContent, array(), array(), 'BOTH');
-		} else {
-			$childNode = $this->addRichContentNote($xmlNode, $attributes, $noteHTML, array(), array(), 'BOTH');
-		}
-		return $childNode;
+		return $this->addNode($xmlNode, $attributes);
 	}
 
 	/**
@@ -513,31 +417,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	 */
 	public function addImagesNode(SimpleXMLElement $xmlNode, $attributes, $images)
 	{
-
-		$html = array();
-
-		foreach ($images as $img) {
-			$iconLocal = str_replace('../', '', $img['path']);
-			if (is_file(PATH_site . $iconLocal)) {
-
-				if (isset($img['link'])) {
-					$img['link'] = str_replace('&', '&amp;', $img['link']);
-					$html[] = '<a href="' . $img['link'] . '"><img border="0" ' . $img['html'] . ' src="' . $this->parentObject->getBEHttpHost() . $iconLocal . '"/></a>';
-				} else {
-					$html[] = '<img ' . $img['html'] . ' src="' . $this->parentObject->getBEHttpHost() . $iconLocal . '"/>';
-				}
-			}
-		}
-
-		if (count($html) > 0) {
-
-			$nodeHTML = implode('@#160;@#160;', $html) . '@#160;@#160;' . htmlspecialchars($attributes['TEXT']);
-			$childNode = $this->addRichContentNode($xmlNode, $attributes, $nodeHTML);
-		} else {
-			$childNode = $this->addNode($xmlNode, $attributes);
-		}
-
-		return $childNode;
+		return $this->addNode($xmlNode, $attributes);
 	}
 
 	/**
@@ -550,22 +430,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	public function addArrowlink(SimpleXMLElement $xmlNode, $attributes)
 	{
 
-		// @todo set arrow color ... somewhere ...
-		$attributes['COLOR'] = '#FF0025';
-		$attributes['ENDARROW'] = 'Default'; /* there is an arrow */
-		$attributes['STARTARROW'] = 'Default'; /* there is an arrow */
-		$attributes['ID'] = 'Arrow_ID_' . mt_rand();
-		$attributes['ENDINCLINATION'] = '440;0;';
-		$attributes['STARTINCLINATION'] = '440;0;';
-
-		if (!isset($attributes['DESTINATION']) || empty($attributes['DESTINATION'])) {
-			die('addArrowlink(): DESTINATION not set!');
-		}
-
-		$child = $xmlNode->addChild('arrowlink', '');
-
-		$this->addAttributes($child, $this->checkNodeAttr($attributes));
-		return $child;
+		return $xmlNode;
 	}
 
 	/**

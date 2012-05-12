@@ -52,13 +52,18 @@ class Tx_Typo3mind_Domain_Export_mmMain extends Tx_Typo3mind_Domain_Export_mmCom
 
 		$rootNode = $this->mmFormat->getMap();
 
+		var_dump( $rootNode );
+		exit;
+
 		$mmExportLeftSide = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Export_mmLeftSide', $this->settings, $this->t3MindRepository);
 		/* @var $mmExportLeftSide Tx_Typo3mind_Domain_Export_mmLeftSide */
-		$mmExportLeftSide->getSecurityNode($rootNode);
+//		$mmExportLeftSide->getSecurityNode($rootNode);
 		$mmExportLeftSide->getTYPONode($rootNode);
 		$mmExportLeftSide->getExtensionNode($rootNode);
-		$mmExportLeftSide->getDatabaseNode($rootNode);
-		$mmExportLeftSide->getServerNode($rootNode);
+//		$mmExportLeftSide->getDatabaseNode($rootNode);
+//		$mmExportLeftSide->getServerNode($rootNode);
+
+
 
 		$mmExportRightSide = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Export_mmRightSide', $this->settings, $this->t3MindRepository);
 		$mmExportRightSide->getSysLanguages($rootNode);
