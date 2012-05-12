@@ -99,9 +99,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 		$this->addNode($ThisFileInfoNode, array(
 			'TEXT' => 'Created: ' . date('Y-m-d H:i:s'),
 		));
-		$this->addNode($ThisFileInfoNode, array(
-			'TEXT' => 'MD5 Hash: ###MD5_FILE_HASH####',
-		));
+
 		$this->addNode($ThisFileInfoNode, array(
 			'TEXT' => 'Map Mode: ' . $this->parentObject->settings['mapMode'],
 		));
@@ -443,22 +441,36 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	public function finalOutputFile(SimpleXMLElement $xml)
 	{
 
+
+
 		$fileName = str_replace('[sitename]', preg_replace('~[^a-z0-9]+~i', '', $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']), $this->parentObject->settings['outputFileName']);
 
 		$fileName = preg_replace('~\[([a-z_\-]+)\]~ie', 'date(\'\\1\')', $fileName);
 		$fileName = empty($fileName) ? 'TYPO3Mind_' . mt_rand() . '.mm' : $fileName;
 
-		$xml = str_replace(
-				array('|lt|', '|gt|', '@#', '&amp;gt;', '&amp;lt;', '&amp;amp;'), array('<', '>', '&#', '&gt;', '&lt;', '&amp;'), $xml->asXML()
-		);
-
 		$fileName = '/typo3temp/' . $fileName;
 
-		$md5 = md5($xml);
 
-		$xml = str_replace(
-						array('###MD5_FILE_HASH####'), array($md5), $xml
-				) . '<!--HiddenMD5:' . md5($xml) . '-->';
+		$json = array();
+		$json['id'] = 'root'.mt_rand();
+		$json['title'] = $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
+		$json['dimensions'] = array('x'=>4000,'y'=>2000);
+		$json['dates'] = array('created'=>time(),'modified'=>time());
+		$json['autosave'] = false;
+		$json['mindmap'] = array();
+
+//		var_dump($rootNode);
+		echo json_encode($json);
+		exit;
+
+
+//		$xml = str_replace(
+//				array('|lt|', '|gt|', '@#', '&amp;gt;', '&amp;lt;', '&amp;amp;'),
+//				array('<', '>', '&#', '&gt;', '&lt;', '&amp;'),
+//				$xml->asXML()
+//		);
+
+
 
 		$bytesWritten = file_put_contents(PATH_site . $fileName, $xml);
 
@@ -472,15 +484,8 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 
 		/* check if file has been build successfully */
 		$return = array();
-		$return['iserror'] = simplexml_load_file(PATH_site . $fileName) === false ? true : false;
-		$return['errors'] = array_reverse(libxml_get_errors(), true);
-		foreach ($return['errors'] as $k => $v) {
-			if ($v->level > 2) {
-				$return['errors'][$k] = (array) $v;
-			} else {
-				unset($return['errors'][$k]);
-			}
-		}
+		$return['iserror'] = false;
+		$return['errors'] = array();
 		$return['filekb'] = sprintf('%.2f', $bytesWritten / 1024);
 		$return['file'] = $fileName;
 
