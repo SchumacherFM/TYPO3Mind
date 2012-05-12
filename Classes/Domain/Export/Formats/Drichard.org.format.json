@@ -1,0 +1,176 @@
+{
+	"id":"12118536-df41-4974-a0f8-9461ae6730a3",
+	"title":"New Document",
+	"mindmap":{
+		"root":{
+			"id":"8837267a-64dc-463a-8408-696dea28d0be",
+			"parentId":null,
+			"text":{
+				"caption":"Central Idea",
+				"font":{
+					"style":"normal",
+					"weight":"bold",
+					"decoration":"none",
+					"size":20,
+					"color":"#000000"
+				}
+			},
+		"offset":{
+			"x":0,
+			"y":0
+		},
+		"foldChildren":false,
+		"branchColor":"#000000",
+		"children":[{
+			"id":"d2908141-33e7-4731-a5e1-9a902538434b",
+			"parentId":"8837267a-64dc-463a-8408-696dea28d0be",
+			"text":{
+				"caption":"New Idea 1",
+				"font":{
+					"style":"normal",
+					"weight":"normal",
+					"decoration":"none",
+					"size":15,
+					"color":"#000000"
+				}
+			},
+		"offset":{
+			"x":53,
+			"y":-102
+		},
+		"foldChildren":false,
+		"branchColor":"#4074ad",
+		"children":[{
+			"id":"57f3e66e-6505-4a56-9c0b-18a6da2a4bef",
+			"parentId":"d2908141-33e7-4731-a5e1-9a902538434b",
+			"text":{
+				"caption":"New Idea 2",
+				"font":{
+					"style":"italic",
+					"weight":"bold",
+					"decoration":"underline",
+					"size":15,
+					"color":"#ba5454"
+				}
+			},
+		"offset":{
+			"x":92,
+			"y":-131
+		},
+		"foldChildren":false,
+		"branchColor":"#ba51d4",
+		"children":[]
+	},{
+		"id":"7946c837-04fd-477f-a560-57f8e13ca97f",
+		"parentId":"d2908141-33e7-4731-a5e1-9a902538434b",
+		"text":{
+			"caption":"New Idea 2a",
+			"font":{
+				"style":"normal",
+				"weight":"normal",
+				"decoration":"none",
+				"size":15,
+				"color":"#000000"
+			}
+		},
+	"offset":{
+		"x":176,
+		"y":48
+	},
+	"foldChildren":false,
+	"branchColor":"#4074ad",
+	"children":[{
+		"id":"a5a6a27f-26a4-4e28-8a00-ed0b8933f34e",
+		"parentId":"7946c837-04fd-477f-a560-57f8e13ca97f",
+		"text":{
+			"caption":"New Idea 3",
+			"font":{
+				"style":"normal",
+				"weight":"normal",
+				"decoration":"none",
+				"size":15,
+				"color":"#000000"
+			}
+		},
+	"offset":{
+		"x":133,
+		"y":118
+	},
+	"foldChildren":false,
+	"branchColor":"#4074ad",
+	"children":[]
+}]
+}]
+},{
+	"id":"6d5d6465-c4e9-402b-a1f1-707481fe5a29",
+	"parentId":"8837267a-64dc-463a-8408-696dea28d0be",
+	"text":{
+		"caption":"New Idea",
+		"font":{
+			"style":"normal",
+			"weight":"normal",
+			"decoration":"none",
+			"size":15,
+			"color":"#000000"
+		}
+	},
+"offset":{
+	"x":-125,
+	"y":-91
+},
+"foldChildren":false,
+"branchColor":"#3f8fee",
+"children":[{
+	"id":"11f52f6c-6b00-4ec1-81ad-4be22a922272",
+	"parentId":"6d5d6465-c4e9-402b-a1f1-707481fe5a29",
+	"text":{
+		"caption":"New Idea",
+		"font":{
+			"style":"normal",
+			"weight":"normal",
+			"decoration":"none",
+			"size":15,
+			"color":"#000000"
+		}
+	},
+"offset":{
+	"x":-128,
+	"y":97
+},
+"foldChildren":false,
+"branchColor":"#3f8fee",
+"children":[{
+	"id":"374e5bab-8b5f-4eba-a22e-ccb7d2772d6f",
+	"parentId":"11f52f6c-6b00-4ec1-81ad-4be22a922272",
+	"text":{
+		"caption":"New Idea",
+		"font":{
+			"style":"normal",
+			"weight":"normal",
+			"decoration":"none",
+			"size":15,
+			"color":"#000000"
+		}
+	},
+"offset":{
+	"x":-82,
+	"y":-74
+},
+"foldChildren":false,
+"branchColor":"#3f8fee",
+"children":[]
+}]
+}]
+}]
+}
+},
+"dates":{
+	"created":1336451308641,
+	"modified":1336451417107
+},
+"dimensions":{
+	"x":4000,
+	"y":2000
+},
+"autosave":false
+}
