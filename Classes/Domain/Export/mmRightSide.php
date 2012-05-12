@@ -380,7 +380,7 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 					$htmlContent = $this->getNoteContentFromRow('pages',$record);
 					$pageParent = $this->mmFormat->addImagesNote($xmlNode,$attr,$iconArray, $htmlContent );
 				}else{
-					$pageParent = $this->addImagesNode($xmlNode,$attr,$iconArray);
+					$pageParent = $this->mmFormat->addImagesNote($xmlNode,$attr,$iconArray);
 				}
 
 
