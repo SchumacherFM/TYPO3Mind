@@ -60,7 +60,7 @@ module.tx_typo3mind {
 		# TER = TYPO3 Extension Repository URL
 		TerURL2Ext = http://typo3.org/extensions/repository/view/###extname###/current/
 
-		TYPO3SecurityGuideURL = http://typo3.org/documentation/document-library/extension-manuals/doc_guide_security/current/
+		TYPO3SecurityGuideURL = http://typo3.org/extension-manuals/doc_guide_security/current/
 
 		# RSS Reader: As many feeds as you like! If none is defined, then no rss feed will be
 		# added to the mind map. RSS feed must be in format RSS 2.0
