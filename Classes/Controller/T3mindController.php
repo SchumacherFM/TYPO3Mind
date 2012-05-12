@@ -90,6 +90,16 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	protected $tt;
 
 	/**
+	 * Checks if the pageUid has been set, if not throws an error
+	 * @param string $position
+	 */
+	private function checkPageUid($position){
+		if( $this->pageUid == 0 ){
+			throw new Exception( $this->translate('error.missingPageUid') .' / Position: '.$position );
+		}
+	}
+
+	/**
 	 * initializeAction
 	 *
 	 * @return void
@@ -116,19 +126,19 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 * @return void
 	 */
 	public function dispatchAction() {
-		if( $this->pageUid == 0 ){
-			throw new Exception('No page UID specified. 1336458548');
-		}
-			$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
 
-			if( $T3mind == NULL ){
-				$T3mind = new Tx_Typo3mind_Domain_Model_T3mind();
-				$T3mind->setpageUid( $this->pageUid );
-				$this->t3MindRepository->add($T3mind);
-				$persistenceManager = Tx_Extbase_Dispatcher::getPersistenceManager();
-				$persistenceManager->persistAll();
-				$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
-			}
+		$this->checkPageUid(__LINE__.'/1336458130');
+
+		$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
+
+		if( $T3mind == NULL ){
+			$T3mind = new Tx_Typo3mind_Domain_Model_T3mind();
+			$T3mind->setpageUid( $this->pageUid );
+			$this->t3MindRepository->add($T3mind);
+			$persistenceManager = Tx_Extbase_Dispatcher::getPersistenceManager();
+			$persistenceManager->persistAll();
+			$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
+		}
 
 		$T3_THIS_LOCATION = urlencode('mod.php?M=web_list&id='.$this->pageUid);
 		$this->view->assign('redirect','alt_doc.php?returnUrl='.$T3_THIS_LOCATION.'&edit[tx_typo3mind_domain_model_t3mind]['.$T3mind->getUid().']=edit');
@@ -140,15 +150,10 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 * @return void
 	 */
 	public function exportAction() {
-		if( $this->pageUid == 0 ){
-			// todo better error messages .... 8-)
-			throw new Exception('No page UID selected. Please click in the tree on the root page and then on "TYPO3Mind Export". 1336458652');
-		}
+		$this->checkPageUid(__LINE__.'/1336458153');
 
 		libxml_use_internal_errors(true);
 		$this->settings['pageUid'] = $this->pageUid;
-		/*TODO export via ajax ...*/
-		// $expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);
 
 		$mmFile = $this->t3mmExport->getContent();
 
@@ -244,7 +249,7 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 * @return void
 	 */
 	public function exportEIDAction() {
-		// todo better error handling
+
 		if( $this->apikey <> md5($this->extConfSettings['apikey']) ){
 			die('API Keys does not match!');
 		}

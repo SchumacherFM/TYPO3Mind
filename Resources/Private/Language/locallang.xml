@@ -24,6 +24,8 @@
 			<label index="tx_typo3mind_domain_model_t3mind.edge_style">Edge style</label>
 			<label index="tx_typo3mind_domain_model_t3mind.edge_width">Edge width</label>
 
+			<label index="error.missingPageUid">No page UID selected. Please click in the tree on the root page and then on "TYPO3Mind Export"</label>
+
 			<label index="html.export.header">TYPO3Mind Export</label>
 			<label index="html.export.header.error">Errors in file %s</label>
 			<label index="html.export.header.error.text">Check the XML encoding settings or remove invalid characters or improper nested HTML tags.</label>

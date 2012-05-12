@@ -100,7 +100,7 @@ module.tx_typo3mind {
 
 		# Set to 1 if you want to see all tt_content Elements also to be listet.
 		# File size will increase immense
-		ListTTContentElements = 1
+		ListTTContentElements = 0
 
 		# Name of the Class which provides the format, factory method
 		# do not touch or nothing will work
