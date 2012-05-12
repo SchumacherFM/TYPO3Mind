@@ -14,7 +14,7 @@ module.tx_typo3mind {
 		# set here the system default language flag, without any file extension. only two characters long.
 		defaultLanguageFlag = de
 
-		# Possible values: frontend, backend_list or backend_tv. This only changes the types of Links.
+		# Possible values: frontend, backend_list or backend_tv. This only changes the types of the links.
 		# Frontend just for viewing.
 		# Backend_* opens the TemplaVoila editing section of a page or content element.
 		# For backend mode you have to be logged in into it, in your default browser.
@@ -100,7 +100,7 @@ module.tx_typo3mind {
 
 		# Set to 1 if you want to see all tt_content Elements also to be listet.
 		# File size will increase immense
-		ListTTContentElements = 0
+		ListTTContentElements = 1
 
 		# Name of the Class which provides the format, factory method
 		# do not touch or nothing will work
