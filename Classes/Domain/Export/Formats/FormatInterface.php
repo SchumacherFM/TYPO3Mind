@@ -173,14 +173,6 @@ interface Tx_Typo3mind_Domain_Export_Formats_FormatInterface
 	public function setNodeFont(SimpleXMLElement $xmlNode, $t3mind);
 
 	/**
-	 * Checks if neccessary attributes are set for a node
-	 *
-	 * @param    array $attributes
-	 * @return    nothing
-	 */
-	protected function checkNodeAttr($attributes);
-
-	/**
 	 * Creates the TLF attributes array (text, link, folded)
 	 *
 	 * @param    array $attributes
