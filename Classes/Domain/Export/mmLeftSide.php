@@ -178,7 +178,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 							$size = $this->formatBytes($this->getDirSize($Level2Dir));
 
 							$faLevel2 = $this->mmFormat->addNode($faLevel1, array(
-								'TEXT' => xmlentities($vL2 . ' ' . $size),
+								'TEXT' => $this->xmlentities($vL2 . ' ' . $size),
 								'BACKGROUND_COLOR' => $BACKGROUND_COLOR,
 									));
 						}
@@ -1067,35 +1067,49 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 		return $ChildFirst_Extensions;
 	}
 
-}
-
-/**
- *
- * @param string $string
- * @return type
- */
-function xmlentities($string)
-{
-	$not_in_list = '';
-	return preg_replace_callback('/[^A-Z0-9a-z_-]/', 'get_xml_entity_at_index_0', $string);
-}
-
-function get_xml_entity_at_index_0($CHAR)
-{
-	if (!is_string($CHAR[0]) || ( strlen($CHAR[0]) > 1 )) {
-		die("function: 'get_xml_entity_at_index_0' requires data type: 'char' (single character). '{$CHAR[0]}' does not match this type.");
+	/**
+	*
+	* @param string $string
+	* @return string
+	*/
+	private function xmlentities($string)
+	{
+		$not_in_list = '';
+		return preg_replace_callback('/[^A-Z0-9a-z_-]/', 'get_xml_entity_at_index_0', $string);
 	}
-	switch ($CHAR[0]) {
-		case '\'': case '"': case '&': case '<': case '>':
-			return htmlspecialchars($CHAR[0], ENT_QUOTES);
-			break;
-		default:
-			return numeric_entity_4_char($CHAR[0]);
-			break;
-	}
-}
 
-function numeric_entity_4_char($char)
-{
-	return '@#' . str_pad(ord($char), 3, '0', STR_PAD_LEFT) . ';';
-}
+} /*endclass*/
+
+	/**
+	* outside class due to preg_replace_callback
+	*
+	* @param string $CHAR
+	* @return string
+    * @see xmlentities()
+	*/
+	function get_xml_entity_at_index_0($CHAR)
+	{
+		if (!is_string($CHAR[0]) || ( strlen($CHAR[0]) > 1 )) {
+			die("function: 'get_xml_entity_at_index_0' requires data type: 'char' (single character). '{$CHAR[0]}' does not match this type.");
+		}
+		switch ($CHAR[0]) {
+			case '\'': case '"': case '&': case '<': case '>':
+				return htmlspecialchars($CHAR[0], ENT_QUOTES);
+				break;
+			default:
+				return numeric_entity_4_char($CHAR[0]);
+				break;
+		}
+	}
+
+	/**
+	* outside class due to preg_replace_callback
+	*
+	* @param string $char
+	* @return string
+    * @see xmlentities()
+	*/
+	function numeric_entity_4_char($char)
+	{
+		return '@#' . str_pad(ord($char), 3, '0', STR_PAD_LEFT) . ';';
+	}
