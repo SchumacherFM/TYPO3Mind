@@ -446,7 +446,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 		$fileName = str_replace('[sitename]', preg_replace('~[^a-z0-9]+~i', '', $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']), $this->parentObject->settings['outputFileName']);
 
 		$fileName = preg_replace('~\[([a-z_\-]+)\]~ie', 'date(\'\\1\')', $fileName);
-		$fileName = empty($fileName) ? 'TYPO3Mind_' . mt_rand() . '.mm' : $fileName;
+		$fileName = empty($fileName) ? 'TYPO3Mind_' . mt_rand() . '.json' : $fileName;
 
 		$fileName = '/typo3temp/' . $fileName;
 
@@ -455,11 +455,10 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 		$json['id'] = 'root'.mt_rand();
 		$json['title'] = $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
 		$json['dimensions'] = array('x'=>4000,'y'=>2000);
-		$json['dates'] = array('created'=>time(),'modified'=>time());
+		$json['dates'] = array('created'=>time().'000','modified'=>time().'000' );
 		$json['autosave'] = false;
-		$json['mindmap'] = array();
+		$json['mindmap'] = $this->xml2array($xml);
 
-//		var_dump($rootNode);
 		echo json_encode($json);
 		exit;
 
@@ -501,6 +500,121 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	public function convertLTGT($string)
 	{
 		return str_replace(array('<', '>'), array('|lt|', '|gt|'), $string);
+	}
+
+	/**
+	 * generates the mindmap json array
+	 * @param SimpleXMLElement $xml
+	 * @return array
+	 */
+	private function xml2array(SimpleXMLElement $xml){
+		$return = array();
+
+//		var_dump($xml->node);
+
+		foreach ($xml as $node) {
+
+			$id = 'root'.  mt_rand();
+			$return['root'] = array(
+				'id'=>$id,
+				'parentId'=>null,
+				'text'=>$this->getText( $node ),
+				'offset'=>$this->getOffSet(0,0),
+				'foldChildren'=>false,
+				'branchColor'=>'#000',
+				'children'=>$this->getChildren($node, $id),
+			);
+
+//var_dump( $node->getName() );
+//var_dump( $node->count() );
+//var_dump( $node->attributes()->TEXT );
+////var_dump( $node->children() );
+//echo '<hr>';
+//exit;
+		}
+
+
+
+		return $return;
+	}
+
+	private function getChildren(SimpleXMLElement $node,$parentId){
+		if( $node->count() == 0 ){
+			return array();
+		}
+
+		$return = array();
+		$i=0;
+		foreach ($node->children() as $child) {
+			$return[] = array(
+				'id'=>'child'.  mt_rand(),
+				'parentId'=>$parentId,
+				'text'=>$this->getText( $child ),
+				'offset' => $this->getOffSet( -150 , $i*100 ),
+				'foldChildren'=>false,
+				'branchColor'=>'#000',
+				'children'=>array(),
+			);
+			++$i;
+		}
+		return $return;
+	}
+
+		/**
+	 *
+	 * @param SimpleXMLElement $xml
+	 * @param string $attributeName
+	 * @return type
+	 */
+	private function getAttribute(SimpleXMLElement $xml,$attributeName){
+		return (string)$xml->attributes()->{$attributeName};
+	}
+
+	/**
+	 *
+	 * @param string|SimpleXMLElement $caption
+	 * @param string $style
+	 * @param string $weight
+	 * @param string $decoration
+	 * @param int $size
+	 * @param string $color
+	 * @return array
+	 */
+	private function getText($caption,$style='normal',$weight='normal',$decoration='none',$size=14,$color='#000000'){
+
+		if( $caption instanceof SimpleXMLElement){
+			$caption = $this->getAttribute($caption, 'TEXT');
+		}
+
+		$style = empty($style) ? 'normal' : $style;
+		$weight = empty($weight) ? 'normal' : $weight;
+		$decoration = empty($decoration) ? 'none' : $decoration;
+		$size = empty($size) ? 14 : $size;
+		$color = empty($color) ? '#000000' : $color;
+
+		return array(
+			'caption'=>$caption,
+			'font'=>array(
+				'style'=>$style,
+				'weight'=>$weight,
+				'decoration'=>$decoration,
+				'size'=>$size,
+				'color'=>$color,
+			),
+		);
+	}
+
+	/**
+	 *
+	 * @param int $x
+	 * @param int $y
+	 * @return array
+	 */
+	private function getOffSet($x,$y){
+		return array(
+			'x'=>$x,
+			'y'=>$y,
+		);
 	}
 
 }
