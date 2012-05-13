@@ -108,6 +108,10 @@ module.tx_typo3mind {
 		# Tx_Typo3mind_Domain_Export_Formats_[Format Name]
 		exportFormatClass = Freemind
 
+		# Enter here the method/function names to disable the node creating
+		# possible values: getDatabaseNode,getServerNode,getTYPONode,getSecurityNode,getExtensionNode
+		disabledNodeFunctions =
+
 		# Only available for the left side of the mind map tree.
 		design {
 			# function name, color index for moduls count(settings->BeUsersHandleRow), as many colors as you like

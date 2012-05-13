@@ -1116,7 +1116,17 @@ abstract class Tx_Typo3mind_Domain_Export_mmCommon /*
 			$this->dbTables[$tablename][$row['uid']] = $row;
 		}
 		return true;
-	}
+	} /* </loadDatabaseTable> */
 
-/* </loadDatabaseTable> */
+
+	/**
+	 * @param string $functionName
+	 * @return boolean
+	 */
+	protected function mainNodeIsDisabled($functionName){
+
+		if( empty($this->settings['disabledNodeFunctions']) ){ return false; }
+		return stristr($this->settings['disabledNodeFunctions'],$functionName) === false ? false : true;
+
+	}
 }

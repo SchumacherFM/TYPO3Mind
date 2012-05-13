@@ -84,6 +84,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 		$rootNode = $this->addNode($this->mapXmlRoot, $attributes);
 
 		$ThisFileInfoNode = $this->addImgNode($rootNode, array(
+			'POSITION' => 'left',
 			'TEXT' => $this->parentObject->translate('tree.fileInfo'),
 				)
 		);
@@ -115,7 +116,8 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	 */
 	public function xmlentities($value = '')
 	{
-		return trim(str_replace(array('&', '"', "'", '<', '>'), array('&amp;', '&quot;', '&apos;', '&lt;', '&gt;'), (string) $value));
+		return $value;
+//		return trim(str_replace(array('&', '"', "'", '<', '>'), array('&amp;', '&quot;', '&apos;', '&lt;', '&gt;'), (string) $value));
 	}
 
 	/**
@@ -372,23 +374,7 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	 */
 	public function addImgNote(SimpleXMLElement $xmlNode, $attributes, $imgRelPath, $imgHTML = '', $noteHTML = '', $addEdgeAttr = array(), $addFontAttr = array())
 	{
-
-		$iconLocal = str_replace('../', '', $imgRelPath);
-
-		$img = '';
-		if (is_file(PATH_site . $iconLocal)) {
-			$img = '<img ' . $imgHTML . ' src="' . $this->parentObject->getBEHttpHost() . $iconLocal . '"/>@#160;@#160;';
-		}
-
-		$htmlContent = array(
-			'NODE' => $img . htmlspecialchars($attributes['TEXT']),
-			'NOTE' => $noteHTML,
-		);
-
-		$childNode = $this->addRichContentNote($xmlNode, $attributes, $htmlContent, $addEdgeAttr, $addFontAttr, 'BOTH');
-
-
-		return $childNode;
+		return $this->addNode($xmlNode, $attributes);
 	}
 
 	/**
@@ -446,34 +432,22 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 		$fileName = str_replace('[sitename]', preg_replace('~[^a-z0-9]+~i', '', $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']), $this->parentObject->settings['outputFileName']);
 
 		$fileName = preg_replace('~\[([a-z_\-]+)\]~ie', 'date(\'\\1\')', $fileName);
-		$fileName = empty($fileName) ? 'TYPO3Mind_' . mt_rand() . '.json' : $fileName;
+		$fileName = empty($fileName) ? 'TYPO3Mind_' . mt_rand() . '.json' : str_replace('.mm', '.json', $fileName);
 
 		$fileName = '/typo3temp/' . $fileName;
 
 
 		$json = array();
-		$json['id'] = 'root'.mt_rand();
+		$json['id'] = 'root' . mt_rand();
 		$json['title'] = $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
-		$json['dimensions'] = array('x'=>4000,'y'=>2000);
-		$json['dates'] = array('created'=>time().'000','modified'=>time().'000' );
+		$json['dimensions'] = array('x' => 4000, 'y' => 2000);
+		$json['dates'] = array('created' => time() . '000', 'modified' => time() . '000');
 		$json['autosave'] = false;
-		$json['mindmap'] = $this->xml2array($xml);
+		$json['mindmap'] = $this->getMindMapStructure($xml);
 
-		echo json_encode($json);
-		exit;
+		$bytesWritten = file_put_contents(PATH_site . $fileName, json_encode($json));
 
-
-//		$xml = str_replace(
-//				array('|lt|', '|gt|', '@#', '&amp;gt;', '&amp;lt;', '&amp;amp;'),
-//				array('<', '>', '&#', '&gt;', '&lt;', '&amp;'),
-//				$xml->asXML()
-//		);
-
-
-
-		$bytesWritten = file_put_contents(PATH_site . $fileName, $xml);
-
-		unset($xml);
+		unset($json);
 
 		if ($bytesWritten === false) {
 			die('<h2>Write to file ' . PATH_site . $fileName . ' failed ... check permissions!</h2>');
@@ -507,67 +481,139 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	 * @param SimpleXMLElement $xml
 	 * @return array
 	 */
-	private function xml2array(SimpleXMLElement $xml){
+	private function getMindMapStructure(SimpleXMLElement $xml)
+	{
 		$return = array();
-
-//		var_dump($xml->node);
 
 		foreach ($xml as $node) {
 
-			$id = 'root'.  mt_rand();
+			$id = $this->generateId('root');
 			$return['root'] = array(
-				'id'=>$id,
-				'parentId'=>null,
-				'text'=>$this->getText( $node ),
-				'offset'=>$this->getOffSet(0,0),
-				'foldChildren'=>false,
-				'branchColor'=>'#000',
-				'children'=>$this->getChildren($node, $id),
+				'id' => $id,
+				'parentId' => null,
+				'text' => $this->getText($node),
+				'offset' => $this->getOffSet(),
+				'foldChildren' => false,
+				'branchColor' => '#ececec',
+				'children' => $this->getChildren($node, $id),
 			);
-
-//var_dump( $node->getName() );
-//var_dump( $node->count() );
-//var_dump( $node->attributes()->TEXT );
-////var_dump( $node->children() );
-//echo '<hr>';
-//exit;
 		}
-
-
 
 		return $return;
 	}
 
-	private function getChildren(SimpleXMLElement $node,$parentId){
-		if( $node->count() == 0 ){
+	const NODE_WIDTH = 160;
+	const NODE_HEIGHT = 70;
+	const NODE_HEIGHT_MARGIN = 1;
+
+	/**
+	 * sets the height where a node will be placed
+	 *
+	 * @param int $startHeight
+	 * @param int $nodeCount
+	 * @param int $iterator
+	 * @return int
+	 */
+	private function getHeight($startHeight, $nodeCount, $iterator)
+	{
+		$nodeBox = self::NODE_HEIGHT + (2 * self::NODE_HEIGHT_MARGIN);
+		$totalHeight = $nodeCount * $nodeBox;
+		$totalHeightHalf = -1 * ceil($totalHeight / 2);
+		$currentHeight = $totalHeightHalf + ($iterator * $nodeBox );
+		return $startHeight + $currentHeight;
+	}
+
+	/**
+	 *
+	 * @param SimpleXMLElement $node
+	 * @param string $parentId
+	 * @param int $leftOrRight if -1 then left if 1 then right
+	 * @param int $depth
+	 * @param int $startHeight
+	 * @return type
+	 */
+	private function getChildren(SimpleXMLElement $node, $parentId, $leftOrRight, $depth = 0, $startHeight = 0)
+	{
+
+		$nodeCount = $node->count();
+		if ($nodeCount == 0 || $depth > 2) { // limited to 2 otherwise the browser crashes
 			return array();
 		}
+		++$depth;
 
+		// get left right count
+		$leftRightCount = array(-1 => 0, 1 => 0);
+		if ($depth == 1) {
+			foreach ($node->children() as $child) {
+				if (stristr($this->getAttribute($child, 'POSITION'), 'left') !== false) {
+					++$leftRightCount[-1];
+				} else {
+					++$leftRightCount[1];
+				}
+			}
+		}//endif
+
+
+		$leftRightCounter = array(-1 => 0, 1 => 0);
 		$return = array();
-		$i=0;
+
+		$i = 0;
 		foreach ($node->children() as $child) {
+
+			if ($depth == 1) {
+				if (stristr($this->getAttribute($child, 'POSITION'), 'left') !== false) {
+					$leftOrRight = -1;
+				} else {
+					$leftOrRight = 1;
+				}
+				$i = $leftRightCounter[$leftOrRight];
+				++$leftRightCounter[$leftOrRight];
+
+				$nodeCount = $leftRightCount[$leftOrRight];
+			}//endif depth == 1
+
+			$nodeHeight = $this->getHeight($startHeight, $nodeCount, $i);
+
+			$id = $this->getAttribute($child, 'ID'); // $this->generateId('child');
 			$return[] = array(
-				'id'=>'child'.  mt_rand(),
-				'parentId'=>$parentId,
-				'text'=>$this->getText( $child ),
-				'offset' => $this->getOffSet( -150 , $i*100 ),
-				'foldChildren'=>false,
-				'branchColor'=>'#000',
-				'children'=>array(),
+				'id' => $id,
+				'parentId' => $parentId,
+				'text' => $this->getText($child),
+				'offset' => $this->getOffSet($leftOrRight * $depth * self::NODE_WIDTH, $nodeHeight),
+				'foldChildren' => $this->getAttributeFolded($child),
+				'branchColor' => '#ececec',
+				'children' => $this->getChildren($child, $id, $leftOrRight, $depth, $nodeHeight),
 			);
 			++$i;
 		}
 		return $return;
 	}
 
-		/**
+	/**
 	 *
 	 * @param SimpleXMLElement $xml
 	 * @param string $attributeName
 	 * @return type
 	 */
-	private function getAttribute(SimpleXMLElement $xml,$attributeName){
-		return (string)$xml->attributes()->{$attributeName};
+	private function getAttribute(SimpleXMLElement $xml, $attributeName)
+	{
+		return (string) $xml->attributes()->{$attributeName};
+	}
+
+	/**
+	 *
+	 * @param SimpleXMLElement $xml
+	 * @return boolean
+	 */
+	private function getAttributeFolded(SimpleXMLElement $xml)
+	{
+		$folded = $this->getAttribute($xml, 'FOLDED');
+		if ($folded === 'true') {
+			$folded = true;
+		} elseif ($folded === '') {
+			$folded = true;
+		}
+		return $folded;
 	}
 
 	/**
@@ -580,10 +626,17 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 	 * @param string $color
 	 * @return array
 	 */
-	private function getText($caption,$style='normal',$weight='normal',$decoration='none',$size=14,$color='#000000'){
+	private function getText($caption, $style = 'normal', $weight = 'normal', $decoration = 'none', $size = 14, $color = '#000000')
+	{
 
-		if( $caption instanceof SimpleXMLElement){
+		if ($caption instanceof SimpleXMLElement) {
 			$caption = $this->getAttribute($caption, 'TEXT');
+		}
+
+		$caption = (htmlspecialchars_decode($caption));
+
+		if (stristr($caption, '@#')) {
+			$caption = preg_replace('~@#[0-9]{3};~e', 'chr(\\1)', $decoration);
 		}
 
 		$style = empty($style) ? 'normal' : $style;
@@ -593,28 +646,40 @@ class Tx_Typo3mind_Domain_Export_Formats_Drichard implements Tx_Typo3mind_Domain
 		$color = empty($color) ? '#000000' : $color;
 
 		return array(
-			'caption'=>$caption,
-			'font'=>array(
-				'style'=>$style,
-				'weight'=>$weight,
-				'decoration'=>$decoration,
-				'size'=>$size,
-				'color'=>$color,
+			'caption' => $caption,
+			'font' => array(
+				'style' => $style,
+				'weight' => $weight,
+				'decoration' => $decoration,
+				'size' => $size,
+				'color' => $color,
 			),
 		);
 	}
 
 	/**
 	 *
-	 * @param int $x
-	 * @param int $y
+	 * @param int $x if negativ then left, else right position
+	 * @param int $y if negativ then below else above
 	 * @return array
 	 */
-	private function getOffSet($x,$y){
+	private function getOffSet($x = 0, $y = 0)
+	{
 		return array(
-			'x'=>$x,
-			'y'=>$y,
+			'x' => $x,
+			'y' => $y,
 		);
+	}
+
+	/**
+	 * generates a unique id
+	 *
+	 * @param string $prefix
+	 * @return string
+	 */
+	private function generateId($prefix)
+	{
+		return uniqid($prefix);
 	}
 
 }

@@ -142,6 +142,7 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 	{
 
 		$MainNode = $this->mmFormat->addImgNode($xmlNode, array(
+			'POSITION' => 'right',
 			'FOLDED' => 'true',
 			'TEXT' => $this->translate('tree.syslanguage'),
 				), 'typo3/sysext/t3skin/images/icons/mimetypes/x-sys_language.gif');
@@ -185,6 +186,7 @@ class Tx_Typo3mind_Domain_Export_mmRightSide extends Tx_Typo3mind_Domain_Export_
 
 		if (count($pageDomains) > 0) {
 			$MainNode = $this->mmFormat->addImgNode($xmlNode, array(
+				'POSITION' => 'right',
 				'FOLDED' => 'true',
 				'TEXT' => $this->translate('tree.sysdomains'),
 					), 'typo3/sysext/t3skin/images/icons/mimetypes/x-content-domain.png');

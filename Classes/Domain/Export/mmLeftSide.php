@@ -650,6 +650,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	 */
 	public function getTYPONode(SimpleXMLElement $xmlNode)
 	{
+		if( $this->mainNodeIsDisabled(__FUNCTION__) ){ return false; }
 
 		$MainNode = $this->mmFormat->addImgNode($xmlNode, array(
 			'POSITION' => 'left',
@@ -680,6 +681,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	 */
 	public function getSecurityNode(SimpleXMLElement $xmlNode)
 	{
+		if( $this->mainNodeIsDisabled(__FUNCTION__) ){ return false; }
 
 		$secMainNode = $this->mmFormat->addImgNode($xmlNode, array(
 			'POSITION' => 'left',
@@ -704,6 +706,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	 */
 	public function getServerNode(SimpleXMLElement $xmlNode)
 	{
+		if( $this->mainNodeIsDisabled(__FUNCTION__) ){ return false; }
 
 		$MainNode = $this->mmFormat->addImgNode($xmlNode, array(
 			'POSITION' => 'left',
@@ -734,6 +737,7 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	 */
 	public function getDatabaseNode(SimpleXMLElement $xmlNode)
 	{
+		if( $this->mainNodeIsDisabled(__FUNCTION__) ){ return false; }
 
 		$MainNode = $this->mmFormat->addImgNode($xmlNode, array(
 			'POSITION' => 'left',
@@ -852,6 +856,8 @@ class Tx_Typo3mind_Domain_Export_mmLeftSide extends Tx_Typo3mind_Domain_Export_m
 	public function getExtensionNode(SimpleXMLElement $xmlNode)
 	{
 		global $TCA;
+		
+		if( $this->mainNodeIsDisabled(__FUNCTION__) ){ return false; }
 
 		$extensionManager = new Tx_Typo3mind_Utility_ExtensionManager();
 
