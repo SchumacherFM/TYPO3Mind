@@ -109,7 +109,7 @@ module.tx_typo3mind {
 		exportFormatClass = Freemind
 
 		# Enter here the method/function names to disable the node creating
-		# possible values: getDatabaseNode,getServerNode,getTYPONode,getSecurityNode,getExtensionNode
+		# possible values: getDatabaseNode, getServerNode, getTYPONode, getSecurityNode, getExtensionNode
 		disabledNodeFunctions =
 
 		# Only available for the left side of the mind map tree.
