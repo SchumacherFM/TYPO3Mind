@@ -4,7 +4,7 @@
  *  Copyright notice
  *
  *  (c) 2011 Cyrill Schumacher <Cyrill@Schumacher.fm>
- *  			
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -49,8 +49,8 @@ class Tx_Freemind2_Domain_Model_FmConfigTest extends Tx_Extbase_Tests_Unit_BaseT
 	public function tearDown() {
 		unset($this->fixture);
 	}
-	
-	
+
+
 	/**
 	 * @test
 	 */
@@ -59,7 +59,7 @@ class Tx_Freemind2_Domain_Model_FmConfigTest extends Tx_Extbase_Tests_Unit_BaseT
 	/**
 	 * @test
 	 */
-	public function setNameForStringSetsName() { 
+	public function setNameForStringSetsName() {
 		$this->fixture->setName('Conceived at T3CON10');
 
 		$this->assertSame(
@@ -67,7 +67,7 @@ class Tx_Freemind2_Domain_Model_FmConfigTest extends Tx_Extbase_Tests_Unit_BaseT
 			$this->fixture->getName()
 		);
 	}
-	
+
 	/**
 	 * @test
 	 */
@@ -76,7 +76,7 @@ class Tx_Freemind2_Domain_Model_FmConfigTest extends Tx_Extbase_Tests_Unit_BaseT
 	/**
 	 * @test
 	 */
-	public function setDefaultValueForStringSetsDefaultValue() { 
+	public function setDefaultValueForStringSetsDefaultValue() {
 		$this->fixture->setDefaultValue('Conceived at T3CON10');
 
 		$this->assertSame(
@@ -84,6 +84,5 @@ class Tx_Freemind2_Domain_Model_FmConfigTest extends Tx_Extbase_Tests_Unit_BaseT
 			$this->fixture->getDefaultValue()
 		);
 	}
-	
+
 }
-?>

@@ -1,2 +1,0 @@
-  # cat=basic; type=string; label=Enter here a random string/password which you have to submit via URL/GET param when downloading the .mm file via direct link and without logging into the T3 backend. Usage of eID.
-apikey = 

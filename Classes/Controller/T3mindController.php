@@ -72,13 +72,6 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	protected $pageUid;
 
 	/**
-	 * apikey the key to authenticate with an eID request
-	 *
-	 * @var string
-	 */
-	protected $apikey;
-
-	/**
 	 * helpers object
 	 *
 	 * @var Tx_Typo3mind_Utility_Helpers
@@ -111,15 +104,10 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	public function initializeAction()
 	{
 		$this->pageUid = (int) t3lib_div::_GET('id');
-		$this->apikey = md5(t3lib_div::_GET('apikey'));
 		$this->helpers = new Tx_Typo3mind_Utility_Helpers();
 		$this->extConfSettings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['typo3mind']);
 		$this->tt = t3lib_div::makeInstance('t3lib_timetrack');
 		$this->tt->start();
-
-		if (!isset($this->extConfSettings['apikey']) || trim($this->extConfSettings['apikey']) == '') {
-			throw new Exception('Please set an API Key in the Extension Manager. 1336458461');
-		}
 
 		if (!is_array($this->settings)) {
 			throw new Exception('Missing TypoScript configuration.
@@ -183,9 +171,9 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 		$this->view->assign('duration', ($this->tt->getDifferenceToStarttime() / 1000));
 	}
 
-	/*	 * ***********************************************************************************************
+	/*************************************************************************************************
 	  NOT USED, but kept for later ....
-	 * *********************************************************************************************** */
+	 *************************************************************************************************/
 
 	/**
 	 * action editPages
@@ -256,33 +244,6 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 
 		$this->view->assign('options', $options);
 		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'title'));
-	}
-
-	/**
-	 * action export via eID
-	  http://xxxxxxxxxxxxx/index.php?eID=typo3mind&id=6&apikey=xxxxxxx
-	  http://stuff.lime-flavour.de/link-typo3-eid-use-with-extbase-and-fluid/
-	 *
-	 * $apikey string the key
-	 * @return void
-	 */
-	public function exportEIDAction()
-	{
-
-		if ($this->apikey <> md5($this->extConfSettings['apikey'])) {
-			die('API Keys does not match!');
-		}
-
-		throw new Exception('Still not supported');
-
-		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings, $this->t3MindRepository);
-		$typo3tempFilename = $expObj->getContent();
-
-		echo '<pre>';
-		var_dump($typo3tempFilename);
-		echo '</pre>';
-
-		return '';
 	}
 
 	/**

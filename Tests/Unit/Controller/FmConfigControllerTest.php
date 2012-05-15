@@ -4,7 +4,7 @@
  *  Copyright notice
  *
  *  (c) 2011 Cyrill Schumacher <Cyrill@Schumacher.fm>
- *  			
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -58,4 +58,3 @@ class Tx_Freemind2_Controller_FmConfigControllerTest extends Tx_Extbase_Tests_Un
 	}
 
 }
-?>

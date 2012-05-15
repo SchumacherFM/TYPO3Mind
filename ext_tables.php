@@ -45,7 +45,7 @@ if(TYPO3_MODE === 'BE') {
 		'fm2be',		// Submodule key
 		'',				// Position
 		array(
-			'T3mind' => 'export, exportEID, dispatch, editPages, editPagesSave',
+			'T3mind' => 'export, dispatch, editPages, editPagesSave',
 		),
 		array(
 			'access' => 'user,group',
