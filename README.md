@@ -36,3 +36,4 @@ How to install:
 ====
 Please see http://forge.typo3.org/projects/extension-typo3mind/issues
 
+May 2012: Recruit some contributors :-)

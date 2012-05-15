@@ -1,5 +1,6 @@
 <?php
-/***************************************************************
+
+/* * *************************************************************
  *  Copyright notice
  *
  *  (c) 2011 Cyrill Schumacher <Cyrill@Schumacher.fm>
@@ -21,7 +22,7 @@
  *  GNU General Public License for more details.
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * ************************************************************* */
 
 /**
  *
@@ -30,7 +31,8 @@
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *
  */
-class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller_ActionController {
+class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller_ActionController
+{
 
 	/**
 	 * t3MindRepository
@@ -45,7 +47,8 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 * @param Tx_Typo3mind_Domain_Repository_T3mindRepository $t3MindRepository
 	 * @return void
 	 */
-	public function injectT3mindRepository(Tx_Typo3mind_Domain_Repository_T3mindRepository $t3MindRepository) {
+	public function injectT3mindRepository(Tx_Typo3mind_Domain_Repository_T3mindRepository $t3MindRepository)
+	{
 		$this->t3MindRepository = $t3MindRepository;
 	}
 
@@ -93,9 +96,10 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 * Checks if the pageUid has been set, if not throws an error
 	 * @param string $position
 	 */
-	private function checkPageUid($position){
-		if( $this->pageUid == 0 ){
-			throw new Exception( $this->translate('error.missingPageUid') .' / Position: '.$position );
+	private function checkPageUid($position)
+	{
+		if ($this->pageUid == 0) {
+			throw new Exception($this->translate('error.missingPageUid') . ' / Position: ' . $position);
 		}
 	}
 
@@ -104,20 +108,31 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 *
 	 * @return void
 	 */
-	public function initializeAction() {
-		$this->pageUid = (int)t3lib_div::_GET('id');
+	public function initializeAction()
+	{
+		$this->pageUid = (int) t3lib_div::_GET('id');
 		$this->apikey = md5(t3lib_div::_GET('apikey'));
 		$this->helpers = new Tx_Typo3mind_Utility_Helpers();
-        $this->extConfSettings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['typo3mind']);
+		$this->extConfSettings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['typo3mind']);
 		$this->tt = t3lib_div::makeInstance('t3lib_timetrack');
 		$this->tt->start();
-		$this->t3mmExport = new Tx_Typo3mind_Domain_Export_mmMain($this->settings,$this->t3MindRepository);
 
-
-		if( !isset($this->extConfSettings['apikey']) || trim($this->extConfSettings['apikey'])=='' ){
+		if (!isset($this->extConfSettings['apikey']) || trim($this->extConfSettings['apikey']) == '') {
 			throw new Exception('Please set an API Key in the Extension Manager. 1336458461');
 		}
 
+		if (!is_array($this->settings)) {
+			throw new Exception('Missing TypoScript configuration.
+			Please add it and use a folder in the page tree where TYPO3Mind can
+			access its TypoScript configuration /  1336458345');
+		}
+
+		if (!($this->t3MindRepository instanceof Tx_Typo3mind_Domain_Repository_T3mindRepository)) {
+			throw new Exception('Missing the Tx_Typo3mind_Domain_Repository_T3mindRepository class. There is really
+				something wrong. / 1336458348');
+		}
+
+		$this->t3mmExport = new Tx_Typo3mind_Domain_Export_mmMain($this->settings, $this->t3MindRepository);
 	}
 
 	/**
@@ -125,32 +140,35 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 *
 	 * @return void
 	 */
-	public function dispatchAction() {
+	public function dispatchAction()
+	{
 
-		$this->checkPageUid(__LINE__.'/1336458130');
+		$this->checkPageUid(__LINE__ . ' / 1336458130');
 
-		$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
+		$T3mind = $this->t3MindRepository->findOneBypageUid($this->pageUid);
 
-		if( $T3mind == NULL ){
+		if ($T3mind == NULL) {
 			$T3mind = new Tx_Typo3mind_Domain_Model_T3mind();
-			$T3mind->setpageUid( $this->pageUid );
+			$T3mind->setpageUid($this->pageUid);
 			$this->t3MindRepository->add($T3mind);
 			$persistenceManager = Tx_Extbase_Dispatcher::getPersistenceManager();
 			$persistenceManager->persistAll();
-			$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
+			$T3mind = $this->t3MindRepository->findOneBypageUid($this->pageUid);
 		}
 
-		$T3_THIS_LOCATION = urlencode('mod.php?M=web_list&id='.$this->pageUid);
-		$this->view->assign('redirect','alt_doc.php?returnUrl='.$T3_THIS_LOCATION.'&edit[tx_typo3mind_domain_model_t3mind]['.$T3mind->getUid().']=edit');
-		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'uid,title' ) );
+		$T3_THIS_LOCATION = urlencode('mod.php?M=web_list&id=' . $this->pageUid);
+		$this->view->assign('redirect', 'alt_doc.php?returnUrl=' . $T3_THIS_LOCATION . '&edit[tx_typo3mind_domain_model_t3mind][' . $T3mind->getUid() . ']=edit');
+		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'uid,title'));
 	}
+
 	/**
 	 * action export
 	 * @param none
 	 * @return void
 	 */
-	public function exportAction() {
-		$this->checkPageUid(__LINE__.'/1336458153');
+	public function exportAction()
+	{
+		$this->checkPageUid(__LINE__ . '/1336458153');
 
 		libxml_use_internal_errors(true);
 		$this->settings['pageUid'] = $this->pageUid;
@@ -158,17 +176,17 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 		$mmFile = $this->t3mmExport->getContent();
 
 		$this->view->assign('downloadURL', $mmFile['file']);
-		$this->view->assign('filename', basename($mmFile['file']) );
-		$this->view->assign('filekb', $mmFile['filekb'] );
-		$this->view->assign('iserror', $mmFile['iserror'] );
-		$this->view->assign('errors', $mmFile['errors'] );
-		$this->view->assign('duration', ($this->tt->getDifferenceToStarttime() /1000) );
+		$this->view->assign('filename', basename($mmFile['file']));
+		$this->view->assign('filekb', $mmFile['filekb']);
+		$this->view->assign('iserror', $mmFile['iserror']);
+		$this->view->assign('errors', $mmFile['errors']);
+		$this->view->assign('duration', ($this->tt->getDifferenceToStarttime() / 1000));
 	}
 
+	/*	 * ***********************************************************************************************
+	  NOT USED, but kept for later ....
+	 * *********************************************************************************************** */
 
-	/*************************************************************************************************
-		NOT USED, but kept for later ....
-	*************************************************************************************************/
 	/**
 	 * action editPages
 	 *
@@ -176,31 +194,31 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 * @dontvalidate $T3mind
 	 * @return void
 	 */
-	public function editPagesAction(Tx_Typo3mind_Domain_Model_T3mind $T3mind = NULL) {
+	public function editPagesAction(Tx_Typo3mind_Domain_Model_T3mind $T3mind = NULL)
+	{
 
 		die('<h1>Use a TYPO3 Sysfolder and edit there the TYPO3Mind node properties for a page!</h1>');
 
-		/*TODO: */
+		/* TODO: */
 		if ($T3mind == NULL) {
 
-			$T3mind = $this->t3MindRepository->findOneBypageUid( $this->pageUid );
+			$T3mind = $this->t3MindRepository->findOneBypageUid($this->pageUid);
 
-			if( $T3mind == NULL ){
+			if ($T3mind == NULL) {
 				$T3mind = t3lib_div::makeInstance('Tx_Typo3mind_Domain_Model_T3mind');
-				$T3mind->setpageUid( $this->pageUid );
+				$T3mind->setpageUid($this->pageUid);
 				$this->t3MindRepository->add($T3mind);
 			}
 		}
 
 
-		$this->view->assign('T3mind', $T3mind );
-		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'uid,title' ) );
-		$this->view->assign('icons', $this->t3MindRepository->getIcons( $this->settings ) );
-		$this->view->assign('userIcons', $this->t3MindRepository->getUserIcons( $this->settings ) );
-		$this->view->assign('nodeStyles', $this->helpers->trimExplodeVK(',', $this->settings['nodeStyles'] ) );
-		$this->view->assign('edgeStyles', $this->helpers->trimExplodeVK(',', $this->settings['edgeStyles'] ) );
-		$this->view->assign('edgeWidths', $this->helpers->trimExplodeVK(',', $this->settings['edgeWidths'] ) );
-
+		$this->view->assign('T3mind', $T3mind);
+		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'uid,title'));
+		$this->view->assign('icons', $this->t3MindRepository->getIcons($this->settings));
+		$this->view->assign('userIcons', $this->t3MindRepository->getUserIcons($this->settings));
+		$this->view->assign('nodeStyles', $this->helpers->trimExplodeVK(',', $this->settings['nodeStyles']));
+		$this->view->assign('edgeStyles', $this->helpers->trimExplodeVK(',', $this->settings['edgeStyles']));
+		$this->view->assign('edgeWidths', $this->helpers->trimExplodeVK(',', $this->settings['edgeWidths']));
 	}
 
 	/**
@@ -210,14 +228,15 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 * @param array $options
 	 * @return void
 	 */
-	public function editPagesSaveAction(Tx_Typo3mind_Domain_Model_T3mind $T3mind, $options ) {
+	public function editPagesSaveAction(Tx_Typo3mind_Domain_Model_T3mind $T3mind, $options)
+	{
 
 		die('<h1>Use a TYPO3 Sysfolder and edit there the TYPO3Mind node properties for a page!</h1>');
 
-		/*TODO: */
+		/* TODO: */
 
-		foreach($options as $k=>$v){
-			$options[$k] = (int)$v;
+		foreach ($options as $k => $v) {
+			$options[$k] = (int) $v;
 		}
 
 		$this->pageUid = isset($options['pageUid']) ? $options['pageUid'] : 0;
@@ -229,34 +248,34 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 		echo '</pre>';
 
 
-		if( $this->pageUid == 0 ){
+		if ($this->pageUid == 0) {
 			$this->redirect('editPages');
 		}
 
 		$this->t3MindRepository->update($T3mind);
 
-		$this->view->assign('options', $options );
-		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'title' ) );
-
+		$this->view->assign('options', $options);
+		$this->view->assign('page', t3lib_BEfunc::getRecord('pages', $this->pageUid, 'title'));
 	}
 
 	/**
 	 * action export via eID
-	 http://xxxxxxxxxxxxx/index.php?eID=typo3mind&id=6&apikey=xxxxxxx
-	 http://stuff.lime-flavour.de/link-typo3-eid-use-with-extbase-and-fluid/
+	  http://xxxxxxxxxxxxx/index.php?eID=typo3mind&id=6&apikey=xxxxxxx
+	  http://stuff.lime-flavour.de/link-typo3-eid-use-with-extbase-and-fluid/
 	 *
 	 * $apikey string the key
 	 * @return void
 	 */
-	public function exportEIDAction() {
+	public function exportEIDAction()
+	{
 
-		if( $this->apikey <> md5($this->extConfSettings['apikey']) ){
+		if ($this->apikey <> md5($this->extConfSettings['apikey'])) {
 			die('API Keys does not match!');
 		}
 
 		throw new Exception('Still not supported');
 
-		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings,$this->t3MindRepository);
+		$expObj = new Tx_Typo3mind_Export_mmExport($this->settings, $this->t3MindRepository);
 		$typo3tempFilename = $expObj->getContent();
 
 		echo '<pre>';
@@ -264,7 +283,6 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 		echo '</pre>';
 
 		return '';
-
 	}
 
 	/**
@@ -274,7 +292,8 @@ class Tx_Typo3mind_Controller_T3mindController extends Tx_Extbase_MVC_Controller
 	 * @param array $arguments Array of arguments to be used with vsprintf on the translated item.
 	 * @return string Translation output.
 	 */
-	protected function translate($key, $arguments = null) {
+	protected function translate($key, $arguments = null)
+	{
 		return Tx_Extbase_Utility_Localization::translate($key, 'Typo3mind', $arguments);
 	}
 
