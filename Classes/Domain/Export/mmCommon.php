@@ -105,6 +105,12 @@ abstract class Tx_Typo3mind_Domain_Export_mmCommon /*
 	protected $mmFormat;
 
 	/**
+	 *
+	 * @var array
+	 */
+	private $_iconCache;
+
+	/**
 	 * Constructor
 	 *
 	 * @param array $settings
@@ -213,6 +219,22 @@ abstract class Tx_Typo3mind_Domain_Export_mmCommon /*
 	}
 
 	/**
+	 * gets the subfolder where TYPO3 is installed
+	 * @return string
+	 */
+	protected function getRelInstallPathPart(){
+		// getting the subfolders where typo3 is installed
+		// Bug #37931
+		$path = '';
+		if( PATH_site.TYPO3_mainDir <> PATH_typo3 ){
+			$path = str_replace(array(PATH_site,TYPO3_mainDir), array('',''), PATH_typo3);
+			$path .= '/';
+		}
+		return $path;
+	}
+
+
+	/**
 	 * returns the http_host
 	 *
 	 * @param	none
@@ -220,7 +242,8 @@ abstract class Tx_Typo3mind_Domain_Export_mmCommon /*
 	 */
 	public function getBEHttpHost()
 	{
-		return $this->httpHosts['backend'];
+
+		return $this->httpHosts['backend'].$this->getRelInstallPathPart();
 	}
 
 	/**
@@ -232,10 +255,11 @@ abstract class Tx_Typo3mind_Domain_Export_mmCommon /*
 	{
 		if (isset($this->sysDomains[$page_Uid])) {
 			$httpWhat = t3lib_div::getIndpEnv('TYPO3_SSL') ? 'https' : 'http';
-			/* how can you be sure to know that this FE hosts supports SSL when you generate the .mm file using a different BE host with SSL? */
+			/* how can you be sure to know that this FE hosts supports SSL when you
+			 * generate the .mm file using a different BE host with SSL? */
 			$this->httpHosts['frontend'] = $httpWhat . '://' . $this->sysDomains[$page_Uid] . '/';
 		}
-		return $this->httpHosts['frontend'];
+		return $this->httpHosts['frontend'].$this->getRelInstallPathPart();
 	}
 
 	/**
@@ -550,7 +574,9 @@ abstract class Tx_Typo3mind_Domain_Export_mmCommon /*
 						$htmlContent[] = '<p>' . htmlspecialchars($item->pubDate) . '</p>';
 						$htmlContent[] = '<p>' . $item->description . '</p>';
 
-						$this->mmFormat->addRichContentNote($rssHeadNode, array('TEXT' => htmlspecialchars($item->title), 'LINK' => $item->link), implode('', $htmlContent));
+						$this->mmFormat->addRichContentNote($rssHeadNode, array(
+							'TEXT' => htmlspecialchars($item->title), 'LINK' => $item->link
+						), implode('', $htmlContent));
 					}/* endforeach */
 				}/* endif rss 2.0 */ else {
 					$this->mmFormat->addNode($xmlNode, array(
@@ -1034,16 +1060,23 @@ abstract class Tx_Typo3mind_Domain_Export_mmCommon /*
 		foreach ($TCA['tt_content']['columns']['CType']['config']['items'] as $ct) {
 			if ($ct[1] == $ttContentElementRow['CType']) {
 
+				if( isset($this->_iconCache[$ct[2]]) ){
+					return $this->_iconCache[$ct[2]];
+				}
+
 				$icon = $systemIconPrefixPath . $ct[2];
 				if (stristr($ct[2], 'EXT:') !== false) {
-					/* @todo resolve ext path better ... instead of quick and dirty ... */
-					$icon = str_replace('EXT:', 'typo3conf/ext/', $ct[2]);
+					$extPathArray = explode(DIRECTORY_SEPARATOR,$ct[2]);
+					$_EXTKEY = str_replace('EXT:', '', $extPathArray[0]);
+					$extSiteRelPath = t3lib_extMgm::siteRelPath($_EXTKEY);
+					$icon = str_replace('EXT:'.$_EXTKEY.'/', $extSiteRelPath, $ct[2]);
 				}
 
 				$return = array(
 					'icon' => $icon,
 					'txt' => $GLOBALS['LANG']->sL($ct[0]),
 				);
+				$this->_iconCache[$ct[2]] = $return;
 				break;
 			}
 		}
