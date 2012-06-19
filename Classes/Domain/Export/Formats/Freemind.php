@@ -583,7 +583,9 @@ class Tx_Typo3mind_Domain_Export_Formats_Freemind implements Tx_Typo3mind_Domain
 		$fileName = empty($fileName) ? 'TYPO3Mind_' . mt_rand() . '.mm' : $fileName;
 
 		$xml = str_replace(
-				array('|lt|', '|gt|', '@#', '&amp;gt;', '&amp;lt;', '&amp;amp;'), array('<', '>', '&#', '&gt;', '&lt;', '&amp;'), $xml->asXML()
+                    array('|lt|', '|gt|', '@#', '&amp;gt;', '&amp;lt;', '&amp;amp;'),
+                    array('<', '>', '&#', '&gt;', '&lt;', '&amp;'),
+                    $xml->asXML()
 		);
 
 		$fileName = '/typo3temp/' . $fileName;
@@ -591,8 +593,13 @@ class Tx_Typo3mind_Domain_Export_Formats_Freemind implements Tx_Typo3mind_Domain
 		$md5 = md5($xml);
 
 		$xml = str_replace(
-						array('###MD5_FILE_HASH####'), array($md5), $xml
-				) . '<!--HiddenMD5:' . md5($xml) . '-->';
+			array('###MD5_FILE_HASH####'),
+                        array($md5),
+                        $xml
+		) . '<!--HiddenMD5:' . md5($xml) . '-->';
+
+                // remove first xml tag Bug #38183
+                $xml = preg_replace('~^\s*<\?xml[^>]+\?>~i', '', $xml);
 
 		$bytesWritten = file_put_contents(PATH_site . $fileName, $xml);
 
