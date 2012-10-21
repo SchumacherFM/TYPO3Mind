@@ -28,7 +28,9 @@
 
 			<label index="html.export.header">TYPO3Mind Export</label>
 			<label index="html.export.header.error">Errors in file %s</label>
-			<label index="html.export.header.error.text">Check the XML encoding settings or remove invalid characters or improper nested HTML tags.</label>
+			<label index="html.export.header.error.text">Check the XML encoding settings or remove invalid characters or improper nested HTML tags.
+            Sometimes there are errors listet ... but you can still open the .mm file in FreeMind :-)
+            </label>
 
 			<label index="html.export.Filesize">Filesize: %s KB</label>
 			<label index="html.export.Duration">Duration: %s secs</label>
