@@ -83,9 +83,9 @@ module.tx_typo3mind {
 			tt_news = datetime,short,bodytext
 			tt_products = subtitle,itemnumber
 
-
 			# if these three columns are set, they show you additional infos for TemplaVoila
 			tx_templavoila_tmplobj = datastructure,fileref,fileref_md5
+
 			sys_template = root,clear,include_static,include_static_file,constants,config
 		}
 
@@ -97,6 +97,16 @@ module.tx_typo3mind {
 		# if set to 0 then only these pages will show extended details which have set the flag in the backend.
 		# To keep the mind map file size down set this to 0.
 		ShowExtendedDetailsInPageTree = 1
+
+        # add here additional columns from the pages table which you want to see in a note.
+        # TCA will be checked if column exists
+        # the values listed below are only for example
+        AdditionalPageTreeColumns {
+            1 = SYS_LASTCHANGED
+            2 = tx_templavoila_ds
+            3 = tx_templavoila_next_ds
+            4 = tx_realurl_pathsegment
+        }
 
 		# Set to 1 if you want to see all tt_content Elements also to be listet.
 		# File size will increase immense
