@@ -1,7 +1,7 @@
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=SchumacherFM&url=https://github.com/SchumacherFM/TYPO3Mind&title=TYPO3Mind&language=en_GB&tags=github&category=software)
 
 TYPO3Mind
-====
+=========
 
 TYPO3Mind is an extension for generating mind mapping files from your whole
 TYPO3 installation. Mind maps helps you to understand how your TYPO3 project
@@ -11,7 +11,7 @@ Freeplane, XMind, Mindjet, MindManager, etc. TYPO3Mind uses the cool icon
 from FreeMind. This extension hooks into the tree click menu and in the left
 pane. The mind map includes many icons and pictures with URIs to your
 webserver. You have a lot of configuration options.
-Needs TYPO3 4.5 or later, SimpleXML, PHP5.2 or later.
+Needs TYPO3 4.5 - 4.7, SimpleXML, PHP5.2 or later.
 
 
 How to install:
@@ -30,10 +30,15 @@ How to install:
 
 5. Clear all caches
 
-6. In left pane click on "TYPO3Mind Export" and the .mm file is generating.
+6. In left pane click on "TYPO3Mind Export" and the .mm file will be generated.
 
 @Todo:
-====
-Please see http://forge.typo3.org/projects/extension-typo3mind/issues
+======
+Please see (http://forge.typo3.org/projects/extension-typo3mind/issues)
 
-May 2012: Recruit some contributors :-)
+Collaborating
+=============
+
+I follow the principles of (http://wwww.) send me a Pull Request which proves your
+PHP coding abilities and I'll add you as a collaborator to this git repository.
+
