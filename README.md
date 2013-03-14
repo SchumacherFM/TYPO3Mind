@@ -3,7 +3,7 @@
 TYPO3Mind
 =========
 
-This is the version for TYPO3 v6.
+This is the version for TYPO3 v6. Still under development.
 
 TYPO3Mind is an extension for generating mind mapping files from your whole
 TYPO3 installation. Mind maps helps you to understand how your TYPO3 project
@@ -13,7 +13,7 @@ Freeplane, XMind, Mindjet, MindManager, etc. TYPO3Mind uses the cool icon
 from FreeMind. This extension hooks into the tree click menu and in the left
 pane. The mind map includes many icons and pictures with URIs to your
 webserver. You have a lot of configuration options.
-Needs TYPO3 6.0 or later, SimpleXML, PHP5.2 or later.
+Needs TYPO3 6.0 or later, SimpleXML, PHP5.3 or later.
 
 
 How to install:
