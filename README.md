@@ -42,3 +42,7 @@ Collaborating
 I follow the principles of (http://wwww.) send me a Pull Request which proves your
 PHP coding abilities and I'll add you as a collaborator to this git repository.
 
+License
+=======
+
+The GNU General Public License can be found at (http://www.gnu.org/copyleft/gpl.html)
