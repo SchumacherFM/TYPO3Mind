@@ -39,8 +39,9 @@ Please see (http://forge.typo3.org/projects/extension-typo3mind/issues)
 Collaborating
 =============
 
-I follow the principles of (http://wwww.) send me a Pull Request which proves your
-PHP coding abilities and I'll add you as a collaborator to this git repository.
+I follow the principles of (http://felixge.de/2013/03/11/the-pull-request-hack.html)
+send me a Pull Request which proves your PHP coding abilities and I'll add you
+as a collaborator to this git repository.
 
 License
 =======
