@@ -33,3 +33,16 @@ How to install:
 5. Clear all caches
 
 6. In left pane click on "TYPO3Mind Export" and the .mm file is generating.
+
+
+Collaborating
+=============
+
+I follow the principles of (http://wwww.) send me a Pull Request which proves your
+PHP coding abilities and I'll add you as a collaborator to this git repository.
+
+License
+=======
+
+The GNU General Public License can be found at (http://www.gnu.org/copyleft/gpl.html)
+
